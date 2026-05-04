@@ -961,6 +961,14 @@ const DAYS = [
 // ══════════════════════════════════════
 // SUPABASE INIT
 // ══════════════════════════════════════
+
+// Lift state must be declared before renderLift is called
+let liftExercises = [...LIFT_EXERCISES];
+let liftLogs = {};
+let liftCatFilter = 'All';
+let liftModalExId = null;
+let liftExpandedEx = null;
+
 const SUPABASE_URL  = 'https://msfmhgvjpdiudlmekghr.supabase.co';
 const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zZm1oZ3ZqcGRpdWRsbWVrZ2hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDg1NzksImV4cCI6MjA5MzQ4NDU3OX0.Xe7mEv3LdrU2UatOqWneyhfFIJNf-GkT3RH3YhxXgFQ';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
@@ -1551,12 +1559,6 @@ const LIFT_EXERCISES = [
   {id:'dead_bug',      name:'Dead Bug',                cat:'Core'},
   {id:'cable_crunch',  name:'Cable Crunch',            cat:'Core'},
 ];
-
-let liftExercises = [...LIFT_EXERCISES, ...(loadData('customExercises') || [])];
-let liftLogs = loadData('liftLogs') || {};       // { exId: [{date, weight, reps, sets, notes, ts}] }
-let liftCatFilter = 'All';
-let liftModalExId = null;
-let liftExpandedEx = null;
 
 // ── LIFT: RENDER ──
 function renderLift() {
