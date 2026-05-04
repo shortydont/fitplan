@@ -962,13 +962,6 @@ const DAYS = [
 // SUPABASE INIT
 // ══════════════════════════════════════
 
-// Lift state must be declared before renderLift is called
-let liftExercises = [...LIFT_EXERCISES];
-let liftLogs = {};
-let liftCatFilter = 'All';
-let liftModalExId = null;
-let liftExpandedEx = null;
-
 const SUPABASE_URL  = 'https://msfmhgvjpdiudlmekghr.supabase.co';
 const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zZm1oZ3ZqcGRpdWRsbWVrZ2hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDg1NzksImV4cCI6MjA5MzQ4NDU3OX0.Xe7mEv3LdrU2UatOqWneyhfFIJNf-GkT3RH3YhxXgFQ';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
@@ -1022,12 +1015,12 @@ function showApp(user) {
     avatarEl.textContent = name.charAt(0).toUpperCase();
   }
 
-  // Load user-specific data
+  // Load user-specific data then boot the app
   loadUserData();
   init();
 }
 
-// ── USER DATA (scoped to user ID via localStorage prefix) ──
+// ── USER DATA (scoped per user via localStorage prefix) ──
 function userKey(key) {
   return `fitplan_${currentUser.id}_${key}`;
 }
@@ -1046,6 +1039,39 @@ function loadUserData() {
 }
 
 // ══════════════════════════════════════
+// LIFT EXERCISES LIBRARY
+// ══════════════════════════════════════
+const LIFT_EXERCISES = [
+  // Upper Body
+  {id:'chest_press',   name:'Dumbbell Chest Press', cat:'Upper Body'},
+  {id:'incline_press', name:'Incline DB Press',      cat:'Upper Body'},
+  {id:'cable_row',     name:'Seated Cable Row',      cat:'Upper Body'},
+  {id:'db_row',        name:'Dumbbell Row',           cat:'Upper Body'},
+  {id:'shoulder_press',name:'Shoulder Press',         cat:'Upper Body'},
+  {id:'lat_pulldown',  name:'Lat Pulldown',           cat:'Upper Body'},
+  {id:'tricep_push',   name:'Tricep Pushdown',        cat:'Upper Body'},
+  {id:'bicep_curl',    name:'Bicep Curls',            cat:'Upper Body'},
+  {id:'arnold_press',  name:'Arnold Press',           cat:'Upper Body'},
+  {id:'bent_row',      name:'Bent-Over Row',          cat:'Upper Body'},
+  // Lower Body
+  {id:'goblet_squat',  name:'Goblet Squat',           cat:'Lower Body'},
+  {id:'rdl',           name:'Romanian Deadlift',      cat:'Lower Body'},
+  {id:'lunges',        name:'Walking Lunges',          cat:'Lower Body'},
+  {id:'hip_thrust',    name:'Hip Thrust',              cat:'Lower Body'},
+  {id:'leg_press',     name:'Leg Press',               cat:'Lower Body'},
+  {id:'calf_raise',    name:'Calf Raises',             cat:'Lower Body'},
+  {id:'step_up',       name:'Step-ups',                cat:'Lower Body'},
+  // Full Body
+  {id:'deadlift',      name:'Deadlift',                cat:'Full Body'},
+  {id:'barbell_squat', name:'Barbell Squat',           cat:'Full Body'},
+  {id:'farmers_carry', name:"Farmer's Carry",          cat:'Full Body'},
+  // Core
+  {id:'plank',         name:'Plank',                   cat:'Core'},
+  {id:'dead_bug',      name:'Dead Bug',                cat:'Core'},
+  {id:'cable_crunch',  name:'Cable Crunch',            cat:'Core'},
+];
+
+// ══════════════════════════════════════
 // STATE
 // ══════════════════════════════════════
 let planDayIdx = 0;
@@ -1055,6 +1081,13 @@ let weightEntries = [];
 let gymChecked = {};
 let foodDiary = {};
 let chart = null;
+
+// Lift state — initialised here, populated after LIFT_EXERCISES loads
+let liftExercises = [];
+let liftLogs = {};
+let liftCatFilter = 'All';
+let liftModalExId = null;
+let liftExpandedEx = null;
 
 // ══════════════════════════════════════
 // HELPERS
@@ -1525,40 +1558,6 @@ function init() {
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
   }
 }
-
-init();
-// ══════════════════════════════════════
-// LIFT TRACKER DATA & STATE
-// ══════════════════════════════════════
-const LIFT_EXERCISES = [
-  // Upper Body
-  {id:'chest_press',   name:'Dumbbell Chest Press', cat:'Upper Body'},
-  {id:'incline_press', name:'Incline DB Press',      cat:'Upper Body'},
-  {id:'cable_row',     name:'Seated Cable Row',      cat:'Upper Body'},
-  {id:'db_row',        name:'Dumbbell Row',           cat:'Upper Body'},
-  {id:'shoulder_press',name:'Shoulder Press',         cat:'Upper Body'},
-  {id:'lat_pulldown',  name:'Lat Pulldown',           cat:'Upper Body'},
-  {id:'tricep_push',   name:'Tricep Pushdown',        cat:'Upper Body'},
-  {id:'bicep_curl',    name:'Bicep Curls',            cat:'Upper Body'},
-  {id:'arnold_press',  name:'Arnold Press',           cat:'Upper Body'},
-  {id:'bent_row',      name:'Bent-Over Row',          cat:'Upper Body'},
-  // Lower Body
-  {id:'goblet_squat',  name:'Goblet Squat',           cat:'Lower Body'},
-  {id:'rdl',           name:'Romanian Deadlift',      cat:'Lower Body'},
-  {id:'lunges',        name:'Walking Lunges',          cat:'Lower Body'},
-  {id:'hip_thrust',    name:'Hip Thrust',              cat:'Lower Body'},
-  {id:'leg_press',     name:'Leg Press',               cat:'Lower Body'},
-  {id:'calf_raise',    name:'Calf Raises',             cat:'Lower Body'},
-  {id:'step_up',       name:'Step-ups',                cat:'Lower Body'},
-  // Full Body
-  {id:'deadlift',      name:'Deadlift',                cat:'Full Body'},
-  {id:'barbell_squat', name:'Barbell Squat',           cat:'Full Body'},
-  {id:'farmers_carry', name:"Farmer's Carry",          cat:'Full Body'},
-  // Core
-  {id:'plank',         name:'Plank',                   cat:'Core'},
-  {id:'dead_bug',      name:'Dead Bug',                cat:'Core'},
-  {id:'cable_crunch',  name:'Cable Crunch',            cat:'Core'},
-];
 
 // ── LIFT: RENDER ──
 function renderLift() {
