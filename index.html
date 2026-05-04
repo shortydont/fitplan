@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -46,23 +47,23 @@ body {
 
 /* ── BOTTOM NAV ── */
 .bottom-nav {
-  position:fixed; bottom:0; left:0; right:0; z-index:100;
-  background:var(--surface);
-  border-top:1px solid var(--border);
-  display:flex;
-  padding-bottom:var(--safe-bottom);
-  box-shadow:0 -2px 12px #00000010;
+position:fixed; bottom:0; left:0; right:0; z-index:100;
+background:var(–surface);
+border-top:1px solid var(–border);
+display:flex;
+padding-bottom:var(–safe-bottom);
+box-shadow:0 -2px 12px #00000010;
 }
 .nav-btn {
-  flex:1; display:flex; flex-direction:column; align-items:center;
-  gap:3px; padding:10px 4px 8px;
-  background:none; border:none; cursor:pointer;
-  color:var(--muted); font-family:'DM Sans',sans-serif;
-  font-size:10px; font-weight:500; letter-spacing:0.5px;
-  text-transform:uppercase; transition:color 0.2s;
+flex:1; display:flex; flex-direction:column; align-items:center;
+gap:3px; padding:10px 4px 8px;
+background:none; border:none; cursor:pointer;
+color:var(–muted); font-family:‘DM Sans’,sans-serif;
+font-size:10px; font-weight:500; letter-spacing:0.5px;
+text-transform:uppercase; transition:color 0.2s;
 }
 .nav-btn svg { width:22px; height:22px; stroke-width:1.8; }
-.nav-btn.active { color:var(--teal); }
+.nav-btn.active { color:var(–teal); }
 .nav-btn.active svg { filter:drop-shadow(0 0 4px #0099cc40); }
 
 /* ── SCREENS ── */
@@ -72,524 +73,573 @@ body {
 /* ── SCROLL AREA ── */
 .scroll { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding-bottom:80px; }
 .scroll::-webkit-scrollbar { width:3px; }
-.scroll::-webkit-scrollbar-thumb { background:var(--muted2); border-radius:3px; }
+.scroll::-webkit-scrollbar-thumb { background:var(–muted2); border-radius:3px; }
 
 /* ── HERO ── */
 .hero {
-  background:linear-gradient(135deg,#0099cc 0%,#0077aa 60%,#005f8a 100%);
-  border-bottom:1px solid var(--border);
-  padding:calc(var(--safe-top) + 28px) 20px 24px;
-  position:relative; overflow:hidden; flex-shrink:0;
-  box-shadow:0 2px 12px #0099cc30;
+background:linear-gradient(135deg,#0099cc 0%,#0077aa 60%,#005f8a 100%);
+border-bottom:1px solid var(–border);
+padding:calc(var(–safe-top) + 28px) 20px 24px;
+position:relative; overflow:hidden; flex-shrink:0;
+box-shadow:0 2px 12px #0099cc30;
 }
 .hero::before {
-  content:''; position:absolute; top:-40px; right:-40px;
-  width:220px; height:220px;
-  background:radial-gradient(circle,#ffffff15 0%,transparent 70%);
-  border-radius:50%;
+content:’’; position:absolute; top:-40px; right:-40px;
+width:220px; height:220px;
+background:radial-gradient(circle,#ffffff15 0%,transparent 70%);
+border-radius:50%;
 }
 .hero-tag {
-  display:inline-block; background:#ffffff25;
-  border:1px solid #ffffff50; color:#ffffff;
-  font-size:10px; font-weight:600; letter-spacing:2px;
-  text-transform:uppercase; padding:3px 10px; border-radius:20px; margin-bottom:10px;
+display:inline-block; background:#ffffff25;
+border:1px solid #ffffff50; color:#ffffff;
+font-size:10px; font-weight:600; letter-spacing:2px;
+text-transform:uppercase; padding:3px 10px; border-radius:20px; margin-bottom:10px;
 }
 .hero h1 {
-  font-family:'Bebas Neue',sans-serif;
-  font-size:clamp(36px,8vw,56px); letter-spacing:2px; line-height:0.95;
-  margin-bottom:8px; color:#ffffff;
+font-family:‘Bebas Neue’,sans-serif;
+font-size:clamp(36px,8vw,56px); letter-spacing:2px; line-height:0.95;
+margin-bottom:8px; color:#ffffff;
 }
 .hero h1 span { color:#b3eaff; }
 .hero p { color:#cceeff; font-size:13px; font-weight:300; margin-bottom:16px; }
 .stats-row { display:flex; gap:16px; flex-wrap:wrap; }
 .stat { display:flex; flex-direction:column; gap:1px; }
-.stat-val { font-family:'Bebas Neue',sans-serif; font-size:22px; color:#ffffff; }
+.stat-val { font-family:‘Bebas Neue’,sans-serif; font-size:22px; color:#ffffff; }
 .stat-label { font-size:10px; color:#99d6f0; text-transform:uppercase; letter-spacing:1px; }
 .stat-sep { width:1px; background:#ffffff30; height:32px; align-self:center; }
 
 /* ── PAGE HEADER (sub-screens) ── */
 .page-header {
-  padding:calc(var(--safe-top) + 20px) 20px 16px;
-  border-bottom:1px solid var(--border);
-  background:var(--surface); flex-shrink:0;
-  box-shadow:0 1px 4px #00000008;
+padding:calc(var(–safe-top) + 20px) 20px 16px;
+border-bottom:1px solid var(–border);
+background:var(–surface); flex-shrink:0;
+box-shadow:0 1px 4px #00000008;
 }
 .page-header h2 {
-  font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:1px; color:var(--text);
+font-family:‘Bebas Neue’,sans-serif; font-size:26px; letter-spacing:1px; color:var(–text);
 }
-.page-header p { color:var(--muted); font-size:12px; font-weight:300; }
+.page-header p { color:var(–muted); font-size:12px; font-weight:300; }
 
 /* ── CONTAINER ── */
 .container { padding:16px; max-width:700px; margin:0 auto; }
 
 /* ── DAY TABS ── */
 .day-tabs {
-  display:flex; overflow-x:auto; gap:0;
-  background:var(--surface); border-bottom:1px solid var(--border);
-  -webkit-overflow-scrolling:touch; flex-shrink:0;
-  box-shadow:0 1px 3px #00000006;
+display:flex; overflow-x:auto; gap:0;
+background:var(–surface); border-bottom:1px solid var(–border);
+-webkit-overflow-scrolling:touch; flex-shrink:0;
+box-shadow:0 1px 3px #00000006;
 }
 .day-tabs::-webkit-scrollbar { display:none; }
 .day-tab {
-  padding:11px 16px; font-size:12px; font-weight:500;
-  color:var(--muted); background:none; border:none;
-  border-bottom:2px solid transparent; cursor:pointer;
-  white-space:nowrap; transition:all 0.2s; font-family:'DM Sans',sans-serif;
+padding:11px 16px; font-size:12px; font-weight:500;
+color:var(–muted); background:none; border:none;
+border-bottom:2px solid transparent; cursor:pointer;
+white-space:nowrap; transition:all 0.2s; font-family:‘DM Sans’,sans-serif;
 }
-.day-tab:hover { color:var(--text); background:#f8fafc; }
-.day-tab.active { color:var(--teal); border-bottom-color:var(--teal); }
+.day-tab:hover { color:var(–text); background:#f8fafc; }
+.day-tab.active { color:var(–teal); border-bottom-color:var(–teal); }
 
 /* ── CARDS ── */
 .card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:12px; padding:16px; margin-bottom:12px;
-  transition:border-color 0.2s;
-  box-shadow:0 1px 4px #00000008;
+background:var(–surface); border:1px solid var(–border);
+border-radius:12px; padding:16px; margin-bottom:12px;
+transition:border-color 0.2s;
+box-shadow:0 1px 4px #00000008;
 }
 .card-label {
-  font-size:10px; font-weight:600; letter-spacing:2px;
-  text-transform:uppercase; margin-bottom:8px;
-  display:flex; align-items:center; gap:8px;
+font-size:10px; font-weight:600; letter-spacing:2px;
+text-transform:uppercase; margin-bottom:8px;
+display:flex; align-items:center; gap:8px;
 }
-.card-label::after { content:''; flex:1; height:1px; background:var(--border); }
-.card-title { font-weight:600; font-size:14px; color:var(--text); margin-bottom:5px; }
-.card-body { color:var(--muted); font-size:13px; font-weight:300; line-height:1.7; }
-.card-body strong { color:var(--text); font-weight:500; }
+.card-label::after { content:’’; flex:1; height:1px; background:var(–border); }
+.card-title { font-weight:600; font-size:14px; color:var(–text); margin-bottom:5px; }
+.card-body { color:var(–muted); font-size:13px; font-weight:300; line-height:1.7; }
+.card-body strong { color:var(–text); font-weight:500; }
 
-.meal-card { border-left:3px solid var(--teal); }
-.meal-card .card-label { color:var(--teal); }
-.snack-card { border-left:3px solid var(--gold); }
-.snack-card .card-label { color:var(--gold); }
-.swim-card { border-left:3px solid var(--blue); }
-.swim-card .card-label { color:var(--blue); }
-.rest-card { border-left:3px solid var(--muted2); }
-.rest-card .card-label { color:var(--muted); }
+.meal-card { border-left:3px solid var(–teal); }
+.meal-card .card-label { color:var(–teal); }
+.snack-card { border-left:3px solid var(–gold); }
+.snack-card .card-label { color:var(–gold); }
+.swim-card { border-left:3px solid var(–blue); }
+.swim-card .card-label { color:var(–blue); }
+.rest-card { border-left:3px solid var(–muted2); }
+.rest-card .card-label { color:var(–muted); }
 
 .macros { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
 .macro {
-  background:var(--surface2); border:1px solid var(--border);
-  border-radius:5px; padding:3px 8px; font-size:11px; color:var(--muted);
+background:var(–surface2); border:1px solid var(–border);
+border-radius:5px; padding:3px 8px; font-size:11px; color:var(–muted);
 }
-.macro span { color:var(--text); font-weight:600; }
+.macro span { color:var(–text); font-weight:600; }
 
 /* ── SECTION TITLE ── */
 .section-title {
-  font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1px;
-  color:var(--text); margin-bottom:12px; padding-bottom:8px;
-  border-bottom:1px solid var(--border);
+font-family:‘Bebas Neue’,sans-serif; font-size:20px; letter-spacing:1px;
+color:var(–text); margin-bottom:12px; padding-bottom:8px;
+border-bottom:1px solid var(–border);
 }
 
 /* ── OVERVIEW WEEK GRID ── */
 .week-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:20px; }
 @media(min-width:500px){ .week-grid { grid-template-columns:repeat(7,1fr); } }
 .wdc {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:10px; padding:10px 6px; text-align:center; cursor:pointer;
-  transition:all 0.2s; box-shadow:0 1px 3px #00000008;
+background:var(–surface); border:1px solid var(–border);
+border-radius:10px; padding:10px 6px; text-align:center; cursor:pointer;
+transition:all 0.2s; box-shadow:0 1px 3px #00000008;
 }
-.wdc:hover,.wdc:active { border-color:var(--teal); background:var(--teal-dim); }
-.wdc-day { font-family:'Bebas Neue',sans-serif; font-size:12px; color:var(--muted); letter-spacing:1px; }
-.wdc-name { font-size:10px; font-weight:500; color:var(--text); margin:4px 0; }
+.wdc:hover,.wdc:active { border-color:var(–teal); background:var(–teal-dim); }
+.wdc-day { font-family:‘Bebas Neue’,sans-serif; font-size:12px; color:var(–muted); letter-spacing:1px; }
+.wdc-name { font-size:10px; font-weight:500; color:var(–text); margin:4px 0; }
 .wdc-badges { display:flex; flex-direction:column; gap:2px; align-items:center; }
 .badge { font-size:8px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; padding:2px 5px; border-radius:3px; }
-.badge-lift { background:var(--coral-dim); color:var(--coral); border:1px solid var(--coral); }
-.badge-swim { background:var(--blue-dim); color:var(--blue); border:1px solid var(--blue); }
-.badge-rest { background:var(--surface2); color:var(--muted); border:1px solid var(--border); }
-.badge-walk { background:var(--gold-dim); color:var(--gold); border:1px solid var(--gold); }
+.badge-lift { background:var(–coral-dim); color:var(–coral); border:1px solid var(–coral); }
+.badge-swim { background:var(–blue-dim); color:var(–blue); border:1px solid var(–blue); }
+.badge-rest { background:var(–surface2); color:var(–muted); border:1px solid var(–border); }
+.badge-walk { background:var(–gold-dim); color:var(–gold); border:1px solid var(–gold); }
 
 .principles-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
 @media(max-width:400px){ .principles-grid { grid-template-columns:1fr; } }
-.principle-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px; box-shadow:0 1px 3px #00000008; }
-.principle-card h4 { font-weight:600; font-size:13px; color:var(--text); margin-bottom:4px; }
-.principle-card p { font-size:12px; color:var(--muted); line-height:1.6; }
+.principle-card { background:var(–surface); border:1px solid var(–border); border-radius:10px; padding:14px; box-shadow:0 1px 3px #00000008; }
+.principle-card h4 { font-weight:600; font-size:13px; color:var(–text); margin-bottom:4px; }
+.principle-card p { font-size:12px; color:var(–muted); line-height:1.6; }
 
 /* ── GYM TRACKER ── */
 .exercise-tracker-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:12px; padding:16px; margin-bottom:12px;
-  border-left:3px solid var(--coral);
-  box-shadow:0 1px 4px #00000008;
+background:var(–surface); border:1px solid var(–border);
+border-radius:12px; padding:16px; margin-bottom:12px;
+border-left:3px solid var(–coral);
+box-shadow:0 1px 4px #00000008;
 }
-.exercise-tracker-card .card-label { color:var(--coral); }
+.exercise-tracker-card .card-label { color:var(–coral); }
 .ex-item {
-  display:flex; align-items:center; gap:12px;
-  padding:10px 0; border-bottom:1px solid var(--border);
+display:flex; align-items:center; gap:12px;
+padding:10px 0; border-bottom:1px solid var(–border);
 }
 .ex-item:last-child { border-bottom:none; }
 .ex-check {
-  width:24px; height:24px; border-radius:6px;
-  border:2px solid var(--muted2); background:transparent;
-  cursor:pointer; flex-shrink:0; transition:all 0.2s;
-  display:flex; align-items:center; justify-content:center;
+width:24px; height:24px; border-radius:6px;
+border:2px solid var(–muted2); background:transparent;
+cursor:pointer; flex-shrink:0; transition:all 0.2s;
+display:flex; align-items:center; justify-content:center;
 }
-.ex-check.done { background:var(--teal); border-color:var(--teal); }
+.ex-check.done { background:var(–teal); border-color:var(–teal); }
 .ex-check svg { width:14px; height:14px; stroke:#0d1117; stroke-width:2.5; display:none; }
 .ex-check.done svg { display:block; }
 .ex-info { flex:1; }
-.ex-name { font-weight:500; font-size:13px; color:var(--text); }
-.ex-name.done { text-decoration:line-through; color:var(--muted); }
-.ex-detail { font-size:11px; color:var(--muted); font-weight:300; }
-.ex-sets { font-size:11px; color:var(--teal); font-weight:600; }
+.ex-name { font-weight:500; font-size:13px; color:var(–text); }
+.ex-name.done { text-decoration:line-through; color:var(–muted); }
+.ex-detail { font-size:11px; color:var(–muted); font-weight:300; }
+.ex-sets { font-size:11px; color:var(–teal); font-weight:600; }
 
 .progress-bar-wrap {
-  background:var(--surface2); border-radius:20px; height:6px;
-  overflow:hidden; margin:10px 0 4px;
+background:var(–surface2); border-radius:20px; height:6px;
+overflow:hidden; margin:10px 0 4px;
 }
-.progress-bar { height:100%; background:var(--teal); border-radius:20px; transition:width 0.4s ease; }
-.progress-label { font-size:11px; color:var(--muted); }
+.progress-bar { height:100%; background:var(–teal); border-radius:20px; transition:width 0.4s ease; }
+.progress-label { font-size:11px; color:var(–muted); }
 
 /* ── FOOD DIARY ── */
 .diary-date-header {
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:14px;
+display:flex; align-items:center; justify-content:space-between;
+margin-bottom:14px;
 }
-.diary-date-header h3 { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1px; }
+.diary-date-header h3 { font-family:‘Bebas Neue’,sans-serif; font-size:20px; letter-spacing:1px; }
 .diary-date-nav {
-  display:flex; gap:6px;
+display:flex; gap:6px;
 }
 .date-nav-btn {
-  width:32px; height:32px; border-radius:8px;
-  background:var(--surface2); border:1px solid var(--border);
-  color:var(--text); cursor:pointer; font-size:16px;
-  display:flex; align-items:center; justify-content:center;
-  transition:all 0.2s;
+width:32px; height:32px; border-radius:8px;
+background:var(–surface2); border:1px solid var(–border);
+color:var(–text); cursor:pointer; font-size:16px;
+display:flex; align-items:center; justify-content:center;
+transition:all 0.2s;
 }
-.date-nav-btn:hover { border-color:var(--teal); color:var(--teal); }
+.date-nav-btn:hover { border-color:var(–teal); color:var(–teal); }
 
 .meal-slot {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:12px; margin-bottom:10px; overflow:hidden;
-  box-shadow:0 1px 4px #00000008;
+background:var(–surface); border:1px solid var(–border);
+border-radius:12px; margin-bottom:10px; overflow:hidden;
+box-shadow:0 1px 4px #00000008;
 }
 .meal-slot-header {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:12px 14px; border-bottom:1px solid var(--border);
+display:flex; align-items:center; justify-content:space-between;
+padding:12px 14px; border-bottom:1px solid var(–border);
 }
 .meal-slot-title { font-weight:600; font-size:13px; }
-.meal-slot-cal { font-size:12px; color:var(--muted); }
-.meal-slot-teal { border-left:3px solid var(--teal); }
-.meal-slot-gold { border-left:3px solid var(--gold); }
-.meal-slot-blue { border-left:3px solid var(--blue); }
+.meal-slot-cal { font-size:12px; color:var(–muted); }
+.meal-slot-teal { border-left:3px solid var(–teal); }
+.meal-slot-gold { border-left:3px solid var(–gold); }
+.meal-slot-blue { border-left:3px solid var(–blue); }
 
 .food-entry {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:9px 14px; border-bottom:1px solid var(--border);
+display:flex; align-items:center; justify-content:space-between;
+padding:9px 14px; border-bottom:1px solid var(–border);
 }
 .food-entry:last-child { border-bottom:none; }
-.food-entry-name { font-size:13px; color:var(--text); }
+.food-entry-name { font-size:13px; color:var(–text); }
 .food-entry-macros { display:flex; gap:8px; align-items:center; }
-.food-entry-cal { font-size:12px; color:var(--teal); font-weight:600; }
-.food-entry-p { font-size:11px; color:var(--muted); }
+.food-entry-cal { font-size:12px; color:var(–teal); font-weight:600; }
+.food-entry-p { font-size:11px; color:var(–muted); }
 .food-del {
-  width:22px; height:22px; border-radius:4px;
-  background:none; border:none; color:var(--muted2);
-  cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center;
-  transition:color 0.2s; margin-left:8px;
+width:22px; height:22px; border-radius:4px;
+background:none; border:none; color:var(–muted2);
+cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center;
+transition:color 0.2s; margin-left:8px;
 }
-.food-del:hover { color:var(--coral); }
+.food-del:hover { color:var(–coral); }
 
 .add-food-row {
-  display:flex; gap:8px; padding:10px 14px;
-  background:var(--surface2);
+display:flex; gap:8px; padding:10px 14px;
+background:var(–surface2);
 }
 .food-input {
-  flex:1; background:var(--bg); border:1px solid var(--border);
-  border-radius:8px; padding:8px 12px; color:var(--text);
-  font-family:'DM Sans',sans-serif; font-size:13px; outline:none;
-  transition:border-color 0.2s;
+flex:1; background:var(–bg); border:1px solid var(–border);
+border-radius:8px; padding:8px 12px; color:var(–text);
+font-family:‘DM Sans’,sans-serif; font-size:13px; outline:none;
+transition:border-color 0.2s;
 }
-.food-input:focus { border-color:var(--teal); box-shadow:0 0 0 3px var(--teal-dim); }
-.food-input::placeholder { color:var(--muted2); }
+.food-input:focus { border-color:var(–teal); box-shadow:0 0 0 3px var(–teal-dim); }
+.food-input::placeholder { color:var(–muted2); }
 .food-input.small { width:72px; flex:none; }
 .add-btn {
-  background:var(--teal); border:none; border-radius:8px;
-  color:#0d1117; font-weight:700; font-size:13px;
-  padding:8px 14px; cursor:pointer; transition:opacity 0.2s;
-  font-family:'DM Sans',sans-serif; white-space:nowrap;
+background:var(–teal); border:none; border-radius:8px;
+color:#0d1117; font-weight:700; font-size:13px;
+padding:8px 14px; cursor:pointer; transition:opacity 0.2s;
+font-family:‘DM Sans’,sans-serif; white-space:nowrap;
 }
 .add-btn:hover { opacity:0.85; }
 
 .daily-totals {
-  background:var(--surface2); border:1px solid var(--border);
-  border-radius:12px; padding:14px 16px; margin-bottom:16px;
-  display:flex; gap:20px; flex-wrap:wrap;
+background:var(–surface2); border:1px solid var(–border);
+border-radius:12px; padding:14px 16px; margin-bottom:16px;
+display:flex; gap:20px; flex-wrap:wrap;
 }
 .total-item { display:flex; flex-direction:column; gap:2px; }
-.total-val { font-family:'Bebas Neue',sans-serif; font-size:24px; }
-.total-val.teal { color:var(--teal); }
-.total-val.gold { color:var(--gold); }
-.total-val.blue { color:var(--blue); }
-.total-val.coral { color:var(--coral); }
-.total-label { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
-.total-goal { font-size:10px; color:var(--muted2); }
+.total-val { font-family:‘Bebas Neue’,sans-serif; font-size:24px; }
+.total-val.teal { color:var(–teal); }
+.total-val.gold { color:var(–gold); }
+.total-val.blue { color:var(–blue); }
+.total-val.coral { color:var(–coral); }
+.total-label { font-size:10px; color:var(–muted); text-transform:uppercase; letter-spacing:1px; }
+.total-goal { font-size:10px; color:var(–muted2); }
 
 /* ── WEIGHT TRACKER ── */
 .weight-input-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:12px; padding:16px; margin-bottom:16px;
+background:var(–surface); border:1px solid var(–border);
+border-radius:12px; padding:16px; margin-bottom:16px;
 }
 .weight-input-row {
-  display:flex; gap:10px; align-items:flex-end; margin-top:10px;
+display:flex; gap:10px; align-items:flex-end; margin-top:10px;
 }
 .weight-field-wrap { flex:1; }
-.weight-field-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
+.weight-field-label { font-size:11px; color:var(–muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
 .weight-field {
-  width:100%; background:var(--bg); border:1px solid var(--border);
-  border-radius:8px; padding:10px 14px; color:var(--text);
-  font-family:'DM Sans',sans-serif; font-size:18px; font-weight:600;
-  outline:none; transition:border-color 0.2s;
+width:100%; background:var(–bg); border:1px solid var(–border);
+border-radius:8px; padding:10px 14px; color:var(–text);
+font-family:‘DM Sans’,sans-serif; font-size:18px; font-weight:600;
+outline:none; transition:border-color 0.2s;
 }
-.weight-field:focus { border-color:var(--teal); box-shadow:0 0 0 3px var(--teal-dim); }
+.weight-field:focus { border-color:var(–teal); box-shadow:0 0 0 3px var(–teal-dim); }
 .log-btn {
-  background:var(--teal); border:none; border-radius:8px;
-  color:#0d1117; font-weight:700; font-size:14px;
-  padding:10px 20px; cursor:pointer; white-space:nowrap;
-  font-family:'DM Sans',sans-serif; transition:opacity 0.2s;
+background:var(–teal); border:none; border-radius:8px;
+color:#0d1117; font-weight:700; font-size:14px;
+padding:10px 20px; cursor:pointer; white-space:nowrap;
+font-family:‘DM Sans’,sans-serif; transition:opacity 0.2s;
 }
 .log-btn:hover { opacity:0.85; }
 
 /* ── CHART ── */
 .chart-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:12px; padding:16px; margin-bottom:16px;
+background:var(–surface); border:1px solid var(–border);
+border-radius:12px; padding:16px; margin-bottom:16px;
 }
 .chart-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-.chart-title { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1px; }
-.chart-meta { font-size:12px; color:var(--muted); }
+.chart-title { font-family:‘Bebas Neue’,sans-serif; font-size:20px; letter-spacing:1px; }
+.chart-meta { font-size:12px; color:var(–muted); }
 
 canvas#weightChart { width:100%!important; }
 
 .weight-log-list { margin-top:4px; }
 .weight-log-item {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:9px 0; border-bottom:1px solid var(--border);
+display:flex; align-items:center; justify-content:space-between;
+padding:9px 0; border-bottom:1px solid var(–border);
 }
 .weight-log-item:last-child { border-bottom:none; }
-.wl-date { font-size:13px; color:var(--muted); }
-.wl-weight { font-size:16px; font-weight:600; color:var(--teal); }
+.wl-date { font-size:13px; color:var(–muted); }
+.wl-weight { font-size:16px; font-weight:600; color:var(–teal); }
 .wl-diff { font-size:11px; padding:2px 7px; border-radius:4px; }
-.wl-down { background:#00c9a720; color:var(--teal); }
-.wl-up { background:#ff6b6b20; color:var(--coral); }
-.wl-same { background:var(--surface2); color:var(--muted); }
+.wl-down { background:#00c9a720; color:var(–teal); }
+.wl-up { background:#ff6b6b20; color:var(–coral); }
+.wl-same { background:var(–surface2); color:var(–muted); }
 .wl-del {
-  width:24px; height:24px; border-radius:4px;
-  background:none; border:none; color:var(--muted2);
-  cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center;
-  transition:color 0.2s;
+width:24px; height:24px; border-radius:4px;
+background:none; border:none; color:var(–muted2);
+cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center;
+transition:color 0.2s;
 }
-.wl-del:hover { color:var(--coral); }
+.wl-del:hover { color:var(–coral); }
 
 .weight-stats {
-  display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px;
+display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px;
 }
 .ws-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:10px; padding:12px; text-align:center;
-  box-shadow:0 1px 3px #00000008;
+background:var(–surface); border:1px solid var(–border);
+border-radius:10px; padding:12px; text-align:center;
+box-shadow:0 1px 3px #00000008;
 }
-.ws-val { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--teal); }
-.ws-label { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.ws-val { font-family:‘Bebas Neue’,sans-serif; font-size:22px; color:var(–teal); }
+.ws-label { font-size:10px; color:var(–muted); text-transform:uppercase; letter-spacing:1px; }
 
 .empty-state {
-  text-align:center; padding:40px 20px;
-  color:var(--muted); font-size:13px; font-weight:300;
+text-align:center; padding:40px 20px;
+color:var(–muted); font-size:13px; font-weight:300;
 }
 .empty-state .emoji { font-size:36px; display:block; margin-bottom:10px; }
 
 /* ── TOAST ── */
 .toast {
-  position:fixed; bottom:calc(70px + var(--safe-bottom) + 10px); left:50%; transform:translateX(-50%) translateY(20px);
-  background:var(--teal); color:#0d1117; font-weight:600; font-size:13px;
-  padding:10px 20px; border-radius:20px; z-index:200;
-  opacity:0; transition:all 0.3s; white-space:nowrap; pointer-events:none;
+position:fixed; bottom:calc(70px + var(–safe-bottom) + 10px); left:50%; transform:translateX(-50%) translateY(20px);
+background:var(–teal); color:#0d1117; font-weight:600; font-size:13px;
+padding:10px 20px; border-radius:20px; z-index:200;
+opacity:0; transition:all 0.3s; white-space:nowrap; pointer-events:none;
 }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
 /* ── MODAL ── */
 .modal-overlay {
-  position:fixed; inset:0; background:#0009; z-index:300;
-  display:none; align-items:center; justify-content:center; padding:20px;
+position:fixed; inset:0; background:#0009; z-index:300;
+display:none; align-items:center; justify-content:center; padding:20px;
 }
 .modal-overlay.open { display:flex; }
 .modal {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:16px; padding:24px; width:100%; max-width:400px;
-  box-shadow:0 8px 32px #00000018;
+background:var(–surface); border:1px solid var(–border);
+border-radius:16px; padding:24px; width:100%; max-width:400px;
+box-shadow:0 8px 32px #00000018;
 }
-.modal h3 { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1px; margin-bottom:16px; }
+.modal h3 { font-family:‘Bebas Neue’,sans-serif; font-size:22px; letter-spacing:1px; margin-bottom:16px; }
 .modal-btns { display:flex; gap:10px; margin-top:20px; }
 .modal-btn {
-  flex:1; padding:10px; border-radius:8px; border:none;
-  font-family:'DM Sans',sans-serif; font-weight:600; font-size:14px; cursor:pointer;
+flex:1; padding:10px; border-radius:8px; border:none;
+font-family:‘DM Sans’,sans-serif; font-weight:600; font-size:14px; cursor:pointer;
 }
-.modal-btn.primary { background:var(--teal); color:#0d1117; }
-.modal-btn.ghost { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
+.modal-btn.primary { background:var(–teal); color:#0d1117; }
+.modal-btn.ghost { background:var(–surface2); color:var(–text); border:1px solid var(–border); }
 /* ── LIFT TRACKER ── */
 .lift-cats {
-  display:flex; gap:8px; overflow-x:auto; margin-bottom:14px;
-  -webkit-overflow-scrolling:touch; padding-bottom:2px;
+display:flex; gap:8px; overflow-x:auto; margin-bottom:14px;
+-webkit-overflow-scrolling:touch; padding-bottom:2px;
 }
 .lift-cats::-webkit-scrollbar { display:none; }
 .lift-cat-btn {
-  padding:6px 14px; border-radius:20px; border:1px solid var(--border);
-  background:var(--surface); color:var(--muted); font-size:12px; font-weight:500;
-  cursor:pointer; white-space:nowrap; transition:all 0.2s;
-  font-family:'DM Sans',sans-serif;
+padding:6px 14px; border-radius:20px; border:1px solid var(–border);
+background:var(–surface); color:var(–muted); font-size:12px; font-weight:500;
+cursor:pointer; white-space:nowrap; transition:all 0.2s;
+font-family:‘DM Sans’,sans-serif;
 }
 .lift-cat-btn.active {
-  background:var(--purple); border-color:var(--purple); color:#fff;
+background:var(–purple); border-color:var(–purple); color:#fff;
 }
 
 .lift-pb-row {
-  display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px;
+display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px;
 }
 .lift-pb-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:10px; padding:10px 12px; text-align:center;
-  box-shadow:0 1px 3px #00000008;
+background:var(–surface); border:1px solid var(–border);
+border-radius:10px; padding:10px 12px; text-align:center;
+box-shadow:0 1px 3px #00000008;
 }
-.lift-pb-val { font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--purple); }
-.lift-pb-name { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:1px; }
+.lift-pb-val { font-family:‘Bebas Neue’,sans-serif; font-size:20px; color:var(–purple); }
+.lift-pb-name { font-size:10px; color:var(–muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:1px; }
 
 .lift-ex-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:12px; margin-bottom:10px; overflow:hidden;
-  box-shadow:0 1px 4px #00000008; border-left:3px solid var(--purple);
+background:var(–surface); border:1px solid var(–border);
+border-radius:12px; margin-bottom:10px; overflow:hidden;
+box-shadow:0 1px 4px #00000008; border-left:3px solid var(–purple);
 }
 .lift-ex-header {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:12px 14px; cursor:pointer;
+display:flex; align-items:center; justify-content:space-between;
+padding:12px 14px; cursor:pointer;
 }
 .lift-ex-header:hover { background:#f8f9ff; }
-.lift-ex-name { font-weight:600; font-size:14px; color:var(--text); }
-.lift-ex-cat { font-size:11px; color:var(--muted); margin-top:1px; }
+.lift-ex-name { font-weight:600; font-size:14px; color:var(–text); }
+.lift-ex-cat { font-size:11px; color:var(–muted); margin-top:1px; }
 .lift-ex-current {
-  text-align:right;
+text-align:right;
 }
-.lift-ex-weight { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--purple); }
-.lift-ex-detail { font-size:11px; color:var(--muted); }
+.lift-ex-weight { font-family:‘Bebas Neue’,sans-serif; font-size:22px; color:var(–purple); }
+.lift-ex-detail { font-size:11px; color:var(–muted); }
 .lift-log-btn {
-  background:var(--purple); border:none; border-radius:7px;
-  color:#fff; font-size:12px; font-weight:600; padding:6px 12px;
-  cursor:pointer; font-family:'DM Sans',sans-serif; white-space:nowrap;
-  transition:opacity 0.2s; margin-left:10px; flex-shrink:0;
+background:var(–purple); border:none; border-radius:7px;
+color:#fff; font-size:12px; font-weight:600; padding:6px 12px;
+cursor:pointer; font-family:‘DM Sans’,sans-serif; white-space:nowrap;
+transition:opacity 0.2s; margin-left:10px; flex-shrink:0;
 }
 .lift-log-btn:hover { opacity:0.85; }
 
 .lift-history {
-  border-top:1px solid var(--border);
+border-top:1px solid var(–border);
 }
 .lift-history-header {
-  padding:8px 14px; background:var(--surface2);
-  font-size:11px; font-weight:600; color:var(--muted);
-  text-transform:uppercase; letter-spacing:1px;
-  display:flex; justify-content:space-between;
+padding:8px 14px; background:var(–surface2);
+font-size:11px; font-weight:600; color:var(–muted);
+text-transform:uppercase; letter-spacing:1px;
+display:flex; justify-content:space-between;
 }
 .lift-entry {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:9px 14px; border-bottom:1px solid var(--border); font-size:13px;
+display:flex; align-items:center; justify-content:space-between;
+padding:9px 14px; border-bottom:1px solid var(–border); font-size:13px;
 }
 .lift-entry:last-child { border-bottom:none; }
-.lift-entry-date { color:var(--muted); font-size:12px; min-width:80px; }
+.lift-entry-date { color:var(–muted); font-size:12px; min-width:80px; }
 .lift-entry-stats { display:flex; gap:10px; align-items:center; flex:1; justify-content:center; }
 .lift-stat-pill {
-  background:var(--purple-dim); border:1px solid var(--purple);
-  color:var(--purple); font-size:11px; font-weight:600;
-  padding:3px 8px; border-radius:5px;
+background:var(–purple-dim); border:1px solid var(–purple);
+color:var(–purple); font-size:11px; font-weight:600;
+padding:3px 8px; border-radius:5px;
 }
-.lift-stat-pill.gold { background:var(--gold-dim); border-color:var(--gold); color:var(--gold); }
-.lift-entry-note { font-size:11px; color:var(--muted); font-style:italic; margin-top:2px; }
+.lift-stat-pill.gold { background:var(–gold-dim); border-color:var(–gold); color:var(–gold); }
+.lift-entry-note { font-size:11px; color:var(–muted); font-style:italic; margin-top:2px; }
 .lift-entry-del {
-  width:22px; height:22px; border-radius:4px; background:none; border:none;
-  color:var(--muted2); cursor:pointer; font-size:16px;
-  display:flex; align-items:center; justify-content:center; transition:color 0.2s;
+width:22px; height:22px; border-radius:4px; background:none; border:none;
+color:var(–muted2); cursor:pointer; font-size:16px;
+display:flex; align-items:center; justify-content:center; transition:color 0.2s;
 }
-.lift-entry-del:hover { color:var(--coral); }
+.lift-entry-del:hover { color:var(–coral); }
 
 .pb-badge {
-  background:#fbbf2420; border:1px solid #f0b429;
-  color:#d97706; font-size:10px; font-weight:700;
-  padding:2px 6px; border-radius:4px; letter-spacing:0.5px;
+background:#fbbf2420; border:1px solid #f0b429;
+color:#d97706; font-size:10px; font-weight:700;
+padding:2px 6px; border-radius:4px; letter-spacing:0.5px;
 }
 
 .lift-trend-up { color:#16a34a; font-size:11px; font-weight:600; }
-.lift-trend-down { color:var(--coral); font-size:11px; font-weight:600; }
-.lift-trend-same { color:var(--muted); font-size:11px; }
+.lift-trend-down { color:var(–coral); font-size:11px; font-weight:600; }
+.lift-trend-same { color:var(–muted); font-size:11px; }
+
+/* ── PROFILE SCREEN ── */
+.target-grid {
+display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:14px;
+}
+.target-card {
+background:var(–surface); border:1px solid var(–border);
+border-radius:12px; padding:14px; text-align:center;
+box-shadow:0 1px 4px #00000008;
+}
+.target-card.full { grid-column:1/-1; }
+.target-card-val {
+font-family:‘Bebas Neue’,sans-serif; font-size:28px; line-height:1;
+margin-bottom:4px;
+}
+.target-card-label { font-size:11px; color:var(–muted); text-transform:uppercase; letter-spacing:1px; }
+.target-card-sub { font-size:11px; color:var(–muted2); margin-top:2px; }
+
+.macro-bar-wrap { margin:10px 0 4px; }
+.macro-bar-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; }
+.macro-bar-track { background:var(–surface2); border-radius:20px; height:8px; overflow:hidden; }
+.macro-bar-fill { height:100%; border-radius:20px; }
+
+.metrics-grid {
+display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px;
+}
+.metric-card {
+background:var(–surface); border:1px solid var(–border);
+border-radius:10px; padding:12px 8px; text-align:center;
+box-shadow:0 1px 3px #00000008;
+}
+.metric-val { font-family:‘Bebas Neue’,sans-serif; font-size:20px; }
+.metric-label { font-size:10px; color:var(–muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px; }
+.metric-status { font-size:10px; font-weight:600; margin-top:3px; padding:2px 6px; border-radius:4px; display:inline-block; }
+.status-healthy { background:#dcfce7; color:#16a34a; }
+.status-over { background:#fee2e2; color:#dc2626; }
+.status-under { background:#fef9c3; color:#ca8a04; }
+
+.profile-setup-prompt {
+background:var(–teal-dim); border:1px solid var(–teal);
+border-radius:12px; padding:20px; text-align:center; margin-bottom:16px;
+}
+.profile-setup-prompt h3 {
+font-family:‘Bebas Neue’,sans-serif; font-size:22px;
+color:var(–teal); letter-spacing:1px; margin-bottom:6px;
+}
+.profile-setup-prompt p { font-size:13px; color:var(–muted); line-height:1.6; }
 
 /* ── LOGIN SCREEN ── */
 #login-screen {
-  position:fixed; inset:0; z-index:500;
-  background:linear-gradient(160deg,#0099cc 0%,#0077aa 50%,#005f8a 100%);
-  display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  padding:40px 24px; text-align:center;
+position:fixed; inset:0; z-index:500;
+background:linear-gradient(160deg,#0099cc 0%,#0077aa 50%,#005f8a 100%);
+display:flex; flex-direction:column;
+align-items:center; justify-content:center;
+padding:40px 24px; text-align:center;
 }
 #login-screen.hidden { display:none; }
 
 .login-logo {
-  font-family:'Bebas Neue',sans-serif;
-  font-size:72px; letter-spacing:4px; color:#fff;
-  line-height:0.9; margin-bottom:8px;
+font-family:‘Bebas Neue’,sans-serif;
+font-size:72px; letter-spacing:4px; color:#fff;
+line-height:0.9; margin-bottom:8px;
 }
 .login-logo span { color:#b3eaff; display:block; font-size:32px; letter-spacing:6px; }
 .login-tagline {
-  color:#cceeff; font-size:14px; font-weight:300;
-  margin-bottom:48px; max-width:280px;
+color:#cceeff; font-size:14px; font-weight:300;
+margin-bottom:48px; max-width:280px;
 }
 .google-btn {
-  display:flex; align-items:center; gap:12px;
-  background:#fff; border:none; border-radius:12px;
-  padding:14px 28px; cursor:pointer;
-  font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600;
-  color:#1a202c; box-shadow:0 4px 20px #00000025;
-  transition:all 0.2s; width:100%; max-width:300px;
-  justify-content:center;
+display:flex; align-items:center; gap:12px;
+background:#fff; border:none; border-radius:12px;
+padding:14px 28px; cursor:pointer;
+font-family:‘DM Sans’,sans-serif; font-size:15px; font-weight:600;
+color:#1a202c; box-shadow:0 4px 20px #00000025;
+transition:all 0.2s; width:100%; max-width:300px;
+justify-content:center;
 }
 .google-btn:hover { transform:translateY(-1px); box-shadow:0 6px 24px #00000035; }
 .google-btn:active { transform:translateY(0); }
 .google-btn svg { width:22px; height:22px; flex-shrink:0; }
 .login-note {
-  color:#99d6ee; font-size:11px; margin-top:20px;
-  max-width:260px; font-weight:300; line-height:1.6;
+color:#99d6ee; font-size:11px; margin-top:20px;
+max-width:260px; font-weight:300; line-height:1.6;
 }
 .login-loading {
-  color:#cceeff; font-size:14px; margin-top:16px;
-  display:none;
+color:#cceeff; font-size:14px; margin-top:16px;
+display:none;
 }
 
 /* ── USER HEADER BAR ── */
 .user-bar {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:calc(var(--safe-top) + 10px) 16px 10px;
-  background:linear-gradient(135deg,#0099cc,#005f8a);
-  flex-shrink:0;
+display:flex; align-items:center; justify-content:space-between;
+padding:calc(var(–safe-top) + 10px) 16px 10px;
+background:linear-gradient(135deg,#0099cc,#005f8a);
+flex-shrink:0;
 }
 .user-bar-left { display:flex; align-items:center; gap:10px; }
 .user-avatar {
-  width:34px; height:34px; border-radius:50%;
-  border:2px solid #ffffff50; overflow:hidden;
-  background:#ffffff30; display:flex; align-items:center; justify-content:center;
-  font-size:14px; font-weight:700; color:#fff;
+width:34px; height:34px; border-radius:50%;
+border:2px solid #ffffff50; overflow:hidden;
+background:#ffffff30; display:flex; align-items:center; justify-content:center;
+font-size:14px; font-weight:700; color:#fff;
 }
 .user-avatar img { width:100%; height:100%; object-fit:cover; }
 .user-name { color:#fff; font-size:13px; font-weight:600; }
 .user-sub { color:#b3eaff; font-size:11px; font-weight:300; }
 .signout-btn {
-  background:#ffffff20; border:1px solid #ffffff40;
-  border-radius:8px; color:#fff; font-size:12px; font-weight:500;
-  padding:6px 12px; cursor:pointer; font-family:'DM Sans',sans-serif;
-  transition:background 0.2s;
+background:#ffffff20; border:1px solid #ffffff40;
+border-radius:8px; color:#fff; font-size:12px; font-weight:500;
+padding:6px 12px; cursor:pointer; font-family:‘DM Sans’,sans-serif;
+transition:background 0.2s;
 }
 .signout-btn:hover { background:#ffffff35; }
 
 .lift-mini-graph { padding:8px 14px 10px; }
 </style>
+
 </head>
 <body>
 
 <!-- ══════════════════════════════════════════
      LOGIN SCREEN
 ══════════════════════════════════════════ -->
+
 <div id="login-screen">
   <div class="login-logo">FIT<span>PLAN</span></div>
   <div class="login-tagline">Your personal high-protein fat loss plan. Track your progress, log your lifts, crush your goals.</div>
@@ -609,9 +659,11 @@ canvas#weightChart { width:100%!important; }
 <!-- ══════════════════════════════════════════
      MAIN APP (shown after login)
 ══════════════════════════════════════════ -->
+
 <div id="main-app" style="display:none;flex-direction:column;height:100%;overflow:hidden;flex:1">
 
 <!-- USER BAR -->
+
 <div class="user-bar" id="userBar">
   <div class="user-bar-left">
     <div class="user-avatar" id="userAvatar">?</div>
@@ -624,16 +676,17 @@ canvas#weightChart { width:100%!important; }
 </div>
 
 <!-- APP SCREENS WRAPPER -->
+
 <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;" id="screensWrapper">
 <div class="screen active" id="screen-plan">
   <div class="hero">
     <div class="hero-tag">Wegovy · High Protein · 7-Day</div>
     <h1>FAT LOSS<br><span>PLAN</span></h1>
-    <p>1,300 cal · 140g protein · Built for your Wegovy journey</p>
+    <p>1,300 cal · 175g protein · Built for your Wegovy journey</p>
     <div class="stats-row">
       <div class="stat"><div class="stat-val">1,300</div><div class="stat-label">Calories</div></div>
       <div class="stat-sep"></div>
-      <div class="stat"><div class="stat-val">140g</div><div class="stat-label">Protein</div></div>
+      <div class="stat"><div class="stat-val">175g</div><div class="stat-label">Protein</div></div>
       <div class="stat-sep"></div>
       <div class="stat"><div class="stat-val">3×</div><div class="stat-label">Swim</div></div>
       <div class="stat-sep"></div>
@@ -649,6 +702,7 @@ canvas#weightChart { width:100%!important; }
 <!-- ══════════════════════════════════════════
      SCREEN 2: GYM TRACKER
 ══════════════════════════════════════════ -->
+
 <div class="screen" id="screen-gym">
   <div class="page-header">
     <h2>🏋️ Gym Tracker</h2>
@@ -663,6 +717,7 @@ canvas#weightChart { width:100%!important; }
 <!-- ══════════════════════════════════════════
      SCREEN 3: FOOD DIARY
 ══════════════════════════════════════════ -->
+
 <div class="screen" id="screen-food">
   <div class="page-header">
     <h2>🍽️ Food Diary</h2>
@@ -686,6 +741,7 @@ canvas#weightChart { width:100%!important; }
 <!-- ══════════════════════════════════════════
      SCREEN 4: WEIGHT TRACKER
 ══════════════════════════════════════════ -->
+
 <div class="screen" id="screen-weight">
   <div class="page-header">
     <h2>⚖️ Weight Tracker</h2>
@@ -728,6 +784,7 @@ canvas#weightChart { width:100%!important; }
 <!-- ══════════════════════════════════════════
      SCREEN 5: LIFT TRACKER
 ══════════════════════════════════════════ -->
+
 <div class="screen" id="screen-lift">
   <div class="page-header">
     <h2>🏅 Lift Tracker</h2>
@@ -736,40 +793,44 @@ canvas#weightChart { width:100%!important; }
   <div class="scroll">
     <div class="container">
 
-      <!-- CATEGORY FILTER -->
-      <div class="lift-cats" id="liftCats"></div>
+```
+  <!-- CATEGORY FILTER -->
+  <div class="lift-cats" id="liftCats"></div>
 
-      <!-- PB SUMMARY ROW -->
-      <div class="lift-pb-row" id="liftPbRow"></div>
+  <!-- PB SUMMARY ROW -->
+  <div class="lift-pb-row" id="liftPbRow"></div>
 
-      <!-- EXERCISE LIST -->
-      <div id="liftExList"></div>
+  <!-- EXERCISE LIST -->
+  <div id="liftExList"></div>
 
-      <!-- ADD CUSTOM EXERCISE -->
-      <div class="card" style="border-left:3px solid var(--purple);margin-top:4px">
-        <div class="card-label" style="color:var(--purple)">Add Custom Exercise</div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
-          <input class="food-input" id="customExName" placeholder="Exercise name (e.g. Incline Press)">
-          <div style="display:flex;gap:8px">
-            <div style="flex:1">
-              <div class="weight-field-label">Category</div>
-              <select class="food-input" id="customExCat" style="height:38px">
-                <option value="Upper Body">Upper Body</option>
-                <option value="Lower Body">Lower Body</option>
-                <option value="Core">Core</option>
-                <option value="Full Body">Full Body</option>
-              </select>
-            </div>
-            <button class="add-btn" style="align-self:flex-end;background:var(--purple)" onclick="addCustomExercise()">+ Add</button>
-          </div>
+  <!-- ADD CUSTOM EXERCISE -->
+  <div class="card" style="border-left:3px solid var(--purple);margin-top:4px">
+    <div class="card-label" style="color:var(--purple)">Add Custom Exercise</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+      <input class="food-input" id="customExName" placeholder="Exercise name (e.g. Incline Press)">
+      <div style="display:flex;gap:8px">
+        <div style="flex:1">
+          <div class="weight-field-label">Category</div>
+          <select class="food-input" id="customExCat" style="height:38px">
+            <option value="Upper Body">Upper Body</option>
+            <option value="Lower Body">Lower Body</option>
+            <option value="Core">Core</option>
+            <option value="Full Body">Full Body</option>
+          </select>
         </div>
+        <button class="add-btn" style="align-self:flex-end;background:var(--purple)" onclick="addCustomExercise()">+ Add</button>
       </div>
-
     </div>
+  </div>
+
+</div>
+```
+
   </div>
 </div>
 
 <!-- LIFT LOG MODAL -->
+
 <div class="modal-overlay" id="liftModal">
   <div class="modal">
     <h3 id="liftModalTitle">Log Lift</h3>
@@ -799,7 +860,89 @@ canvas#weightChart { width:100%!important; }
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     SCREEN 6: PROFILE & TARGETS
+══════════════════════════════════════════ -->
+
+<div class="screen" id="screen-profile">
+  <div class="page-header">
+    <h2>👤 My Profile</h2>
+    <p>Update your stats · Targets recalculate automatically</p>
+  </div>
+  <div class="scroll">
+    <div class="container">
+
+```
+  <!-- STATS INPUT -->
+  <div class="card" style="border-left:3px solid var(--teal);margin-bottom:12px">
+    <div class="card-label" style="color:var(--teal)">Your Stats</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div>
+        <div class="weight-field-label">Body Weight (kg)</div>
+        <input type="number" step="0.1" class="weight-field" id="profileWeight" placeholder="e.g. 107">
+      </div>
+      <div>
+        <div class="weight-field-label">Height (cm)</div>
+        <input type="number" step="1" class="weight-field" id="profileHeight" placeholder="e.g. 178">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div>
+        <div class="weight-field-label">Age</div>
+        <input type="number" class="weight-field" id="profileAge" placeholder="e.g. 40">
+      </div>
+      <div>
+        <div class="weight-field-label">Sex</div>
+        <select class="weight-field" id="profileSex" style="font-family:'DM Sans',sans-serif">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-bottom:10px">
+      <div class="weight-field-label">Activity Level</div>
+      <select class="weight-field" id="profileActivity" style="font-family:'DM Sans',sans-serif;width:100%">
+        <option value="1.2">Sedentary (desk job, little exercise)</option>
+        <option value="1.375">Lightly active (light exercise 1–3 days/week)</option>
+        <option value="1.55" selected>Moderately active (exercise 3–5 days/week)</option>
+        <option value="1.725">Very active (hard exercise 6–7 days/week)</option>
+      </select>
+    </div>
+    <div style="margin-bottom:14px">
+      <div class="weight-field-label">Goal</div>
+      <select class="weight-field" id="profileGoal" style="font-family:'DM Sans',sans-serif;width:100%">
+        <option value="aggressive">Aggressive deficit (lose fat fast)</option>
+        <option value="moderate">Moderate deficit (steady fat loss)</option>
+        <option value="mild">Mild deficit (slow & sustainable)</option>
+      </select>
+    </div>
+    <button class="log-btn" onclick="saveProfile()" style="width:100%;font-size:15px;padding:12px">
+      Calculate & Save My Targets
+    </button>
+  </div>
+
+  <!-- CALCULATED TARGETS -->
+  <div id="profileTargets"></div>
+
+  <!-- BMI & HEALTH METRICS -->
+  <div id="profileMetrics"></div>
+
+  <!-- WEGOVY NOTE -->
+  <div style="background:var(--teal-dim);border:1px solid var(--teal);border-radius:10px;padding:14px 16px;margin-top:4px">
+    <div style="font-size:11px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">💊 Wegovy Note</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.7">
+      Because you're on Wegovy, your protein target is set higher than standard guidelines to protect muscle during rapid fat loss. Your calorie target has also been set conservatively — if you're consistently unable to eat this amount due to Wegovy side effects, speak to your prescriber.
+    </div>
+  </div>
+
+</div>
+```
+
+  </div>
+</div>
+
 <!-- ── BOTTOM NAV ── -->
+
 <nav class="bottom-nav">
   <button class="nav-btn active" onclick="showScreen('plan',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -821,6 +964,10 @@ canvas#weightChart { width:100%!important; }
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12h3m12 0h3M6 12V8a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-4zm12 0V8a1 1 0 0 0-1-1h-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-4zM9 12h6"/></svg>
     Lifts
   </button>
+  <button class="nav-btn" onclick="showScreen('profile',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    Profile
+  </button>
 </nav>
 
 <div class="toast" id="toast"></div>
@@ -838,7 +985,7 @@ const DAYS = [
     badges:['lift'],
     meals:[
       {type:'meal',label:'Meal 1 · ~8am',title:'Egg White Scramble Bowl',body:'6 egg whites + 2 whole eggs with <strong>spinach, cherry tomatoes, feta</strong>. Plus ½ cup oats with ½ cup blueberries.',cal:480,protein:48},
-      {type:'snack',label:'Snack · ~1pm',title:'Protein Shake',body:'1 scoop whey with water or unsweetened almond milk. Drink slowly on Wegovy.',cal:130,protein:25},
+      {type:'snack',label:'Snack · ~1pm',title:'Double Protein Shake',body:'2 scoops whey with water or unsweetened almond milk. Essential for 175g target. Drink slowly on Wegovy.',cal:240,protein:50},
       {type:'meal',label:'Meal 2 · ~6pm',title:'Grilled Chicken + Quinoa + Roasted Veg',body:'6oz grilled chicken with garlic, paprika, lemon. <strong>½ cup quinoa</strong> and large roasted broccoli, zucchini, red pepper.',cal:690,protein:72}
     ],
     exercises:[
@@ -857,7 +1004,7 @@ const DAYS = [
     badges:['swim'],
     meals:[
       {type:'meal',label:'Meal 1 · ~8am',title:'Greek Yogurt Power Bowl',body:'1 cup non-fat Greek yogurt + 1 scoop vanilla whey. Topped with <strong>½ cup strawberries</strong> and 1 tbsp almond butter.',cal:450,protein:50},
-      {type:'snack',label:'Snack · ~1pm',title:'Cottage Cheese + Fruit',body:'½ cup low-fat cottage cheese with ½ cup pineapple or peach. Easy to digest before swimming.',cal:150,protein:16},
+      {type:'snack',label:'Snack · ~1pm',title:'Cottage Cheese + Protein Shake',body:'½ cup low-fat cottage cheese with ½ cup pineapple. Plus 1 scoop whey on the side.',cal:270,protein:40},
       {type:'meal',label:'Meal 2 · ~7pm',title:'Baked Salmon + Sweet Potato + Asparagus',body:'6oz baked salmon (lemon, dill, garlic). <strong>1 small sweet potato</strong> baked and asparagus roasted with olive oil spray.',cal:700,protein:72}
     ],
     exercises:[
@@ -875,7 +1022,7 @@ const DAYS = [
     badges:['lift'],
     meals:[
       {type:'meal',label:'Meal 1 · ~8am',title:'Turkey & Egg Breakfast Skillet',body:'3oz lean ground turkey + 2 eggs scrambled with <strong>diced peppers and onion</strong>. Served with ½ cup black beans.',cal:470,protein:52},
-      {type:'snack',label:'Snack · ~1pm',title:'2 Hard-Boiled Eggs + Cucumber',body:'Simple and portable. 2 hard-boiled eggs with sliced cucumber, salt, optional hot sauce.',cal:160,protein:14},
+      {type:'snack',label:'Snack · ~1pm',title:'4 Hard-Boiled Eggs + Cucumber',body:'4 hard-boiled eggs with sliced cucumber and salt. Simple, portable, high protein.',cal:280,protein:28},
       {type:'meal',label:'Meal 2 · ~6:30pm',title:'Ground Turkey Stir-Fry + Cauli Rice',body:'5oz lean turkey with <strong>edamame, bok choy, snap peas</strong> in soy sauce, ginger, garlic. Over 1 cup cauliflower rice.',cal:670,protein:76}
     ],
     exercises:[
@@ -894,7 +1041,7 @@ const DAYS = [
     badges:['swim','walk'],
     meals:[
       {type:'meal',label:'Meal 1 · ~8am',title:'Protein Oats + Eggs',body:'½ cup oats, stir in <strong>½ scoop whey</strong> once cooled. Top with banana slices. Plus 2 boiled eggs on the side.',cal:460,protein:45},
-      {type:'snack',label:'Snack · ~12:30pm',title:'Tuna + Rice Cakes',body:'1 can tuna in water with mustard and lemon. Served on <strong>2 plain rice cakes</strong>.',cal:165,protein:28},
+      {type:'snack',label:'Snack · ~12:30pm',title:'Tuna + Rice Cakes + Shake',body:'1 can tuna in water with mustard and lemon on 2 rice cakes. Plus 1 scoop whey shake.',cal:295,protein:50},
       {type:'meal',label:'Meal 2 · ~6pm',title:'Shrimp + Brown Rice + Greens',body:'6oz shrimp with garlic, chili flakes, lemon. <strong>½ cup brown rice</strong> and a large bed of wilted spinach or steamed broccoli.',cal:675,protein:67}
     ],
     exercises:[
@@ -911,7 +1058,7 @@ const DAYS = [
     badges:['lift'],
     meals:[
       {type:'meal',label:'Meal 1 · ~8am',title:'Smoked Salmon Egg Scramble',body:'3 whole eggs + <strong>2oz smoked salmon</strong>, capers, red onion, spinach. Optional ½ slice whole grain toast.',cal:440,protein:48},
-      {type:'snack',label:'Snack · ~1pm',title:'Protein Shake + Apple',body:'1 scoop chocolate whey with cold water. Pair with a <strong>small apple</strong> for natural energy before training.',cal:185,protein:25},
+      {type:'snack',label:'Snack · ~1pm',title:'Double Shake + Apple',body:'2 scoops chocolate whey with cold water. Pair with a <strong>small apple</strong> for natural energy before training.',cal:295,protein:50},
       {type:'meal',label:'Meal 2 · ~7pm',title:'Chicken Taco Bowl (No Shell)',body:'6oz seasoned chicken thigh over <strong>½ cup brown rice</strong>, salsa, shredded lettuce, jalapeño, lime. Non-fat Greek yogurt instead of sour cream.',cal:675,protein:72}
     ],
     exercises:[
@@ -930,7 +1077,7 @@ const DAYS = [
     badges:['swim'],
     meals:[
       {type:'meal',label:'Meal 1 · ~9am',title:'High-Protein Pancakes',body:'1 scoop vanilla whey + 1 ripe banana + 2 eggs. Blend and cook. Top with <strong>½ cup mixed berries</strong>.',cal:440,protein:48},
-      {type:'snack',label:'Snack · ~2pm',title:'Edamame + String Cheese',body:'½ cup shelled edamame (lightly salted) + 1 light string cheese stick. Great protein combo.',cal:155,protein:18},
+      {type:'snack',label:'Snack · ~2pm',title:'Edamame + Protein Shake',body:'½ cup shelled edamame (lightly salted) plus 1 scoop whey shake. Great combo to hit your 175g target.',cal:275,protein:43},
       {type:'meal',label:'Meal 2 · ~6:30pm',title:'Turkey Meatballs + Zucchini Noodles',body:'5oz lean turkey meatballs (baked) over <strong>zucchini noodles</strong> with light marinara. 1 tbsp parmesan.',cal:705,protein:72}
     ],
     exercises:[
@@ -947,7 +1094,7 @@ const DAYS = [
     badges:['rest'],
     meals:[
       {type:'meal',label:'Meal 1 · ~9:30am',title:'Relaxed Brunch Bowl',body:'2 poached eggs on wilted spinach with ¼ avocado. Plus <strong>½ cup cottage cheese</strong> on the side. Eat mindfully.',cal:430,protein:40},
-      {type:'snack',label:'Snack · ~2pm',title:'Greek Yogurt + Honey + Walnuts',body:'¾ cup non-fat Greek yogurt, 1 tsp honey, 5–6 walnut halves. A small treat while staying on track.',cal:165,protein:16},
+      {type:'snack',label:'Snack · ~2pm',title:'Greek Yogurt + Protein + Walnuts',body:'¾ cup non-fat Greek yogurt mixed with ½ scoop whey, 1 tsp honey, 5–6 walnut halves.',cal:250,protein:38},
       {type:'meal',label:'Meal 2 · ~6pm',title:'Baked Cod + Roasted Veg + Small Potato',body:'6oz baked cod (lemon, herbs, garlic). Big tray of <strong>roasted veg</strong> plus 1 small roasted new potato.',cal:655,protein:79}
     ],
     exercises:[
@@ -1039,6 +1186,9 @@ function loadUserData() {
   foodDiary     = loadData('foodDiary')     || {};
   liftLogs      = loadData('liftLogs')      || {};
   liftExercises = [...LIFT_EXERCISES, ...(loadData('customExercises') || [])];
+  // Load saved targets if profile exists
+  const savedTargets = loadData('userTargets');
+  if (savedTargets) TARGETS = savedTargets;
 }
 
 // ══════════════════════════════════════
@@ -1046,37 +1196,37 @@ function loadUserData() {
 // ══════════════════════════════════════
 const MEAL_POOL = {
   breakfast: [
-    {title:'Egg White Scramble Bowl', body:'6 egg whites + 2 whole eggs with <strong>spinach, cherry tomatoes, feta</strong>. Plus ½ cup oats with ½ cup blueberries.', cal:480, protein:48},
-    {title:'Greek Yogurt Power Bowl', body:'1 cup non-fat Greek yogurt + 1 scoop vanilla whey. Topped with <strong>½ cup strawberries</strong> and 1 tbsp almond butter.', cal:450, protein:50},
-    {title:'Turkey & Egg Breakfast Skillet', body:'3oz lean ground turkey + 2 eggs scrambled with <strong>diced peppers and onion</strong>. Served with ½ cup black beans.', cal:470, protein:52},
-    {title:'Protein Oats + Eggs', body:'½ cup oats, stir in <strong>½ scoop whey</strong> once cooled. Top with banana slices. Plus 2 boiled eggs on the side.', cal:460, protein:45},
-    {title:'Smoked Salmon Egg Scramble', body:'3 whole eggs + <strong>2oz smoked salmon</strong>, capers, red onion, spinach. Optional ½ slice whole grain toast.', cal:440, protein:48},
+    {title:'Egg White Scramble Bowl', body:'6 egg whites + 2 whole eggs with <strong>spinach, cherry tomatoes, feta</strong>. Plus ½ cup oats with ½ cup blueberries.', cal:480, protein:55},
+    {title:'Greek Yogurt Power Bowl', body:'1 cup non-fat Greek yogurt + 1 scoop vanilla whey. Topped with <strong>½ cup strawberries</strong> and 1 tbsp almond butter.', cal:450, protein:58},
+    {title:'Turkey & Egg Breakfast Skillet', body:'3oz lean ground turkey + 2 eggs scrambled with <strong>diced peppers and onion</strong>. Served with ½ cup black beans.', cal:470, protein:60},
+    {title:'Protein Oats + Eggs', body:'½ cup oats, stir in <strong>½ scoop whey</strong> once cooled. Top with banana slices. Plus 2 boiled eggs on the side.', cal:460, protein:52},
+    {title:'Smoked Salmon Egg Scramble', body:'3 whole eggs + <strong>2oz smoked salmon</strong>, capers, red onion, spinach. Optional ½ slice whole grain toast.', cal:440, protein:55},
     {title:'High-Protein Pancakes', body:'1 scoop vanilla whey + 1 ripe banana + 2 eggs. Blend and cook. Top with <strong>½ cup mixed berries</strong>.', cal:440, protein:48},
-    {title:'Relaxed Brunch Bowl', body:'2 poached eggs on wilted spinach with ¼ avocado. Plus <strong>½ cup cottage cheese</strong> on the side.', cal:430, protein:40},
-    {title:'Cottage Cheese Breakfast Bowl', body:'¾ cup cottage cheese with <strong>sliced peach, 1 tbsp honey</strong> and a sprinkle of flaxseed. 2 boiled eggs on the side.', cal:420, protein:44},
-    {title:'Veggie Omelette', body:'3 whole eggs + 2 whites made into an omelette with <strong>mushrooms, peppers, spinach</strong> and a sprinkle of cheddar.', cal:390, protein:42},
-    {title:'Protein Smoothie Bowl', body:'1 scoop whey + ½ frozen banana + ½ cup frozen mango blended thick. Top with <strong>granola, blueberries</strong> and 1 tbsp almond butter.', cal:460, protein:40},
+    {title:'Relaxed Brunch Bowl', body:'2 poached eggs on wilted spinach with ¼ avocado. Plus <strong>½ cup cottage cheese</strong> on the side.', cal:430, protein:50},
+    {title:'Cottage Cheese Breakfast Bowl', body:'¾ cup cottage cheese with <strong>sliced peach, 1 tbsp honey</strong> and a sprinkle of flaxseed. 2 boiled eggs on the side.', cal:420, protein:52},
+    {title:'Veggie Omelette', body:'3 whole eggs + 2 whites made into an omelette with <strong>mushrooms, peppers, spinach</strong> and a sprinkle of cheddar.', cal:390, protein:50},
+    {title:'Protein Smoothie Bowl', body:'1 scoop whey + ½ frozen banana + ½ cup frozen mango blended thick. Top with <strong>granola, blueberries</strong> and 1 tbsp almond butter.', cal:460, protein:48},
   ],
   snack: [
-    {title:'Protein Shake', body:'1 scoop whey with water or unsweetened almond milk. Drink slowly on Wegovy.', cal:130, protein:25},
-    {title:'Cottage Cheese + Fruit', body:'½ cup low-fat cottage cheese with ½ cup pineapple or peach. Easy to digest.', cal:150, protein:16},
-    {title:'2 Hard-Boiled Eggs + Cucumber', body:'Simple and portable. 2 hard-boiled eggs with sliced cucumber, salt, optional hot sauce.', cal:160, protein:14},
+    {title:'Double Protein Shake', body:'2 scoops whey with water or unsweetened almond milk. Essential for hitting 175g. Drink slowly on Wegovy.', cal:240, protein:50},
+    {title:'Cottage Cheese + Fruit + Shake', body:'½ cup low-fat cottage cheese with ½ cup pineapple. Plus 1 scoop whey on the side.', cal:270, protein:40},
+    {title:'4 Hard-Boiled Eggs + Cucumber', body:'4 hard-boiled eggs with sliced cucumber and salt. Simple, portable, high protein.', cal:280, protein:28},
     {title:'Tuna + Rice Cakes', body:'1 can tuna in water with mustard and lemon. Served on <strong>2 plain rice cakes</strong>.', cal:165, protein:28},
     {title:'Protein Shake + Apple', body:'1 scoop chocolate whey with cold water. Pair with a <strong>small apple</strong>.', cal:185, protein:25},
     {title:'Edamame + String Cheese', body:'½ cup shelled edamame (lightly salted) + 1 light string cheese stick.', cal:155, protein:18},
     {title:'Greek Yogurt + Honey + Walnuts', body:'¾ cup non-fat Greek yogurt, 1 tsp honey, 5–6 walnut halves.', cal:165, protein:16},
-    {title:'Turkey Roll-Ups', body:'3oz sliced turkey breast wrapped around <strong>cucumber sticks and cream cheese</strong>.', cal:150, protein:20},
-    {title:'Protein Bar', body:'Choose a bar with <strong>20g+ protein and under 250 calories</strong>. Quest, Grenade or similar.', cal:200, protein:20},
+    {title:'Turkey Roll-Ups + Shake', body:'3oz sliced turkey breast wrapped around <strong>cucumber sticks</strong> plus 1 scoop whey shake.', cal:270, protein:45},
+    {title:'Protein Bar + Greek Yogurt', body:'A high protein bar (Quest, Grenade) plus ½ cup Greek yogurt. Double hit of protein.', cal:310, protein:40},
     {title:'Roasted Chickpeas', body:'½ cup roasted chickpeas with paprika and sea salt. High fibre, satisfying crunch.', cal:140, protein:8},
   ],
   dinner: [
-    {title:'Grilled Chicken + Quinoa + Roasted Veg', body:'6oz grilled chicken with garlic, paprika, lemon. <strong>½ cup quinoa</strong> and large roasted broccoli, zucchini, red pepper.', cal:690, protein:72},
-    {title:'Baked Salmon + Sweet Potato + Asparagus', body:'6oz baked salmon (lemon, dill, garlic). <strong>1 small sweet potato</strong> and asparagus roasted with olive oil spray.', cal:700, protein:72},
+    {title:'Grilled Chicken + Quinoa + Roasted Veg', body:'8oz grilled chicken with garlic, paprika, lemon. <strong>½ cup quinoa</strong> and large roasted broccoli, zucchini, red pepper.', cal:720, protein:88},
+    {title:'Baked Salmon + Sweet Potato + Asparagus', body:'8oz baked salmon (lemon, dill, garlic). <strong>1 small sweet potato</strong> and asparagus roasted with olive oil spray.', cal:740, protein:88},
     {title:'Ground Turkey Stir-Fry + Cauli Rice', body:'5oz lean turkey with <strong>edamame, bok choy, snap peas</strong> in soy sauce, ginger, garlic. Over 1 cup cauliflower rice.', cal:670, protein:76},
-    {title:'Shrimp + Brown Rice + Greens', body:'6oz shrimp with garlic, chili flakes, lemon. <strong>½ cup brown rice</strong> and a large bed of wilted spinach.', cal:675, protein:67},
-    {title:'Chicken Taco Bowl (No Shell)', body:'6oz seasoned chicken thigh over <strong>½ cup brown rice</strong>, salsa, shredded lettuce, jalapeño, lime.', cal:675, protein:72},
-    {title:'Turkey Meatballs + Zucchini Noodles', body:'5oz lean turkey meatballs (baked) over <strong>zucchini noodles</strong> with light marinara. 1 tbsp parmesan.', cal:705, protein:72},
-    {title:'Baked Cod + Roasted Veg + Small Potato', body:'6oz baked cod (lemon, herbs, garlic). Big tray of <strong>roasted veg</strong> plus 1 small roasted new potato.', cal:655, protein:79},
+    {title:'Shrimp + Brown Rice + Greens', body:'8oz shrimp with garlic, chili flakes, lemon. <strong>½ cup brown rice</strong> and a large bed of wilted spinach.', cal:700, protein:80},
+    {title:'Chicken Taco Bowl (No Shell)', body:'8oz seasoned chicken thigh over <strong>½ cup brown rice</strong>, salsa, shredded lettuce, jalapeño, lime.', cal:710, protein:88},
+    {title:'Turkey Meatballs + Zucchini Noodles', body:'7oz lean turkey meatballs (baked) over <strong>zucchini noodles</strong> with light marinara. 1 tbsp parmesan.', cal:730, protein:85},
+    {title:'Baked Cod + Roasted Veg + Small Potato', body:'8oz baked cod (lemon, herbs, garlic). Big tray of <strong>roasted veg</strong> plus 1 small roasted new potato.', cal:655, protein:79},
     {title:'Lean Beef Stir-Fry + Rice', body:'5oz lean beef strips with <strong>broccoli, snap peas, mushrooms</strong> in teriyaki sauce. ½ cup brown rice.', cal:680, protein:65},
     {title:'Tuna Nicoise Bowl', body:'1 can tuna, 2 boiled eggs, green beans, cherry tomatoes, olives, <strong>small new potatoes</strong>. Lemon dressing.', cal:640, protein:68},
     {title:'Chicken & Chickpea Curry', body:'5oz chicken breast in a light tomato-based curry with <strong>chickpeas and spinach</strong>. Served with ½ cup rice.', cal:660, protein:64},
@@ -1282,6 +1432,7 @@ function showScreen(name, btn) {
   document.getElementById('screen-'+name).classList.add('active');
   btn.classList.add('active');
   if (name === 'lift') renderLift();
+  if (name === 'profile') renderProfile();
 }
 
 // ══════════════════════════════════════
@@ -1489,23 +1640,23 @@ function renderDiary() {
   const day = getDiaryDay();
   const totalCal = MEAL_SLOTS.reduce((s,sl)=>(day[sl.id]||[]).reduce((ss,f)=>ss+f.cal,s),0);
   const totalPro = MEAL_SLOTS.reduce((s,sl)=>(day[sl.id]||[]).reduce((ss,f)=>ss+f.pro,s),0);
-  const calPct = Math.min(100,Math.round(totalCal/1300*100));
-  const proPct = Math.min(100,Math.round(totalPro/140*100));
+  const calPct = Math.min(100,Math.round(totalCal/TARGETS.calories*100));
+  const proPct = Math.min(100,Math.round(totalPro/TARGETS.protein*100));
 
   document.getElementById('dailyTotals').innerHTML = `
     <div class="daily-totals">
       <div class="total-item">
         <div class="total-val teal">${totalCal}</div>
         <div class="total-label">Calories</div>
-        <div class="total-goal">/ 1,300 (${calPct}%)</div>
+        <div class="total-goal">/ ${TARGETS.calories} (${calPct}%)</div>
       </div>
       <div class="total-item">
         <div class="total-val gold">${totalPro}g</div>
         <div class="total-label">Protein</div>
-        <div class="total-goal">/ 140g (${proPct}%)</div>
+        <div class="total-goal">/ ${TARGETS.protein}g (${proPct}%)</div>
       </div>
       <div class="total-item">
-        <div class="total-val blue">${1300-totalCal}</div>
+        <div class="total-val blue">${TARGETS.calories-totalCal}</div>
         <div class="total-label">Remaining</div>
         <div class="total-goal">calories left</div>
       </div>
@@ -1950,6 +2101,192 @@ function deleteCustomExercise(exId) {
   showToast('Exercise removed');
 }
 
+// ══════════════════════════════════════
+// PROFILE & TARGETS
+// ══════════════════════════════════════
+
+// Global targets — recalculated from profile
+let TARGETS = {
+  calories: 1300,
+  protein: 175,
+  carbs: 65,
+  fat: 35
+};
+
+function calcTargets(profile) {
+  const { weight, height, age, sex, activity, goal } = profile;
+
+  // Mifflin-St Jeor BMR
+  let bmr;
+  if (sex === 'male') {
+    bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+  } else {
+    bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+  }
+
+  // TDEE
+  const tdee = Math.round(bmr * parseFloat(activity));
+
+  // Deficit based on goal
+  const deficits = { aggressive: 500, moderate: 350, mild: 200 };
+  const deficit = deficits[goal] || 500;
+  const calories = Math.max(1200, Math.round(tdee - deficit));
+
+  // Protein: 1.8g per kg for fat loss with resistance training
+  // Minimum 175g for heavy bodyweights on Wegovy
+  const protein = Math.max(175, Math.round(weight * 1.8));
+
+  // Remaining calories split between carbs and fat (40/60 ratio)
+  const remainingCals = calories - (protein * 4);
+  const fat   = Math.round((remainingCals * 0.35) / 9);
+  const carbs = Math.round((remainingCals * 0.65) / 4);
+
+  // BMI
+  const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
+
+  // Ideal weight range (BMI 18.5–24.9)
+  const idealLow  = Math.round(18.5 * (height / 100) ** 2);
+  const idealHigh = Math.round(24.9 * (height / 100) ** 2);
+  const tolose    = Math.max(0, weight - idealHigh);
+
+  return { calories, protein, carbs, fat, bmr: Math.round(bmr), tdee, deficit, bmi, idealLow, idealHigh, tolose };
+}
+
+function getBmiStatus(bmi) {
+  const b = parseFloat(bmi);
+  if (b < 18.5) return { label: 'Underweight', cls: 'status-under' };
+  if (b < 25)   return { label: 'Healthy',     cls: 'status-healthy' };
+  if (b < 30)   return { label: 'Overweight',  cls: 'status-over' };
+  return              { label: 'Obese',        cls: 'status-over' };
+}
+
+function saveProfile() {
+  const weight   = parseFloat(document.getElementById('profileWeight').value);
+  const height   = parseFloat(document.getElementById('profileHeight').value);
+  const age      = parseInt(document.getElementById('profileAge').value);
+  const sex      = document.getElementById('profileSex').value;
+  const activity = document.getElementById('profileActivity').value;
+  const goal     = document.getElementById('profileGoal').value;
+
+  if (!weight || !height || !age) {
+    showToast('⚠️ Please fill in weight, height and age');
+    return;
+  }
+
+  const profile = { weight, height, age, sex, activity, goal };
+  saveData('userProfile', profile);
+
+  const t = calcTargets(profile);
+  TARGETS = { calories: t.calories, protein: t.protein, carbs: t.carbs, fat: t.fat };
+  saveData('userTargets', TARGETS);
+
+  renderProfileTargets(profile, t);
+  renderDiary(); // refresh diary totals with new targets
+  showToast('✅ Targets updated!');
+}
+
+function renderProfile() {
+  const profile = loadData('userProfile');
+  const targetsEl  = document.getElementById('profileTargets');
+  const metricsEl  = document.getElementById('profileMetrics');
+
+  if (profile) {
+    // Populate fields
+    document.getElementById('profileWeight').value   = profile.weight   || '';
+    document.getElementById('profileHeight').value   = profile.height   || '';
+    document.getElementById('profileAge').value      = profile.age      || '';
+    document.getElementById('profileSex').value      = profile.sex      || 'male';
+    document.getElementById('profileActivity').value = profile.activity || '1.55';
+    document.getElementById('profileGoal').value     = profile.goal     || 'aggressive';
+
+    const t = calcTargets(profile);
+    renderProfileTargets(profile, t);
+  } else {
+    targetsEl.innerHTML = `
+      <div class="profile-setup-prompt">
+        <h3>Set Up Your Profile</h3>
+        <p>Enter your stats above and tap Calculate — your calorie and protein targets will be personalised to your body.</p>
+      </div>`;
+    metricsEl.innerHTML = '';
+  }
+}
+
+function renderProfileTargets(profile, t) {
+  const bmiStatus = getBmiStatus(t.bmi);
+  const goalLabels = { aggressive:'Aggressive deficit', moderate:'Moderate deficit', mild:'Mild deficit' };
+
+  document.getElementById('profileTargets').innerHTML = `
+    <div class="section-title" style="margin-top:4px">Your Calculated Targets</div>
+    <div class="target-grid">
+      <div class="target-card" style="border-top:3px solid var(--teal)">
+        <div class="target-card-val" style="color:var(--teal)">${t.calories}</div>
+        <div class="target-card-label">Calories / day</div>
+        <div class="target-card-sub">${goalLabels[profile.goal]}</div>
+      </div>
+      <div class="target-card" style="border-top:3px solid var(--gold)">
+        <div class="target-card-val" style="color:var(--gold)">${t.protein}g</div>
+        <div class="target-card-label">Protein / day</div>
+        <div class="target-card-sub">${(t.protein/profile.weight).toFixed(1)}g per kg</div>
+      </div>
+      <div class="target-card" style="border-top:3px solid var(--blue)">
+        <div class="target-card-val" style="color:var(--blue)">${t.carbs}g</div>
+        <div class="target-card-label">Carbs / day</div>
+        <div class="target-card-sub">${t.carbs * 4} calories</div>
+      </div>
+      <div class="target-card" style="border-top:3px solid var(--purple)">
+        <div class="target-card-val" style="color:var(--purple)">${t.fat}g</div>
+        <div class="target-card-label">Fat / day</div>
+        <div class="target-card-sub">${t.fat * 9} calories</div>
+      </div>
+      <div class="target-card full" style="border-top:3px solid var(--coral)">
+        <div style="display:flex;justify-content:space-around">
+          <div><div class="target-card-val" style="color:var(--coral)">${t.bmr}</div><div class="target-card-label">BMR</div></div>
+          <div><div class="target-card-val" style="color:var(--coral)">${t.tdee}</div><div class="target-card-label">TDEE</div></div>
+          <div><div class="target-card-val" style="color:var(--coral)">${t.deficit}</div><div class="target-card-label">Deficit</div></div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px">BMR = calories at rest · TDEE = total daily burn · Deficit = how much below TDEE you eat</div>
+      </div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 1px 4px #00000008">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px">Macro Split</div>
+      <div class="macro-bar-wrap">
+        <div class="macro-bar-label"><span style="color:var(--gold)">Protein</span><span>${t.protein}g · ${Math.round(t.protein*4/t.calories*100)}%</span></div>
+        <div class="macro-bar-track"><div class="macro-bar-fill" style="width:${Math.round(t.protein*4/t.calories*100)}%;background:var(--gold)"></div></div>
+      </div>
+      <div class="macro-bar-wrap">
+        <div class="macro-bar-label"><span style="color:var(--blue)">Carbs</span><span>${t.carbs}g · ${Math.round(t.carbs*4/t.calories*100)}%</span></div>
+        <div class="macro-bar-track"><div class="macro-bar-fill" style="width:${Math.round(t.carbs*4/t.calories*100)}%;background:var(--blue)"></div></div>
+      </div>
+      <div class="macro-bar-wrap">
+        <div class="macro-bar-label"><span style="color:var(--purple)">Fat</span><span>${t.fat}g · ${Math.round(t.fat*9/t.calories*100)}%</span></div>
+        <div class="macro-bar-track"><div class="macro-bar-fill" style="width:${Math.round(t.fat*9/t.calories*100)}%;background:var(--purple)"></div></div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('profileMetrics').innerHTML = `
+    <div class="section-title">Health Metrics</div>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-val" style="color:var(--teal)">${t.bmi}</div>
+        <div class="metric-label">BMI</div>
+        <div class="metric-status ${bmiStatus.cls}">${bmiStatus.label}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" style="color:var(--blue)">${t.idealLow}–${t.idealHigh}</div>
+        <div class="metric-label">Ideal Weight (kg)</div>
+        <div class="metric-status ${t.tolose > 0 ? 'status-over' : 'status-healthy'}">${t.tolose > 0 ? `${t.tolose}kg to go` : 'In range!'}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" style="color:var(--gold)">${Math.round(t.tolose / 0.5)}</div>
+        <div class="metric-label">Weeks to Goal</div>
+        <div class="metric-status status-under">est. at 0.5kg/wk</div>
+      </div>
+    </div>
+  `;
+}
+
 // Close modal on overlay click
 document.getElementById('liftModal').addEventListener('click', function(e) {
   if (e.target === this) closeLiftModal();
@@ -2019,5 +2356,6 @@ function init() {
 })();
 
 </script>
+
 </body>
 </html>
