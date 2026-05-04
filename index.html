@@ -963,7 +963,14 @@ const DAYS = [
 // ══════════════════════════════════════
 const SUPABASE_URL  = 'https://msfmhgvjpdiudlmekghr.supabase.co';
 const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zZm1oZ3ZqcGRpdWRsbWVrZ2hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDg1NzksImV4cCI6MjA5MzQ4NDU3OX0.Xe7mEv3LdrU2UatOqWneyhfFIJNf-GkT3RH3YhxXgFQ';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    flowType: 'pkce',
+    detectSessionInUrl: true,
+    persistSession: true,
+    autoRefreshToken: true
+  }
+});
 
 let currentUser = null;
 
@@ -972,11 +979,15 @@ async function signInWithGoogle() {
   document.getElementById('loginLoading').style.display = 'block';
   const { error } = await sb.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: 'https://fitplan.houseofshort.com' }
+    options: {
+      redirectTo: 'https://fitplan.houseofshort.com',
+      queryParams: { access_type: 'offline', prompt: 'consent' }
+    }
   });
   if (error) {
     document.getElementById('loginLoading').style.display = 'none';
     showToast('Sign in failed — please try again');
+    console.error('Auth error:', error);
   }
 }
 
@@ -1793,13 +1804,32 @@ function init() {
 // BOOT — Check Supabase session on load
 // ══════════════════════════════════════
 (async () => {
+  // First handle any OAuth code in the URL
+  const params = new URLSearchParams(window.location.search);
+  const hashParams = new URLSearchParams(window.location.hash.replace('#',''));
+
+  // Exchange code for session if present
+  if (params.get('code') || hashParams.get('access_token')) {
+    const { data, error } = await sb.auth.exchangeCodeForSession(window.location.href);
+    if (!error && data?.session?.user) {
+      // Clean up the URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+      showApp(data.session.user);
+      return;
+    }
+  }
+
+  // Check for existing session
   const { data: { session } } = await sb.auth.getSession();
   if (session?.user) {
     showApp(session.user);
+    return;
   }
 
+  // Listen for future auth state changes
   sb.auth.onAuthStateChange((event, session) => {
-    if (session?.user) {
+    if (event === 'SIGNED_IN' && session?.user) {
+      window.history.replaceState({}, document.title, window.location.pathname);
       showApp(session.user);
     } else if (event === 'SIGNED_OUT') {
       document.getElementById('main-app').style.display = 'none';
