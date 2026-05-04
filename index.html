@@ -10,6 +10,7 @@
 <link rel="manifest" href="manifest.json">
 <title>FitPlan</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --bg: #f5f7fa;
@@ -512,15 +513,115 @@ canvas#weightChart { width:100%!important; }
 .lift-trend-down { color:var(--coral); font-size:11px; font-weight:600; }
 .lift-trend-same { color:var(--muted); font-size:11px; }
 
-.lift-mini-graph { padding:8px 14px 10px; }
+/* ── LOGIN SCREEN ── */
+#login-screen {
+  position:fixed; inset:0; z-index:500;
+  background:linear-gradient(160deg,#0099cc 0%,#0077aa 50%,#005f8a 100%);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:40px 24px; text-align:center;
+}
+#login-screen.hidden { display:none; }
 
+.login-logo {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:72px; letter-spacing:4px; color:#fff;
+  line-height:0.9; margin-bottom:8px;
+}
+.login-logo span { color:#b3eaff; display:block; font-size:32px; letter-spacing:6px; }
+.login-tagline {
+  color:#cceeff; font-size:14px; font-weight:300;
+  margin-bottom:48px; max-width:280px;
+}
+.google-btn {
+  display:flex; align-items:center; gap:12px;
+  background:#fff; border:none; border-radius:12px;
+  padding:14px 28px; cursor:pointer;
+  font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600;
+  color:#1a202c; box-shadow:0 4px 20px #00000025;
+  transition:all 0.2s; width:100%; max-width:300px;
+  justify-content:center;
+}
+.google-btn:hover { transform:translateY(-1px); box-shadow:0 6px 24px #00000035; }
+.google-btn:active { transform:translateY(0); }
+.google-btn svg { width:22px; height:22px; flex-shrink:0; }
+.login-note {
+  color:#99d6ee; font-size:11px; margin-top:20px;
+  max-width:260px; font-weight:300; line-height:1.6;
+}
+.login-loading {
+  color:#cceeff; font-size:14px; margin-top:16px;
+  display:none;
+}
+
+/* ── USER HEADER BAR ── */
+.user-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:calc(var(--safe-top) + 10px) 16px 10px;
+  background:linear-gradient(135deg,#0099cc,#005f8a);
+  flex-shrink:0;
+}
+.user-bar-left { display:flex; align-items:center; gap:10px; }
+.user-avatar {
+  width:34px; height:34px; border-radius:50%;
+  border:2px solid #ffffff50; overflow:hidden;
+  background:#ffffff30; display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:700; color:#fff;
+}
+.user-avatar img { width:100%; height:100%; object-fit:cover; }
+.user-name { color:#fff; font-size:13px; font-weight:600; }
+.user-sub { color:#b3eaff; font-size:11px; font-weight:300; }
+.signout-btn {
+  background:#ffffff20; border:1px solid #ffffff40;
+  border-radius:8px; color:#fff; font-size:12px; font-weight:500;
+  padding:6px 12px; cursor:pointer; font-family:'DM Sans',sans-serif;
+  transition:background 0.2s;
+}
+.signout-btn:hover { background:#ffffff35; }
+
+.lift-mini-graph { padding:8px 14px 10px; }
 </style>
 </head>
 <body>
 
 <!-- ══════════════════════════════════════════
-     SCREEN 1: MEAL PLAN
+     LOGIN SCREEN
 ══════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-logo">FIT<span>PLAN</span></div>
+  <div class="login-tagline">Your personal high-protein fat loss plan. Track your progress, log your lifts, crush your goals.</div>
+  <button class="google-btn" onclick="signInWithGoogle()">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+    </svg>
+    Continue with Google
+  </button>
+  <div class="login-note">Only authorised accounts can access this app. Sign in with your Google account to continue.</div>
+  <div class="login-loading" id="loginLoading">Signing you in...</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MAIN APP (shown after login)
+══════════════════════════════════════════ -->
+<div id="main-app" style="display:none;flex-direction:column;height:100%;overflow:hidden;flex:1">
+
+<!-- USER BAR -->
+<div class="user-bar" id="userBar">
+  <div class="user-bar-left">
+    <div class="user-avatar" id="userAvatar">?</div>
+    <div>
+      <div class="user-name" id="userName">Loading...</div>
+      <div class="user-sub">FitPlan · High Protein</div>
+    </div>
+  </div>
+  <button class="signout-btn" onclick="signOut()">Sign Out</button>
+</div>
+
+<!-- APP SCREENS WRAPPER -->
+<div style="flex:1;overflow:hidden;display:flex;flex-direction:column;" id="screensWrapper">
 <div class="screen active" id="screen-plan">
   <div class="hero">
     <div class="hero-tag">Wegovy · High Protein · 7-Day</div>
@@ -721,6 +822,9 @@ canvas#weightChart { width:100%!important; }
 
 <div class="toast" id="toast"></div>
 
+</div><!-- end screensWrapper -->
+</div><!-- end main-app -->
+
 <script>
 // ══════════════════════════════════════
 // DATA
@@ -855,14 +959,82 @@ const DAYS = [
 ];
 
 // ══════════════════════════════════════
+// SUPABASE INIT
+// ══════════════════════════════════════
+const SUPABASE_URL  = 'https://msfmhgvjpdiudlmekghr.supabase.co';
+const SUPABASE_KEY  = 'PASTE_YOUR_PUBLISHABLE_KEY_HERE';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+
+// ── AUTH FUNCTIONS ──
+async function signInWithGoogle() {
+  document.getElementById('loginLoading').style.display = 'block';
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href }
+  });
+  if (error) {
+    document.getElementById('loginLoading').style.display = 'none';
+    showToast('Sign in failed — please try again');
+  }
+}
+
+async function signOut() {
+  await sb.auth.signOut();
+  currentUser = null;
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('login-screen').classList.remove('hidden');
+}
+
+function showApp(user) {
+  currentUser = user;
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('main-app').style.display = 'flex';
+
+  // Set user info in header
+  const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
+  const avatar = user.user_metadata?.avatar_url;
+  document.getElementById('userName').textContent = name;
+  const avatarEl = document.getElementById('userAvatar');
+  if (avatar) {
+    avatarEl.innerHTML = `<img src="${avatar}" alt="${name}">`;
+  } else {
+    avatarEl.textContent = name.charAt(0).toUpperCase();
+  }
+
+  // Load user-specific data
+  loadUserData();
+  init();
+}
+
+// ── USER DATA (scoped to user ID via localStorage prefix) ──
+function userKey(key) {
+  return `fitplan_${currentUser.id}_${key}`;
+}
+function saveData(key, val) {
+  try { localStorage.setItem(userKey(key), JSON.stringify(val)); } catch(e){}
+}
+function loadData(key) {
+  try { return JSON.parse(localStorage.getItem(userKey(key))); } catch(e){ return null; }
+}
+function loadUserData() {
+  weightEntries = loadData('weightEntries') || [];
+  gymChecked    = loadData('gymChecked')    || {};
+  foodDiary     = loadData('foodDiary')     || {};
+  liftLogs      = loadData('liftLogs')      || {};
+  liftExercises = [...LIFT_EXERCISES, ...(loadData('customExercises') || [])];
+}
+
+// ══════════════════════════════════════
 // STATE
 // ══════════════════════════════════════
 let planDayIdx = 0;
 let gymDayIdx = 0;
 let diaryDate = todayStr();
-let weightEntries = loadData('weightEntries') || [];
-let gymChecked = loadData('gymChecked') || {};
-let foodDiary = loadData('foodDiary') || {};
+let weightEntries = [];
+let gymChecked = {};
+let foodDiary = {};
 let chart = null;
 
 // ══════════════════════════════════════
@@ -870,12 +1042,6 @@ let chart = null;
 // ══════════════════════════════════════
 function todayStr() {
   return new Date().toISOString().split('T')[0];
-}
-function saveData(key, val) {
-  try { localStorage.setItem('fitplan_'+key, JSON.stringify(val)); } catch(e){}
-}
-function loadData(key) {
-  try { return JSON.parse(localStorage.getItem('fitplan_'+key)); } catch(e){ return null; }
 }
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -1597,6 +1763,50 @@ function deleteCustomExercise(exId) {
 document.getElementById('liftModal').addEventListener('click', function(e) {
   if (e.target === this) closeLiftModal();
 });
+
+// ══════════════════════════════════════
+// INIT (called after login)
+// ══════════════════════════════════════
+function init() {
+  renderPlanTabs();
+  renderPlanContent();
+  renderGymTabs();
+  renderGymContent();
+  renderDiary();
+  renderWeight();
+  renderLift();
+
+  // Default to today's day
+  const dow = new Date().getDay();
+  const dayMap = {1:0,2:1,3:2,4:3,5:4,6:5,0:6};
+  const todayDayIdx = dayMap[dow];
+  switchGymDay(todayDayIdx);
+  switchPlanDay(todayDayIdx);
+
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  }
+}
+
+// ══════════════════════════════════════
+// BOOT — Check Supabase session on load
+// ══════════════════════════════════════
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session?.user) {
+    showApp(session.user);
+  }
+
+  sb.auth.onAuthStateChange((event, session) => {
+    if (session?.user) {
+      showApp(session.user);
+    } else if (event === 'SIGNED_OUT') {
+      document.getElementById('main-app').style.display = 'none';
+      document.getElementById('login-screen').classList.remove('hidden');
+    }
+  });
+})();
 
 </script>
 </body>
