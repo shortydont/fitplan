@@ -682,11 +682,11 @@ transition:background 0.2s;
   <div class="hero">
     <div class="hero-tag">Wegovy · High Protein · 7-Day</div>
     <h1>FAT LOSS<br><span>PLAN</span></h1>
-    <p id="heroSubtitle">${TARGETS.calories} cal · ${TARGETS.protein}g protein · Built for your Wegovy journey</p>
+    <p id="heroSubtitle">1,300 cal · 175g protein · Built for your Wegovy journey</p>
     <div class="stats-row">
-      <div class="stat"><div class="stat-val" id="heroCalStat">${TARGETS.calories}</div><div class="stat-label">Calories</div></div>
+      <div class="stat"><div class="stat-val" id="heroCalStat">1,300</div><div class="stat-label">Calories</div></div>
       <div class="stat-sep"></div>
-      <div class="stat"><div class="stat-val" id="heroProStat">${TARGETS.protein}g</div><div class="stat-label">Protein</div></div>
+      <div class="stat"><div class="stat-val" id="heroProStat">175g</div><div class="stat-label">Protein</div></div>
       <div class="stat-sep"></div>
       <div class="stat"><div class="stat-val">3×</div><div class="stat-label">Swim</div></div>
       <div class="stat-sep"></div>
@@ -1864,31 +1864,6 @@ function drawChart(canvas, labels, data, minY, maxY) {
   ctx.fillText(data[data.length-1], lx, ly-12);
 
   return { destroy: () => {} }; // simple shim
-}
-
-// ══════════════════════════════════════
-// INIT
-// ══════════════════════════════════════
-function init() {
-  renderPlanTabs();
-  renderPlanContent();
-  renderGymTabs();
-  renderGymContent();
-  renderDiary();
-  renderWeight();
-  renderLift();
-
-  // Set gym day to match today's day of week
-  const dow = new Date().getDay(); // 0=Sun
-  const dayMap = {1:0,2:1,3:2,4:3,5:4,6:5,0:6};
-  const todayDayIdx = dayMap[dow];
-  switchGymDay(todayDayIdx);
-  switchPlanDay(todayDayIdx);
-
-  // Register service worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(()=>{});
-  }
 }
 
 // ── LIFT: RENDER ──
