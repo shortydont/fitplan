@@ -91,7 +91,7 @@ overscroll-behavior:contain;
 .hero {
 background:linear-gradient(135deg,#0099cc 0%,#0077aa 60%,#005f8a 100%);
 border-bottom:1px solid var(–border);
-padding:calc(var(–safe-top) + 14px) 16px 14px;
+padding:calc(var(–safe-top) + 16px) 20px 16px;
 position:relative; overflow:hidden; flex-shrink:0;
 box-shadow:0 2px 12px #0099cc30;
 }
@@ -132,9 +132,9 @@ font-family:‘Bebas Neue’,sans-serif; font-size:22px; letter-spacing:1px; col
 /* ── USER BAR ── */
 .user-bar {
 display:flex; align-items:center; justify-content:space-between;
-padding:calc(var(–safe-top) + 8px) 14px 8px;
+padding:calc(var(–safe-top) + 10px) 20px 10px;
 background:linear-gradient(135deg,#0099cc,#005f8a);
-flex-shrink:0; min-height:calc(var(–safe-top) + 48px);
+flex-shrink:0; min-height:calc(var(–safe-top) + 52px);
 }
 .user-avatar {
 width:30px; height:30px; border-radius:50%;
@@ -1205,7 +1205,8 @@ position:fixed; inset:0; z-index:500;
 background:linear-gradient(160deg,#0099cc 0%,#0077aa 50%,#005f8a 100%);
 display:flex; flex-direction:column;
 align-items:center; justify-content:center;
-padding:40px 24px; text-align:center;
+padding:calc(var(–safe-top) + 40px) 28px calc(var(–safe-bottom) + 40px);
+text-align:center;
 }
 #login-screen.hidden { display:none; }
 
@@ -1952,56 +1953,30 @@ function pickFromPool(pool, seed, idx) {
   return pool[Math.floor(seededRandom(seed, idx) * pool.length)];
 }
 
-function generateWeeklyPlan() {
-  const seed = getWeekSeed();
-  const saved = loadData('weeklyPlan');
-  if (saved && saved.seed === seed) return saved.days;
-
-  const days = DAYS.map((day, i) => {
-    const bf  = pickFromPool(MEAL_POOL.breakfast, seed, i * 10 + 1);
-    const snk = pickFromPool(MEAL_POOL.snack,     seed, i * 10 + 2);
-    const din = pickFromPool(MEAL_POOL.dinner,    seed, i * 10 + 3);
-
-    let exercises = day.exercises;
-    if (day.exType === 'lift') {
-      const pool = i === 0 ? EXERCISE_POOL.upper : i === 2 ? EXERCISE_POOL.lower : EXERCISE_POOL.fullbody;
-      exercises = pickFromPool(pool, seed, i * 10 + 4);
-    } else if (day.exType === 'swim') {
-      exercises = pickFromPool(EXERCISE_POOL.swim, seed, i * 10 + 5);
-    }
-
-    return {
-      meals: [
-        { type:'meal',  label:'Meal 1 · ~8am', title:bf.title,  body:bf.body,  cal:bf.cal,  protein:bf.protein  },
-        { type:'snack', label:'Snack · ~1pm',  title:snk.title, body:snk.body, cal:snk.cal, protein:snk.protein },
-        { type:'meal',  label:'Meal 2 · ~6pm', title:din.title, body:din.body, cal:din.cal, protein:din.protein },
-      ],
-      exercises
-    };
-  });
-
-  saveData('weeklyPlan', { seed, days });
-  return days;
-}
-
 function shuffleMeal(dayIdx, slotIdx) {
-  // Re-roll just one meal slot
   const saved = loadData('weeklyPlan');
   if (!saved) return;
   const slotPools = [MEAL_POOL.breakfast, MEAL_POOL.snack, MEAL_POOL.dinner];
   const pool = slotPools[slotIdx];
   const current = saved.days[dayIdx].meals[slotIdx];
-  let newMeal;
-  let tries = 0;
+  // Respect dislikes when shuffling
+  const approved = pool.filter(m => {
+    const slotName = ['breakfast','snack','dinner'][slotIdx];
+    const key = slotName + '_' + m.title.replace(/\W+/g,'_').toLowerCase();
+    return getMealPref(key) !== 'disliked';
+  });
+  const usePool = approved.length >= 2 ? approved : pool;
+  let newMeal, tries = 0;
   do {
-    newMeal = pool[Math.floor(Math.random() * pool.length)];
+    newMeal = usePool[Math.floor(Math.random() * usePool.length)];
     tries++;
   } while (newMeal.title === current.title && tries < 10);
 
   const labels = ['Meal 1 · ~8am', 'Snack · ~1pm', 'Meal 2 · ~6pm'];
   const types  = ['meal', 'snack', 'meal'];
   saved.days[dayIdx].meals[slotIdx] = {
-    type: types[slotIdx], label: labels[slotIdx], ...newMeal
+    type: types[slotIdx], label: labels[slotIdx],
+    title: newMeal.title, body: newMeal.body, cal: newMeal.cal, protein: newMeal.protein
   };
   saveData('weeklyPlan', saved);
   renderPlanContent();
@@ -3159,9 +3134,7 @@ function resetAllPrefs() {
   showToast('↩️ All preferences reset');
 }
 
-// ── UPDATE generateWeeklyPlan to respect preferences ──
-// Override the existing function
-const _originalGenerateWeeklyPlan = generateWeeklyPlan;
+// ── generateWeeklyPlan respects meal preferences ──
 function generateWeeklyPlan() {
   const seed = getWeekSeed();
   const saved = loadData('weeklyPlan');
