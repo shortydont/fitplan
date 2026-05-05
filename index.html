@@ -566,6 +566,76 @@ color:var(–teal); letter-spacing:1px; margin-bottom:6px;
 }
 .profile-setup-prompt p { font-size:13px; color:var(–muted); line-height:1.6; }
 
+/* ── FOOD PREFERENCES ── */
+.pref-filter-row {
+display:flex; gap:8px; margin-bottom:14px;
+overflow-x:auto; -webkit-overflow-scrolling:touch;
+}
+.pref-filter-row::-webkit-scrollbar { display:none; }
+.pref-filter-btn {
+padding:6px 14px; border-radius:20px; border:1px solid var(–border);
+background:var(–surface); color:var(–muted); font-size:12px; font-weight:500;
+cursor:pointer; white-space:nowrap; transition:all 0.2s;
+font-family:‘DM Sans’,sans-serif; flex-shrink:0;
+}
+.pref-filter-btn.active { background:var(–teal); border-color:var(–teal); color:#fff; }
+
+.pref-summary {
+display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px;
+}
+.pref-sum-card {
+border-radius:10px; padding:12px 8px; text-align:center;
+border:1px solid var(–border);
+}
+.pref-sum-val { font-family:‘Bebas Neue’,sans-serif; font-size:24px; }
+.pref-sum-label { font-size:10px; color:var(–muted); text-transform:uppercase; letter-spacing:0.5px; }
+
+.pref-section-title {
+font-size:11px; font-weight:700; text-transform:uppercase;
+letter-spacing:1.5px; color:var(–muted); margin:14px 0 8px;
+display:flex; align-items:center; gap:8px;
+}
+.pref-section-title::after { content:’’; flex:1; height:1px; background:var(–border); }
+
+.pref-card {
+background:var(–surface); border:1px solid var(–border);
+border-radius:12px; margin-bottom:8px; overflow:hidden;
+box-shadow:0 1px 4px #00000008; transition:border-color 0.2s;
+}
+.pref-card.liked { border-left:3px solid #16a34a; }
+.pref-card.disliked { border-left:3px solid var(–coral); opacity:0.6; }
+.pref-card.neutral { border-left:3px solid var(–border); }
+
+.pref-card-inner {
+display:flex; align-items:center; gap:12px; padding:12px 14px;
+}
+.pref-card-info { flex:1; min-width:0; }
+.pref-card-title {
+font-weight:600; font-size:13px; color:var(–text);
+white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.pref-card-meta { font-size:11px; color:var(–muted); margin-top:1px; }
+
+.pref-btns { display:flex; gap:6px; flex-shrink:0; }
+.pref-btn {
+width:34px; height:34px; border-radius:8px; border:1px solid var(–border);
+background:var(–surface2); cursor:pointer; font-size:16px;
+display:flex; align-items:center; justify-content:center;
+transition:all 0.15s; flex-shrink:0;
+}
+.pref-btn:hover { transform:scale(1.1); }
+.pref-btn.active-like { background:#dcfce7; border-color:#16a34a; }
+.pref-btn.active-dislike { background:#fee2e2; border-color:var(–coral); }
+
+.pref-reset-btn {
+width:100%; padding:12px; border-radius:10px;
+border:1px solid var(–border); background:var(–surface2);
+color:var(–muted); font-family:‘DM Sans’,sans-serif;
+font-size:13px; font-weight:500; cursor:pointer;
+margin-top:8px; transition:all 0.2s;
+}
+.pref-reset-btn:hover { border-color:var(–coral); color:var(–coral); }
+
 /* ── LOGIN SCREEN ── */
 #login-screen {
 position:fixed; inset:0; z-index:500;
@@ -980,6 +1050,34 @@ transition:background 0.2s;
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     SCREEN 7: FOOD PREFERENCES
+══════════════════════════════════════════ -->
+
+<div class="screen" id="screen-prefs">
+  <div class="page-header">
+    <h2>🍴 Food Preferences</h2>
+    <p>Rate each meal · The plan only picks from meals you like</p>
+  </div>
+  <div class="scroll">
+    <div class="container">
+
+```
+  <!-- FILTER TABS -->
+  <div class="pref-filter-row" id="prefFilterRow"></div>
+
+  <!-- SUMMARY -->
+  <div id="prefSummary"></div>
+
+  <!-- MEAL LIST -->
+  <div id="prefMealList"></div>
+
+</div>
+```
+
+  </div>
+</div>
+
 <!-- ── BOTTOM NAV ── -->
 
 <nav class="bottom-nav">
@@ -1006,6 +1104,10 @@ transition:background 0.2s;
   <button class="nav-btn" onclick="showScreen('profile',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
     Profile
+  </button>
+  <button class="nav-btn" onclick="showScreen('prefs',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    Meals
   </button>
 </nav>
 
@@ -1189,10 +1291,10 @@ function loadUserData() {
   foodDiary     = loadData('foodDiary')     || {};
   liftLogs      = loadData('liftLogs')      || {};
   liftExercises = [...LIFT_EXERCISES, ...(loadData('customExercises') || [])];
+  mealPrefs     = loadData('mealPrefs')     || {};
   const savedTargets = loadData('userTargets');
   if (savedTargets) {
     TARGETS = savedTargets;
-    // Hero updates after DOM is ready
     setTimeout(updateHero, 50);
   }
 }
@@ -1202,41 +1304,41 @@ function loadUserData() {
 // ══════════════════════════════════════
 const MEAL_POOL = {
   breakfast: [
-    {title:'Egg White Scramble Bowl', body:'6 egg whites + 2 whole eggs with <strong>spinach, cherry tomatoes, feta</strong>. Plus ½ cup oats with ½ cup blueberries.', cal:480, protein:55},
-    {title:'Greek Yogurt Power Bowl', body:'1 cup non-fat Greek yogurt + 1 scoop vanilla whey. Topped with <strong>½ cup strawberries</strong> and 1 tbsp almond butter.', cal:450, protein:58},
-    {title:'Turkey & Egg Breakfast Skillet', body:'3oz lean ground turkey + 2 eggs scrambled with <strong>diced peppers and onion</strong>. Served with ½ cup black beans.', cal:470, protein:60},
-    {title:'Protein Oats + Eggs', body:'½ cup oats, stir in <strong>½ scoop whey</strong> once cooled. Top with banana slices. Plus 2 boiled eggs on the side.', cal:460, protein:52},
-    {title:'Smoked Salmon Egg Scramble', body:'3 whole eggs + <strong>2oz smoked salmon</strong>, capers, red onion, spinach. Optional ½ slice whole grain toast.', cal:440, protein:55},
-    {title:'High-Protein Pancakes', body:'1 scoop vanilla whey + 1 ripe banana + 2 eggs. Blend and cook. Top with <strong>½ cup mixed berries</strong>.', cal:440, protein:48},
-    {title:'Relaxed Brunch Bowl', body:'2 poached eggs on wilted spinach with ¼ avocado. Plus <strong>½ cup cottage cheese</strong> on the side.', cal:430, protein:50},
-    {title:'Cottage Cheese Breakfast Bowl', body:'¾ cup cottage cheese with <strong>sliced peach, 1 tbsp honey</strong> and a sprinkle of flaxseed. 2 boiled eggs on the side.', cal:420, protein:52},
+    {title:'Egg White Scramble Bowl', body:'6 egg whites + 2 whole eggs with <strong>spinach, cherry tomatoes, feta</strong>. Plus 40g oats with 75g blueberries.', cal:480, protein:55},
+    {title:'Greek Yogurt Power Bowl', body:'240g non-fat Greek yogurt + 1 scoop vanilla whey. Topped with <strong>75g strawberries</strong> and 16g almond butter.', cal:450, protein:58},
+    {title:'Turkey & Egg Breakfast Skillet', body:'85g lean ground turkey + 2 eggs scrambled with <strong>diced peppers and onion</strong>. Served with 85g black beans.', cal:470, protein:60},
+    {title:'Protein Oats + Eggs', body:'40g oats, stir in <strong>½ scoop (15g) whey</strong> once cooled. Top with banana slices. Plus 2 boiled eggs on the side.', cal:460, protein:52},
+    {title:'Smoked Salmon Egg Scramble', body:'3 whole eggs + <strong>55g smoked salmon</strong>, capers, red onion, spinach. Optional ½ slice whole grain toast.', cal:440, protein:55},
+    {title:'High-Protein Pancakes', body:'1 scoop vanilla whey + 1 ripe banana (120g) + 2 eggs. Blend and cook. Top with <strong>75g mixed berries</strong>.', cal:440, protein:48},
+    {title:'Relaxed Brunch Bowl', body:'2 poached eggs on wilted spinach with ¼ avocado (35g). Plus <strong>113g cottage cheese</strong> on the side.', cal:430, protein:50},
+    {title:'Cottage Cheese Breakfast Bowl', body:'170g cottage cheese with <strong>sliced peach, 21g honey</strong> and a sprinkle of flaxseed. 2 boiled eggs on the side.', cal:420, protein:52},
     {title:'Veggie Omelette', body:'3 whole eggs + 2 whites made into an omelette with <strong>mushrooms, peppers, spinach</strong> and a sprinkle of cheddar.', cal:390, protein:50},
-    {title:'Protein Smoothie Bowl', body:'1 scoop whey + ½ frozen banana + ½ cup frozen mango blended thick. Top with <strong>granola, blueberries</strong> and 1 tbsp almond butter.', cal:460, protein:48},
+    {title:'Protein Smoothie Bowl', body:'1 scoop (30g) whey + ½ frozen banana + 75g frozen mango blended thick. Top with <strong>granola, blueberries</strong> and 16g almond butter.', cal:460, protein:48},
   ],
   snack: [
-    {title:'Double Protein Shake', body:'2 scoops whey with water or unsweetened almond milk. Essential for hitting 175g. Drink slowly on Wegovy.', cal:240, protein:50},
-    {title:'Cottage Cheese + Fruit + Shake', body:'½ cup low-fat cottage cheese with ½ cup pineapple. Plus 1 scoop whey on the side.', cal:270, protein:40},
+    {title:'Double Protein Shake', body:'2 scoops (60g) whey with water or unsweetened almond milk. Essential for hitting 175g. Drink slowly on Wegovy.', cal:240, protein:50},
+    {title:'Cottage Cheese + Fruit + Shake', body:'113g low-fat cottage cheese with 80g pineapple. Plus 1 scoop (30g) whey on the side.', cal:270, protein:40},
     {title:'4 Hard-Boiled Eggs + Cucumber', body:'4 hard-boiled eggs with sliced cucumber and salt. Simple, portable, high protein.', cal:280, protein:28},
     {title:'Tuna + Rice Cakes', body:'1 can tuna in water with mustard and lemon. Served on <strong>2 plain rice cakes</strong>.', cal:165, protein:28},
     {title:'Protein Shake + Apple', body:'1 scoop chocolate whey with cold water. Pair with a <strong>small apple</strong>.', cal:185, protein:25},
-    {title:'Edamame + String Cheese', body:'½ cup shelled edamame (lightly salted) + 1 light string cheese stick.', cal:155, protein:18},
-    {title:'Greek Yogurt + Honey + Walnuts', body:'¾ cup non-fat Greek yogurt, 1 tsp honey, 5–6 walnut halves.', cal:165, protein:16},
-    {title:'Turkey Roll-Ups + Shake', body:'3oz sliced turkey breast wrapped around <strong>cucumber sticks</strong> plus 1 scoop whey shake.', cal:270, protein:45},
-    {title:'Protein Bar + Greek Yogurt', body:'A high protein bar (Quest, Grenade) plus ½ cup Greek yogurt. Double hit of protein.', cal:310, protein:40},
-    {title:'Roasted Chickpeas', body:'½ cup roasted chickpeas with paprika and sea salt. High fibre, satisfying crunch.', cal:140, protein:8},
+    {title:'Edamame + String Cheese', body:'75g shelled edamame (lightly salted) + 1 light string cheese stick.', cal:155, protein:18},
+    {title:'Greek Yogurt + Honey + Walnuts', body:'180g non-fat Greek yogurt, 7g honey, 6 walnut halves (15g).', cal:165, protein:16},
+    {title:'Turkey Roll-Ups + Shake', body:'85g sliced turkey breast wrapped around <strong>cucumber sticks</strong> plus 1 scoop (30g) whey shake.', cal:270, protein:45},
+    {title:'Protein Bar + Greek Yogurt', body:'A high protein bar (Quest, Grenade) plus 120g Greek yogurt. Double hit of protein.', cal:310, protein:40},
+    {title:'Roasted Chickpeas', body:'85g roasted chickpeas with paprika and sea salt. High fibre, satisfying crunch.', cal:140, protein:8},
   ],
   dinner: [
-    {title:'Grilled Chicken + Quinoa + Roasted Veg', body:'8oz grilled chicken with garlic, paprika, lemon. <strong>½ cup quinoa</strong> and large roasted broccoli, zucchini, red pepper.', cal:720, protein:88},
-    {title:'Baked Salmon + Sweet Potato + Asparagus', body:'8oz baked salmon (lemon, dill, garlic). <strong>1 small sweet potato</strong> and asparagus roasted with olive oil spray.', cal:740, protein:88},
-    {title:'Ground Turkey Stir-Fry + Cauli Rice', body:'5oz lean turkey with <strong>edamame, bok choy, snap peas</strong> in soy sauce, ginger, garlic. Over 1 cup cauliflower rice.', cal:670, protein:76},
-    {title:'Shrimp + Brown Rice + Greens', body:'8oz shrimp with garlic, chili flakes, lemon. <strong>½ cup brown rice</strong> and a large bed of wilted spinach.', cal:700, protein:80},
-    {title:'Chicken Taco Bowl (No Shell)', body:'8oz seasoned chicken thigh over <strong>½ cup brown rice</strong>, salsa, shredded lettuce, jalapeño, lime.', cal:710, protein:88},
-    {title:'Turkey Meatballs + Zucchini Noodles', body:'7oz lean turkey meatballs (baked) over <strong>zucchini noodles</strong> with light marinara. 1 tbsp parmesan.', cal:730, protein:85},
-    {title:'Baked Cod + Roasted Veg + Small Potato', body:'8oz baked cod (lemon, herbs, garlic). Big tray of <strong>roasted veg</strong> plus 1 small roasted new potato.', cal:655, protein:79},
-    {title:'Lean Beef Stir-Fry + Rice', body:'5oz lean beef strips with <strong>broccoli, snap peas, mushrooms</strong> in teriyaki sauce. ½ cup brown rice.', cal:680, protein:65},
+    {title:'Grilled Chicken + Quinoa + Roasted Veg', body:'225g grilled chicken with garlic, paprika, lemon. <strong>90g cooked quinoa</strong> and large roasted broccoli, zucchini, red pepper.', cal:720, protein:88},
+    {title:'Baked Salmon + Sweet Potato + Asparagus', body:'225g baked salmon (lemon, dill, garlic). <strong>1 small sweet potato (150g)</strong> and asparagus roasted with olive oil spray.', cal:740, protein:88},
+    {title:'Ground Turkey Stir-Fry + Cauli Rice', body:'140g lean turkey with <strong>edamame, bok choy, snap peas</strong> in soy sauce, ginger, garlic. Over 120g cauliflower rice.', cal:670, protein:76},
+    {title:'Shrimp + Brown Rice + Greens', body:'225g shrimp with garlic, chili flakes, lemon. <strong>100g cooked brown rice</strong> and a large bed of wilted spinach.', cal:700, protein:80},
+    {title:'Chicken Taco Bowl (No Shell)', body:'225g seasoned chicken thigh over <strong>100g cooked brown rice</strong>, salsa, shredded lettuce, jalapeño, lime.', cal:710, protein:88},
+    {title:'Turkey Meatballs + Zucchini Noodles', body:'200g lean turkey meatballs (baked) over <strong>zucchini noodles</strong> with light marinara. 10g parmesan.', cal:730, protein:85},
+    {title:'Baked Cod + Roasted Veg + Small Potato', body:'225g baked cod (lemon, herbs, garlic). Big tray of <strong>roasted veg</strong> plus 1 small new potato (100g).', cal:655, protein:79},
+    {title:'Lean Beef Stir-Fry + Rice', body:'140g lean beef strips with <strong>broccoli, snap peas, mushrooms</strong> in teriyaki sauce. 100g cooked brown rice.', cal:680, protein:65},
     {title:'Tuna Nicoise Bowl', body:'1 can tuna, 2 boiled eggs, green beans, cherry tomatoes, olives, <strong>small new potatoes</strong>. Lemon dressing.', cal:640, protein:68},
-    {title:'Chicken & Chickpea Curry', body:'5oz chicken breast in a light tomato-based curry with <strong>chickpeas and spinach</strong>. Served with ½ cup rice.', cal:660, protein:64},
-    {title:'Prawn & Mango Salad', body:'6oz king prawns over mixed leaves with <strong>mango, avocado, cucumber</strong> and a lime chili dressing.', cal:480, protein:55},
+    {title:'Chicken & Chickpea Curry', body:'140g chicken breast in a light tomato-based curry with <strong>chickpeas and spinach</strong>. Served with 100g cooked rice.', cal:660, protein:64},
+    {title:'Prawn & Mango Salad', body:'170g king prawns over mixed leaves with <strong>mango, avocado, cucumber</strong> and a lime chili dressing.', cal:480, protein:55},
     {title:'Turkey Stuffed Peppers', body:'2 bell peppers stuffed with <strong>lean turkey mince, rice, tomatoes</strong> and topped with a little cheese. Baked 25 min.', cal:620, protein:58},
   ]
 };
@@ -1434,8 +1536,9 @@ function showScreen(name, btn) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
   btn.classList.add('active');
-  if (name === 'lift') renderLift();
+  if (name === 'lift')    renderLift();
   if (name === 'profile') renderProfile();
+  if (name === 'prefs')   renderPrefs();
 }
 
 // ══════════════════════════════════════
@@ -2352,10 +2455,196 @@ function renderProfileTargets(profile, t) {
   `;
 }
 
-// Close modal on overlay click
-document.getElementById('liftModal').addEventListener('click', function(e) {
-  if (e.target === this) closeLiftModal();
-});
+// ══════════════════════════════════════
+// FOOD PREFERENCES
+// ══════════════════════════════════════
+
+// Preferences: { 'meal_title_key': 'liked' | 'disliked' | 'neutral' }
+let mealPrefs = {};
+let prefFilter = 'all';
+
+// Build a flat list of all meals from the pool with category labels
+function getAllMeals() {
+  const meals = [];
+  Object.entries(MEAL_POOL).forEach(([slot, items]) => {
+    const slotLabel = slot === 'breakfast' ? 'Breakfast' : slot === 'snack' ? 'Snack' : 'Dinner';
+    items.forEach(m => {
+      meals.push({ ...m, slot, slotLabel, key: slot + '_' + m.title.replace(/\W+/g,'_').toLowerCase() });
+    });
+  });
+  return meals;
+}
+
+function getMealPref(key) {
+  return mealPrefs[key] || 'neutral';
+}
+
+function setMealPref(key, pref) {
+  // Toggle — if already set to this pref, reset to neutral
+  mealPrefs[key] = mealPrefs[key] === pref ? 'neutral' : pref;
+  saveData('mealPrefs', mealPrefs);
+  // Clear weekly plan so it regenerates with new prefs
+  saveData('weeklyPlan', null);
+  renderPrefs();
+  const label = mealPrefs[key] === 'liked' ? '👍 Added to plan' : mealPrefs[key] === 'disliked' ? '👎 Removed from plan' : '↩️ Reset to neutral';
+  showToast(label);
+}
+
+function getFilteredMeals() {
+  const all = getAllMeals();
+  if (prefFilter === 'all') return all;
+  if (prefFilter === 'liked') return all.filter(m => getMealPref(m.key) === 'liked');
+  if (prefFilter === 'disliked') return all.filter(m => getMealPref(m.key) === 'disliked');
+  if (prefFilter === 'neutral') return all.filter(m => getMealPref(m.key) === 'neutral');
+  // Filter by slot
+  return all.filter(m => m.slot === prefFilter);
+}
+
+function renderPrefs() {
+  const all = getAllMeals();
+  const liked    = all.filter(m => getMealPref(m.key) === 'liked').length;
+  const disliked = all.filter(m => getMealPref(m.key) === 'disliked').length;
+  const neutral  = all.filter(m => getMealPref(m.key) === 'neutral').length;
+
+  // Filter row
+  const filters = [
+    { id:'all', label:'All' },
+    { id:'breakfast', label:'🌅 Breakfast' },
+    { id:'snack', label:'🍎 Snack' },
+    { id:'dinner', label:'🍽️ Dinner' },
+    { id:'liked', label:'👍 Liked' },
+    { id:'disliked', label:'👎 Disliked' },
+    { id:'neutral', label:'⬜ Unrated' },
+  ];
+  document.getElementById('prefFilterRow').innerHTML = filters.map(f =>
+    `<button class="pref-filter-btn ${prefFilter===f.id?'active':''}" onclick="setPrefFilter('${f.id}')">${f.label}</button>`
+  ).join('');
+
+  // Summary
+  document.getElementById('prefSummary').innerHTML = `
+    <div class="pref-summary">
+      <div class="pref-sum-card" style="background:#f0fdf4;border-color:#86efac">
+        <div class="pref-sum-val" style="color:#16a34a">${liked}</div>
+        <div class="pref-sum-label">👍 Liked</div>
+      </div>
+      <div class="pref-sum-card" style="background:#fff7ed;border-color:#fdba74">
+        <div class="pref-sum-val" style="color:#ea580c">${neutral}</div>
+        <div class="pref-sum-label">⬜ Unrated</div>
+      </div>
+      <div class="pref-sum-card" style="background:#fef2f2;border-color:#fca5a5">
+        <div class="pref-sum-val" style="color:#dc2626">${disliked}</div>
+        <div class="pref-sum-label">👎 Disliked</div>
+      </div>
+    </div>
+    <div style="background:var(--teal-dim);border:1px solid var(--teal);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:var(--muted);line-height:1.6">
+      <strong style="color:var(--teal)">How it works:</strong> 
+      👍 Like a meal to make sure it appears in your plan. 
+      👎 Dislike a meal to remove it from the randomiser completely. 
+      Unrated meals are included by default. The plan regenerates automatically next time you view it.
+    </div>
+  `;
+
+  // Meal list grouped by slot
+  const filtered = getFilteredMeals();
+  const slots = prefFilter === 'all' || ['liked','disliked','neutral'].includes(prefFilter)
+    ? ['breakfast','snack','dinner']
+    : [prefFilter];
+
+  let html = '';
+  slots.forEach(slot => {
+    const slotMeals = filtered.filter(m => m.slot === slot);
+    if (!slotMeals.length) return;
+    const slotLabel = slot === 'breakfast' ? '🌅 Breakfast Options' : slot === 'snack' ? '🍎 Snack Options' : '🍽️ Dinner Options';
+    html += `<div class="pref-section-title">${slotLabel} (${slotMeals.length})</div>`;
+    html += slotMeals.map(m => {
+      const pref = getMealPref(m.key);
+      return `
+        <div class="pref-card ${pref}">
+          <div class="pref-card-inner">
+            <div class="pref-card-info">
+              <div class="pref-card-title">${m.title}</div>
+              <div class="pref-card-meta">${m.cal} cal · ${m.protein}g protein</div>
+            </div>
+            <div class="pref-btns">
+              <button class="pref-btn ${pref==='liked'?'active-like':''}" onclick="setMealPref('${m.key}','liked')" title="Like">👍</button>
+              <button class="pref-btn ${pref==='disliked'?'active-dislike':''}" onclick="setMealPref('${m.key}','disliked')" title="Dislike">👎</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  });
+
+  if (!filtered.length) {
+    html = `<div class="empty-state"><span class="emoji">🍽️</span>No meals in this filter</div>`;
+  }
+
+  html += `<button class="pref-reset-btn" onclick="resetAllPrefs()">🔄 Reset all preferences</button>`;
+  document.getElementById('prefMealList').innerHTML = html;
+}
+
+function setPrefFilter(filter) {
+  prefFilter = filter;
+  renderPrefs();
+}
+
+function resetAllPrefs() {
+  mealPrefs = {};
+  saveData('mealPrefs', mealPrefs);
+  saveData('weeklyPlan', null);
+  renderPrefs();
+  showToast('↩️ All preferences reset');
+}
+
+// ── UPDATE generateWeeklyPlan to respect preferences ──
+// Override the existing function
+const _originalGenerateWeeklyPlan = generateWeeklyPlan;
+function generateWeeklyPlan() {
+  const seed = getWeekSeed();
+  const saved = loadData('weeklyPlan');
+  if (saved && saved.seed === seed) return saved.days;
+
+  // Get approved meals per slot (liked + neutral, not disliked)
+  function getApprovedPool(slot) {
+    const all = MEAL_POOL[slot];
+    const approved = all.filter(m => {
+      const key = slot + '_' + m.title.replace(/\W+/g,'_').toLowerCase();
+      return getMealPref(key) !== 'disliked';
+    });
+    // If somehow everything is disliked, fall back to full pool
+    return approved.length >= 2 ? approved : all;
+  }
+
+  const bfPool  = getApprovedPool('breakfast');
+  const snkPool = getApprovedPool('snack');
+  const dinPool = getApprovedPool('dinner');
+
+  const days = DAYS.map((day, i) => {
+    const bf  = pickFromPool(bfPool,  seed, i * 10 + 1);
+    const snk = pickFromPool(snkPool, seed, i * 10 + 2);
+    const din = pickFromPool(dinPool, seed, i * 10 + 3);
+
+    let exercises = day.exercises;
+    if (day.exType === 'lift') {
+      const pool = i === 0 ? EXERCISE_POOL.upper : i === 2 ? EXERCISE_POOL.lower : EXERCISE_POOL.fullbody;
+      exercises = pickFromPool(pool, seed, i * 10 + 4);
+    } else if (day.exType === 'swim') {
+      exercises = pickFromPool(EXERCISE_POOL.swim, seed, i * 10 + 5);
+    }
+
+    return {
+      meals: [
+        { type:'meal',  label:'Meal 1 · ~8am', title:bf.title,  body:bf.body,  cal:bf.cal,  protein:bf.protein  },
+        { type:'snack', label:'Snack · ~1pm',  title:snk.title, body:snk.body, cal:snk.cal, protein:snk.protein },
+        { type:'meal',  label:'Meal 2 · ~6pm', title:din.title, body:din.body, cal:din.cal, protein:din.protein },
+      ],
+      exercises
+    };
+  });
+
+  saveData('weeklyPlan', { seed, days });
+  return days;
+}
 
 // ══════════════════════════════════════
 // INIT (called after login)
@@ -2422,7 +2711,6 @@ function init() {
   // Listen for auth changes — fires when PKCE exchange completes
   sb.auth.onAuthStateChange((event, session) => {
     if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
-      // Clean up the URL if it has OAuth params
       if (window.location.search.includes('code=')) {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
@@ -2433,6 +2721,11 @@ function init() {
     }
   });
 })();
+
+// Close modal on overlay click
+document.getElementById('liftModal').addEventListener('click', function(e) {
+  if (e.target === this) closeLiftModal();
+});
 
 </script>
 
