@@ -1,5 +1,5 @@
 // FitPlan Service Worker - Network First Strategy
-const STATIC_CACHE = ‘fitplan-static-v3’;
+const STATIC_CACHE = ‘fitplan-static-v1778007129’;
 
 const STATIC_ASSETS = [
 ‘./’,
