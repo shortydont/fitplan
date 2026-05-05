@@ -91,7 +91,7 @@ overscroll-behavior:contain;
 .hero {
 background:linear-gradient(135deg,#0099cc 0%,#0077aa 60%,#005f8a 100%);
 border-bottom:1px solid var(–border);
-padding:calc(var(–safe-top) + 16px) 20px 16px;
+padding:calc(var(–safe-top) + 16px) max(28px, calc(env(safe-area-inset-right) + 20px)) 18px max(28px, calc(env(safe-area-inset-left) + 20px));
 position:relative; overflow:hidden; flex-shrink:0;
 box-shadow:0 2px 12px #0099cc30;
 }
@@ -119,7 +119,7 @@ margin-bottom:6px; color:#ffffff;
 
 /* ── PAGE HEADER ── */
 .page-header {
-padding:calc(var(–safe-top) + 12px) 16px 10px;
+padding:calc(var(–safe-top) + 12px) max(20px, calc(env(safe-area-inset-right) + 16px)) 10px max(20px, calc(env(safe-area-inset-left) + 16px));
 border-bottom:1px solid var(–border);
 background:var(–surface); flex-shrink:0;
 box-shadow:0 1px 4px #00000008;
@@ -132,7 +132,7 @@ font-family:‘Bebas Neue’,sans-serif; font-size:22px; letter-spacing:1px; col
 /* ── USER BAR ── */
 .user-bar {
 display:flex; align-items:center; justify-content:space-between;
-padding:calc(var(–safe-top) + 10px) 20px 10px;
+padding:calc(var(–safe-top) + 10px) max(20px, calc(env(safe-area-inset-right) + 16px)) 10px max(20px, calc(env(safe-area-inset-left) + 16px));
 background:linear-gradient(135deg,#0099cc,#005f8a);
 flex-shrink:0; min-height:calc(var(–safe-top) + 52px);
 }
@@ -153,7 +153,10 @@ transition:background 0.2s; white-space:nowrap;
 }
 
 /* ── CONTAINER ── */
-.container { padding:12px 14px; max-width:700px; margin:0 auto; width:100%; }
+.container {
+padding:12px max(16px, calc(env(safe-area-inset-right) + 14px)) 12px max(16px, calc(env(safe-area-inset-left) + 14px));
+max-width:700px; margin:0 auto; width:100%;
+}
 
 /* ── DAY TABS ── */
 .day-tabs {
