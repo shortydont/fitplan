@@ -804,7 +804,7 @@ display:none;
 <div class="screen" id="screen-food">
   <div class="page-header">
     <h2>🍽️ Food Diary</h2>
-    <p>Log your meals · Track calories & protein</p>
+    <p>Search & log real foods · Track your macros</p>
   </div>
   <div class="scroll">
     <div class="container">
@@ -818,6 +818,55 @@ display:none;
       <div id="dailyTotals"></div>
       <div id="diaryContent"></div>
     </div>
+  </div>
+</div>
+
+<!-- FOOD SEARCH MODAL -->
+
+<div class="modal-overlay" id="foodModal">
+  <div class="modal" style="border-radius:20px 20px 0 0; max-height:85vh; display:flex; flex-direction:column; padding:0;">
+    <div style="padding:16px 20px 12px; border-bottom:1px solid var(--border); flex-shrink:0;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1px;" id="foodModalTitle">Add Food</div>
+        <button onclick="closeFoodModal()" style="background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;">×</button>
+      </div>
+      <input type="text" id="foodSearch" class="food-input" placeholder="Search foods e.g. chicken breast..." 
+        oninput="searchFoods(this.value)" style="width:100%;font-size:14px;"
+        autocomplete="off" autocorrect="off" spellcheck="false">
+    </div>
+
+```
+<!-- QUICK PICKS -->
+<div id="foodQuickPicks" style="padding:10px 20px; border-bottom:1px solid var(--border); flex-shrink:0;">
+  <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">⚡ Quick Add</div>
+  <div id="quickPicksRow" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;"></div>
+</div>
+
+<!-- SEARCH RESULTS -->
+<div id="foodResults" style="flex:1;overflow-y:auto;padding:0 20px 8px;"></div>
+
+<!-- PORTION ENTRY -->
+<div id="portionEntry" style="display:none; padding:16px 20px; border-top:1px solid var(--border); background:var(--surface2); flex-shrink:0;">
+  <div style="font-weight:600;font-size:14px;color:var(--text);margin-bottom:4px;" id="portionFoodName"></div>
+  <div style="font-size:11px;color:var(--muted);margin-bottom:12px;" id="portionFoodMacros"></div>
+  <div style="display:flex;gap:8px;align-items:flex-end;">
+    <div style="flex:1;">
+      <div class="weight-field-label">Amount (grams)</div>
+      <input type="number" class="weight-field" id="portionAmount" placeholder="e.g. 150" 
+        oninput="updatePortionPreview()" style="font-size:16px;">
+    </div>
+    <div style="flex:1;">
+      <div class="weight-field-label">Preview</div>
+      <div id="portionPreview" style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--teal);padding:9px 0;">— cal</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:12px;">
+    <button class="modal-btn ghost" onclick="backToSearch()">← Back</button>
+    <button class="modal-btn primary" onclick="confirmAddFood()">Add to Diary</button>
+  </div>
+</div>
+```
+
   </div>
 </div>
 
@@ -1682,13 +1731,156 @@ function renderGymContent() {
 }
 
 // ══════════════════════════════════════
+// ══════════════════════════════════════
+// FOOD DATABASE (~200 common foods)
+// per 100g: { cal, pro, carb, fat }
+// ══════════════════════════════════════
+const FOOD_DB = [
+  // Proteins - Meat & Fish
+  {n:'Chicken Breast (grilled)',    cal:165, pro:31, carb:0,  fat:3.6},
+  {n:'Chicken Thigh (grilled)',     cal:209, pro:26, carb:0,  fat:11},
+  {n:'Chicken Mince (lean)',        cal:150, pro:28, carb:0,  fat:4},
+  {n:'Turkey Breast (grilled)',     cal:135, pro:30, carb:0,  fat:1},
+  {n:'Turkey Mince (lean)',         cal:149, pro:22, carb:0,  fat:7},
+  {n:'Beef Mince (5% fat)',         cal:137, pro:21, carb:0,  fat:5},
+  {n:'Beef Sirloin Steak',          cal:207, pro:27, carb:0,  fat:11},
+  {n:'Pork Loin',                   cal:143, pro:26, carb:0,  fat:4},
+  {n:'Bacon (back, grilled)',       cal:215, pro:25, carb:0,  fat:13},
+  {n:'Salmon (fillet)',             cal:208, pro:20, carb:0,  fat:13},
+  {n:'Cod (fillet)',                cal:82,  pro:18, carb:0,  fat:0.7},
+  {n:'Tuna (canned in water)',      cal:116, pro:26, carb:0,  fat:1},
+  {n:'Tuna (canned in oil)',        cal:189, pro:27, carb:0,  fat:9},
+  {n:'Shrimp / Prawns',            cal:85,  pro:18, carb:0.9,fat:1},
+  {n:'Smoked Salmon',               cal:142, pro:23, carb:0,  fat:5},
+  {n:'Mackerel (fillet)',           cal:305, pro:19, carb:0,  fat:25},
+  {n:'Haddock',                     cal:89,  pro:20, carb:0,  fat:0.7},
+  {n:'Sea Bass',                    cal:97,  pro:19, carb:0,  fat:2},
+  {n:'Tilapia',                     cal:96,  pro:20, carb:0,  fat:2},
+  // Eggs & Dairy
+  {n:'Egg (whole)',                  cal:143, pro:13, carb:1,  fat:10},
+  {n:'Egg White',                   cal:52,  pro:11, carb:0.7,fat:0.2},
+  {n:'Greek Yogurt (0% fat)',       cal:57,  pro:10, carb:3.6,fat:0.4},
+  {n:'Greek Yogurt (full fat)',     cal:97,  pro:9,  carb:3.8,fat:5},
+  {n:'Cottage Cheese (low fat)',    cal:72,  pro:12, carb:3.4,fat:1},
+  {n:'Cheddar Cheese',              cal:403, pro:25, carb:0.1,fat:33},
+  {n:'Feta Cheese',                 cal:264, pro:14, carb:4,  fat:21},
+  {n:'Mozzarella',                  cal:280, pro:18, carb:2,  fat:22},
+  {n:'Parmesan',                    cal:431, pro:38, carb:4,  fat:29},
+  {n:'Milk (whole)',                cal:61,  pro:3.2,carb:4.8,fat:3.3},
+  {n:'Milk (semi-skimmed)',         cal:46,  pro:3.4,carb:4.8,fat:1.6},
+  {n:'String Cheese',               cal:290, pro:20, carb:3,  fat:22},
+  {n:'Whey Protein (1 scoop=30g)', cal:120, pro:24, carb:3,  fat:1.5},
+  // Grains & Carbs
+  {n:'White Rice (cooked)',         cal:130, pro:2.7,carb:28, fat:0.3},
+  {n:'Brown Rice (cooked)',         cal:110, pro:2.6,carb:23, fat:0.9},
+  {n:'Oats (dry)',                  cal:389, pro:17, carb:66, fat:7},
+  {n:'Quinoa (cooked)',             cal:120, pro:4.4,carb:22, fat:1.9},
+  {n:'Pasta (cooked)',              cal:131, pro:5,  carb:25, fat:1.1},
+  {n:'Whole Grain Bread (1 slice)', cal:81,  pro:4,  carb:15, fat:1.1},
+  {n:'White Bread (1 slice)',       cal:79,  pro:2.7,carb:15, fat:1},
+  {n:'Tortilla Wrap',               cal:218, pro:6,  carb:37, fat:5},
+  {n:'Rice Cakes',                  cal:387, pro:8,  carb:81, fat:3},
+  {n:'Couscous (cooked)',           cal:112, pro:3.8,carb:23, fat:0.2},
+  {n:'Sweet Potato (baked)',        cal:90,  pro:2,  carb:21, fat:0.1},
+  {n:'White Potato (baked)',        cal:93,  pro:2.5,carb:21, fat:0.1},
+  {n:'New Potatoes (boiled)',       cal:70,  pro:1.6,carb:16, fat:0.3},
+  {n:'Granola',                     cal:489, pro:11, carb:60, fat:20},
+  // Vegetables
+  {n:'Broccoli',                    cal:34,  pro:2.8,carb:7,  fat:0.4},
+  {n:'Spinach',                     cal:23,  pro:2.9,carb:3.6,fat:0.4},
+  {n:'Kale',                        cal:49,  pro:4.3,carb:9,  fat:0.9},
+  {n:'Asparagus',                   cal:20,  pro:2.2,carb:3.9,fat:0.1},
+  {n:'Green Beans',                 cal:31,  pro:1.8,carb:7,  fat:0.1},
+  {n:'Zucchini / Courgette',       cal:17,  pro:1.2,carb:3.1,fat:0.3},
+  {n:'Bell Pepper',                 cal:31,  pro:1,  carb:6,  fat:0.3},
+  {n:'Cucumber',                    cal:15,  pro:0.7,carb:3.6,fat:0.1},
+  {n:'Tomato',                      cal:18,  pro:0.9,carb:3.9,fat:0.2},
+  {n:'Cherry Tomatoes',             cal:18,  pro:0.9,carb:3.9,fat:0.2},
+  {n:'Mushrooms',                   cal:22,  pro:3.1,carb:3.3,fat:0.3},
+  {n:'Onion',                       cal:40,  pro:1.1,carb:9.3,fat:0.1},
+  {n:'Garlic',                      cal:149, pro:6.4,carb:33, fat:0.5},
+  {n:'Cauliflower',                 cal:25,  pro:1.9,carb:5,  fat:0.3},
+  {n:'Carrot',                      cal:41,  pro:0.9,carb:10, fat:0.2},
+  {n:'Celery',                      cal:16,  pro:0.7,carb:3,  fat:0.2},
+  {n:'Edamame (shelled)',           cal:121, pro:11, carb:9,  fat:5},
+  {n:'Peas',                        cal:81,  pro:5.4,carb:14, fat:0.4},
+  {n:'Sweetcorn',                   cal:86,  pro:3.2,carb:19, fat:1.2},
+  {n:'Bok Choy',                    cal:13,  pro:1.5,carb:2.2,fat:0.2},
+  {n:'Snap Peas',                   cal:42,  pro:2.8,carb:7.6,fat:0.2},
+  {n:'Lettuce (mixed)',             cal:15,  pro:1.4,carb:2.9,fat:0.2},
+  {n:'Rocket / Arugula',           cal:25,  pro:2.6,carb:3.7,fat:0.7},
+  // Fruits
+  {n:'Banana',                      cal:89,  pro:1.1,carb:23, fat:0.3},
+  {n:'Apple',                       cal:52,  pro:0.3,carb:14, fat:0.2},
+  {n:'Blueberries',                 cal:57,  pro:0.7,carb:14, fat:0.3},
+  {n:'Strawberries',                cal:32,  pro:0.7,carb:7.7,fat:0.3},
+  {n:'Mixed Berries',               cal:45,  pro:0.8,carb:11, fat:0.3},
+  {n:'Mango',                       cal:60,  pro:0.8,carb:15, fat:0.4},
+  {n:'Pineapple',                   cal:50,  pro:0.5,carb:13, fat:0.1},
+  {n:'Peach',                       cal:39,  pro:0.9,carb:10, fat:0.3},
+  {n:'Grapes',                      cal:69,  pro:0.7,carb:18, fat:0.2},
+  {n:'Orange',                      cal:47,  pro:0.9,carb:12, fat:0.1},
+  {n:'Avocado',                     cal:160, pro:2,  carb:9,  fat:15},
+  // Fats & Oils
+  {n:'Olive Oil',                   cal:884, pro:0,  carb:0,  fat:100},
+  {n:'Butter',                      cal:717, pro:0.9,carb:0.1,fat:81},
+  {n:'Almond Butter',               cal:614, pro:21, carb:19, fat:56},
+  {n:'Peanut Butter',               cal:588, pro:25, carb:20, fat:50},
+  {n:'Coconut Oil',                 cal:862, pro:0,  carb:0,  fat:100},
+  {n:'Walnuts',                     cal:654, pro:15, carb:14, fat:65},
+  {n:'Almonds',                     cal:579, pro:21, carb:22, fat:50},
+  {n:'Cashews',                     cal:553, pro:18, carb:30, fat:44},
+  // Legumes
+  {n:'Black Beans (cooked)',        cal:132, pro:8.9,carb:24, fat:0.5},
+  {n:'Chickpeas (cooked)',          cal:164, pro:8.9,carb:27, fat:2.6},
+  {n:'Lentils (cooked)',            cal:116, pro:9,  carb:20, fat:0.4},
+  {n:'Kidney Beans (cooked)',       cal:127, pro:8.7,carb:23, fat:0.5},
+  // Sauces & Condiments
+  {n:'Soy Sauce (low sodium)',      cal:53,  pro:8,  carb:5,  fat:0},
+  {n:'Tomato Sauce / Marinara',    cal:80,  pro:1.7,carb:12, fat:3},
+  {n:'Salsa',                       cal:36,  pro:1.5,carb:8,  fat:0.2},
+  {n:'Mustard',                     cal:66,  pro:4.4,carb:6,  fat:3.7},
+  {n:'Hummus',                      cal:166, pro:8,  carb:14, fat:10},
+  {n:'Ketchup',                     cal:112, pro:1.4,carb:27, fat:0.1},
+  {n:'Hot Sauce',                   cal:18,  pro:0.9,carb:3.7,fat:0.2},
+  // Drinks
+  {n:'Whole Milk (200ml)',          cal:122, pro:6.4,carb:9.6,fat:7.2},
+  {n:'Almond Milk (unsweetened)',   cal:13,  pro:0.4,carb:0.3,fat:1.1},
+  {n:'Orange Juice',                cal:45,  pro:0.7,carb:10, fat:0.2},
+  {n:'Protein Shake (mixed)',       cal:120, pro:24, carb:3,  fat:1.5},
+  // Snacks & Other
+  {n:'Protein Bar (avg)',           cal:220, pro:20, carb:22, fat:7},
+  {n:'Roasted Chickpeas',           cal:364, pro:19, carb:45, fat:11},
+  {n:'Dark Chocolate (85%)',        cal:598, pro:8,  carb:20, fat:52},
+  {n:'Honey',                       cal:304, pro:0.3,carb:82, fat:0},
+];
+
+// Quick pick foods for fast logging
+const QUICK_PICKS = [
+  'Chicken Breast (grilled)',
+  'Brown Rice (cooked)',
+  'Broccoli',
+  'Egg (whole)',
+  'Greek Yogurt (0% fat)',
+  'Salmon (fillet)',
+  'Sweet Potato (baked)',
+  'Tuna (canned in water)',
+  'Spinach',
+  'Oats (dry)',
+];
+
+// ══════════════════════════════════════
 // FOOD DIARY SCREEN
 // ══════════════════════════════════════
 const MEAL_SLOTS = [
-  {id:'meal1', label:'Meal 1', cls:'meal-slot-teal'},
-  {id:'snack',  label:'Snack',  cls:'meal-slot-gold'},
-  {id:'meal2', label:'Meal 2', cls:'meal-slot-blue'}
+  {id:'breakfast', label:'🌅 Breakfast', cls:'meal-slot-teal'},
+  {id:'lunch',     label:'☀️ Lunch',     cls:'meal-slot-gold'},
+  {id:'dinner',    label:'🌙 Dinner',    cls:'meal-slot-blue'},
+  {id:'snacks',    label:'🍎 Snacks',    cls:'meal-slot-purple'},
 ];
+
+let currentFoodSlot = null;
+let selectedFood = null;
 
 function changeDiaryDate(delta) {
   const d = new Date(diaryDate+'T12:00:00');
@@ -1698,93 +1890,276 @@ function changeDiaryDate(delta) {
 }
 
 function getDiaryDay() {
-  return foodDiary[diaryDate] || {meal1:[],snack:[],meal2:[]};
+  return foodDiary[diaryDate] || {breakfast:[],lunch:[],dinner:[],snacks:[]};
 }
 
-function addFood(slotId) {
-  const nameEl = document.getElementById('food-name-'+slotId);
-  const calEl  = document.getElementById('food-cal-'+slotId);
-  const proEl  = document.getElementById('food-pro-'+slotId);
-  const name = nameEl.value.trim();
-  const cal  = parseInt(calEl.value) || 0;
-  const pro  = parseInt(proEl.value) || 0;
-  if (!name) { nameEl.focus(); return; }
-  if (!foodDiary[diaryDate]) foodDiary[diaryDate] = {meal1:[],snack:[],meal2:[]};
-  foodDiary[diaryDate][slotId].push({name, cal, pro, id: Date.now()});
+function openFoodModal(slotId) {
+  currentFoodSlot = slotId;
+  const slot = MEAL_SLOTS.find(s => s.id === slotId);
+  document.getElementById('foodModalTitle').textContent = 'Add to ' + slot.label;
+  document.getElementById('foodSearch').value = '';
+  document.getElementById('portionEntry').style.display = 'none';
+  document.getElementById('foodQuickPicks').style.display = 'block';
+  selectedFood = null;
+  renderQuickPicks();
+  renderFoodResults('');
+  document.getElementById('foodModal').classList.add('open');
+  setTimeout(() => document.getElementById('foodSearch').focus(), 100);
+}
+
+function closeFoodModal() {
+  document.getElementById('foodModal').classList.remove('open');
+  currentFoodSlot = null;
+  selectedFood = null;
+}
+
+function renderQuickPicks() {
+  const row = document.getElementById('quickPicksRow');
+  row.innerHTML = QUICK_PICKS.map(name => {
+    const food = FOOD_DB.find(f => f.n === name);
+    if (!food) return '';
+    return `<button onclick="selectFood('${name}')" style="
+      background:var(--teal-dim);border:1px solid var(--teal);border-radius:20px;
+      color:var(--teal);font-size:11px;font-weight:600;padding:5px 12px;
+      cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;flex-shrink:0;">
+      ${name.split(' (')[0].split('/')[0].trim()}
+    </button>`;
+  }).join('');
+}
+
+function searchFoods(query) {
+  document.getElementById('portionEntry').style.display = 'none';
+  document.getElementById('foodQuickPicks').style.display = query ? 'none' : 'block';
+  renderFoodResults(query);
+}
+
+function renderFoodResults(query) {
+  const resultsEl = document.getElementById('foodResults');
+  const q = query.toLowerCase().trim();
+
+  let results = q
+    ? FOOD_DB.filter(f => f.n.toLowerCase().includes(q))
+        .sort((a,b) => {
+          const ai = a.n.toLowerCase().indexOf(q);
+          const bi = b.n.toLowerCase().indexOf(q);
+          return ai - bi;
+        })
+        .slice(0, 20)
+    : FOOD_DB.slice(0, 20);
+
+  if (!results.length) {
+    resultsEl.innerHTML = `
+      <div class="empty-state" style="padding:24px 0">
+        <span class="emoji">🔍</span>
+        No foods found for "${query}"
+        <div style="margin-top:12px">
+          <button onclick="addCustomFood()" style="background:var(--teal);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;padding:10px 20px;cursor:pointer;font-family:'DM Sans',sans-serif;">
+            + Add Custom Food
+          </button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  resultsEl.innerHTML = results.map(f => `
+    <div onclick="selectFood('${f.n.replace(/'/g, "\\'")}')" style="
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;">
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:500;font-size:13px;color:var(--text);margin-bottom:2px;">${f.n}</div>
+        <div style="font-size:11px;color:var(--muted);">per 100g · ${f.cal} cal · ${f.pro}g protein</div>
+      </div>
+      <div style="color:var(--teal);font-size:20px;padding-left:12px;flex-shrink:0;">›</div>
+    </div>
+  `).join('') + `
+    <div style="padding:14px 0;text-align:center;">
+      <button onclick="addCustomFood()" style="background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;font-weight:500;padding:8px 16px;cursor:pointer;font-family:'DM Sans',sans-serif;">
+        + Add Custom Food
+      </button>
+    </div>`;
+}
+
+function selectFood(name) {
+  const food = FOOD_DB.find(f => f.n === name);
+  if (!food) return;
+  selectedFood = food;
+  document.getElementById('foodQuickPicks').style.display = 'none';
+  document.getElementById('foodResults').innerHTML = '';
+  document.getElementById('portionFoodName').textContent = food.n;
+  document.getElementById('portionFoodMacros').textContent = `Per 100g: ${food.cal} cal · ${food.pro}g protein · ${food.carb}g carbs · ${food.fat}g fat`;
+  document.getElementById('portionAmount').value = '';
+  document.getElementById('portionPreview').textContent = '— cal';
+  document.getElementById('portionEntry').style.display = 'block';
+  setTimeout(() => document.getElementById('portionAmount').focus(), 100);
+}
+
+function updatePortionPreview() {
+  if (!selectedFood) return;
+  const grams = parseFloat(document.getElementById('portionAmount').value) || 0;
+  const cal = Math.round(selectedFood.cal * grams / 100);
+  const pro = Math.round(selectedFood.pro * grams / 100 * 10) / 10;
+  document.getElementById('portionPreview').textContent = `${cal} cal · ${pro}g P`;
+}
+
+function backToSearch() {
+  document.getElementById('portionEntry').style.display = 'none';
+  document.getElementById('foodQuickPicks').style.display = 'block';
+  document.getElementById('foodResults').innerHTML = '';
+  renderFoodResults(document.getElementById('foodSearch').value);
+  selectedFood = null;
+}
+
+function confirmAddFood() {
+  if (!selectedFood || !currentFoodSlot) return;
+  const grams = parseFloat(document.getElementById('portionAmount').value);
+  if (!grams || grams <= 0) { showToast('⚠️ Enter an amount'); return; }
+
+  const cal = Math.round(selectedFood.cal * grams / 100);
+  const pro = Math.round(selectedFood.pro * grams / 100 * 10) / 10;
+  const carb = Math.round(selectedFood.carb * grams / 100 * 10) / 10;
+  const fat = Math.round(selectedFood.fat * grams / 100 * 10) / 10;
+
+  if (!foodDiary[diaryDate]) {
+    foodDiary[diaryDate] = {breakfast:[],lunch:[],dinner:[],snacks:[]};
+  }
+  // Migrate old format if needed
+  if (!foodDiary[diaryDate].breakfast) {
+    foodDiary[diaryDate] = {breakfast:[],lunch:[],dinner:[],snacks:[]};
+  }
+
+  foodDiary[diaryDate][currentFoodSlot].push({
+    name: selectedFood.n,
+    grams, cal, pro, carb, fat,
+    id: Date.now()
+  });
   saveData('foodDiary', foodDiary);
-  nameEl.value=''; calEl.value=''; proEl.value='';
+  closeFoodModal();
   renderDiary();
-  showToast('🍽️ Food logged!');
+  showToast('✅ Added to diary!');
+}
+
+function addCustomFood() {
+  closeFoodModal();
+  // Show custom food input in diary
+  const slotEl = document.getElementById('customFoodSlot');
+  if (slotEl) slotEl.value = currentFoodSlot || 'breakfast';
+  document.getElementById('customFoodPanel').style.display = 'block';
+  document.getElementById('customFoodPanel').scrollIntoView({behavior:'smooth'});
+}
+
+function saveCustomFood() {
+  const name  = document.getElementById('customName').value.trim();
+  const cal   = parseInt(document.getElementById('customCal').value) || 0;
+  const pro   = parseFloat(document.getElementById('customPro').value) || 0;
+  const grams = parseFloat(document.getElementById('customGrams').value) || 100;
+  const slot  = document.getElementById('customFoodSlot').value;
+  if (!name || !cal) { showToast('⚠️ Name and calories required'); return; }
+  if (!foodDiary[diaryDate]) foodDiary[diaryDate] = {breakfast:[],lunch:[],dinner:[],snacks:[]};
+  foodDiary[diaryDate][slot].push({ name, grams, cal, pro, carb:0, fat:0, id: Date.now() });
+  saveData('foodDiary', foodDiary);
+  document.getElementById('customFoodPanel').style.display = 'none';
+  document.getElementById('customName').value = '';
+  document.getElementById('customCal').value = '';
+  document.getElementById('customPro').value = '';
+  document.getElementById('customGrams').value = '';
+  renderDiary();
+  showToast('✅ Added to diary!');
 }
 
 function deleteFood(slotId, id) {
   if (!foodDiary[diaryDate]) return;
-  foodDiary[diaryDate][slotId] = foodDiary[diaryDate][slotId].filter(f=>f.id!==id);
+  foodDiary[diaryDate][slotId] = (foodDiary[diaryDate][slotId] || []).filter(f => f.id !== id);
   saveData('foodDiary', foodDiary);
   renderDiary();
 }
 
 function renderDiary() {
   const isToday = diaryDate === todayStr();
-  const label = isToday ? 'Today' : formatDate(diaryDate);
-  document.getElementById('diaryDateLabel').textContent = label;
+  document.getElementById('diaryDateLabel').textContent = isToday ? 'Today' : formatDate(diaryDate);
   const day = getDiaryDay();
-  const totalCal = MEAL_SLOTS.reduce((s,sl)=>(day[sl.id]||[]).reduce((ss,f)=>ss+f.cal,s),0);
-  const totalPro = MEAL_SLOTS.reduce((s,sl)=>(day[sl.id]||[]).reduce((ss,f)=>ss+f.pro,s),0);
-  const calPct = Math.min(100,Math.round(totalCal/TARGETS.calories*100));
-  const proPct = Math.min(100,Math.round(totalPro/TARGETS.protein*100));
 
+  const allEntries = MEAL_SLOTS.flatMap(sl => day[sl.id] || []);
+  const totalCal = allEntries.reduce((s,f) => s+f.cal, 0);
+  const totalPro = allEntries.reduce((s,f) => s+f.pro, 0);
+  const calPct = Math.min(100, Math.round(totalCal / TARGETS.calories * 100));
+  const proPct = Math.min(100, Math.round(totalPro / TARGETS.protein * 100));
+  const calLeft = TARGETS.calories - totalCal;
+
+  // Progress bars
   document.getElementById('dailyTotals').innerHTML = `
-    <div class="daily-totals">
-      <div class="total-item">
-        <div class="total-val teal">${totalCal}</div>
-        <div class="total-label">Calories</div>
-        <div class="total-goal">/ ${TARGETS.calories} (${calPct}%)</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 4px #00000008;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+        <div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--teal);line-height:1;">${totalCal}</div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">of ${TARGETS.calories} cal</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);line-height:1;">${Math.round(totalPro)}g</div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">of ${TARGETS.protein}g protein</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:${calLeft>=0?'var(--blue)':'var(--coral)'};line-height:1;">${Math.abs(calLeft)}</div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">${calLeft>=0?'cal left':'over'}</div>
+        </div>
       </div>
-      <div class="total-item">
-        <div class="total-val gold">${totalPro}g</div>
-        <div class="total-label">Protein</div>
-        <div class="total-goal">/ ${TARGETS.protein}g (${proPct}%)</div>
+      <div style="margin-bottom:6px;">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px;"><span>Calories</span><span>${calPct}%</span></div>
+        <div style="background:var(--surface2);border-radius:20px;height:6px;overflow:hidden;">
+          <div style="height:100%;width:${calPct}%;background:${calPct>100?'var(--coral)':'var(--teal)'};border-radius:20px;transition:width 0.4s;"></div>
+        </div>
       </div>
-      <div class="total-item">
-        <div class="total-val blue">${TARGETS.calories-totalCal}</div>
-        <div class="total-label">Remaining</div>
-        <div class="total-goal">calories left</div>
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px;"><span>Protein</span><span>${proPct}%</span></div>
+        <div style="background:var(--surface2);border-radius:20px;height:6px;overflow:hidden;">
+          <div style="height:100%;width:${proPct}%;background:var(--gold);border-radius:20px;transition:width 0.4s;"></div>
+        </div>
       </div>
-    </div>
-  `;
+    </div>`;
 
+  // Meal slots
+  const slotColors = {breakfast:'var(--teal)',lunch:'var(--gold)',dinner:'var(--blue)',snacks:'var(--coral)'};
   document.getElementById('diaryContent').innerHTML = MEAL_SLOTS.map(sl => {
     const entries = day[sl.id] || [];
-    const slotCal = entries.reduce((s,f)=>s+f.cal,0);
+    const slotCal = entries.reduce((s,f) => s+f.cal, 0);
+    const slotPro = entries.reduce((s,f) => s+f.pro, 0);
+    const col = slotColors[sl.id];
     return `
-      <div class="meal-slot ${sl.cls}">
-        <div class="meal-slot-header">
-          <div class="meal-slot-title">${sl.label}</div>
-          <div class="meal-slot-cal">${slotCal} cal</div>
-        </div>
-        ${entries.map(f=>`
-          <div class="food-entry">
-            <div class="food-entry-name">${f.name}</div>
-            <div class="food-entry-macros">
-              <span class="food-entry-cal">${f.cal} cal</span>
-              <span class="food-entry-p">${f.pro}g P</span>
-              <button class="food-del" onclick="deleteFood('${sl.id}',${f.id})">×</button>
-            </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid ${col};border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 4px #00000008;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:${entries.length?'1px solid var(--border)':'none'};">
+          <div style="font-weight:600;font-size:13px;">${sl.label}</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            ${slotCal ? `<span style="font-size:11px;color:var(--muted);">${slotCal} cal · ${Math.round(slotPro)}g P</span>` : ''}
+            <button onclick="openFoodModal('${sl.id}')" style="background:${col};border:none;border-radius:7px;color:#fff;font-size:12px;font-weight:600;padding:5px 12px;cursor:pointer;font-family:'DM Sans',sans-serif;">+ Add</button>
           </div>
-        `).join('')}
-        <div class="add-food-row">
-          <input class="food-input" id="food-name-${sl.id}" placeholder="Food name" 
-            onkeydown="if(event.key==='Enter')addFood('${sl.id}')">
-          <input class="food-input small" id="food-cal-${sl.id}" type="number" placeholder="Cal"
-            onkeydown="if(event.key==='Enter')addFood('${sl.id}')">
-          <input class="food-input small" id="food-pro-${sl.id}" type="number" placeholder="Pg"
-            onkeydown="if(event.key==='Enter')addFood('${sl.id}')">
-          <button class="add-btn" onclick="addFood('${sl.id}')">+</button>
         </div>
+        ${entries.map(f => `
+          <div style="display:flex;align-items:center;padding:9px 14px;border-bottom:1px solid var(--border);">
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:13px;color:var(--text);font-weight:500;">${f.name}</div>
+              <div style="font-size:11px;color:var(--muted);">${f.grams}g · ${f.cal} cal · ${f.pro}g protein</div>
+            </div>
+            <button onclick="deleteFood('${sl.id}',${f.id})" style="background:none;border:none;color:var(--muted2);font-size:18px;cursor:pointer;padding:0 0 0 10px;line-height:1;">×</button>
+          </div>`).join('')}
+        ${!entries.length ? `<div style="padding:12px 14px;font-size:12px;color:var(--muted2);">Tap + Add to log your ${sl.label.split(' ')[1].toLowerCase()}</div>` : ''}
+      </div>`;
+  }).join('') + `
+    <!-- CUSTOM FOOD PANEL -->
+    <div id="customFoodPanel" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;">
+      <div style="font-weight:600;font-size:13px;margin-bottom:10px;">Add Custom Food</div>
+      <select id="customFoodSlot" class="weight-field" style="width:100%;margin-bottom:8px;font-family:'DM Sans',sans-serif;">
+        ${MEAL_SLOTS.map(sl=>`<option value="${sl.id}">${sl.label}</option>`).join('')}
+      </select>
+      <input id="customName" class="food-input" placeholder="Food name" style="width:100%;margin-bottom:8px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div><div class="weight-field-label">Grams</div><input type="number" id="customGrams" class="weight-field" placeholder="100"></div>
+        <div><div class="weight-field-label">Calories</div><input type="number" id="customCal" class="weight-field" placeholder="200"></div>
+        <div><div class="weight-field-label">Protein (g)</div><input type="number" id="customPro" class="weight-field" placeholder="20"></div>
       </div>
-    `;
-  }).join('');
+      <div style="display:flex;gap:8px;">
+        <button onclick="document.getElementById('customFoodPanel').style.display='none'" class="modal-btn ghost" style="flex:1;">Cancel</button>
+        <button onclick="saveCustomFood()" class="modal-btn primary" style="flex:1;">Save</button>
+      </div>
+    </div>`;
 }
 
 // ══════════════════════════════════════
@@ -2705,9 +3080,12 @@ function init() {
   });
 })();
 
-// Close modal on overlay click
+// Close modals on overlay click
 document.getElementById('liftModal').addEventListener('click', function(e) {
   if (e.target === this) closeLiftModal();
+});
+document.getElementById('foodModal').addEventListener('click', function(e) {
+  if (e.target === this) closeFoodModal();
 });
 
 </script>
