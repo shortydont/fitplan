@@ -13,6 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <title>FitPlan</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--bg:#f4f6f9;--surface:#fff;--surface2:#edf0f5;--border:#e1e7ef;--teal:#0099cc;--teal-d:#0077aa;--tdim:#0099cc14;--coral:#e53e3e;--cdim:#e53e3e12;--gold:#d97706;--gdim:#d9770612;--blue:#3b82f6;--bdim:#3b82f612;--purple:#7c3aed;--pdim:#7c3aed12;--green:#16a34a;--ndim:#16a34a12;--text:#1a202c;--muted:#64748b;--muted2:#94a3b8;--xs:11px;--sm:13px;--base:14px;--lg:17px;--xl:22px;--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);--nh:56px;}
 body.dark{--bg:#0f1117;--surface:#1a1f2e;--surface2:#252b3b;--border:#2d3548;--text:#e8edf5;--muted:#8892a4;--muted2:#4a5568;}
@@ -445,37 +446,18 @@ select.fi2{-webkit-appearance:none;}
 <div class="toast" id="toast"></div>
 <script>
 // ── SUPABASE ──
-const SURL='https://msfmhgvjpdiudlmekghr.supabase.co';
-const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zZm1oZ3ZqcGRpdWRsbWVrZ2hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDg1NzksImV4cCI6MjA5MzQ4NDU3OX0.Xe7mEv3LdrU2UatOqWneyhfFIJNf-GkT3RH3YhxXgFQ';
-let sb = null;
+var SURL='https://msfmhgvjpdiudlmekghr.supabase.co';
+var SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zZm1oZ3ZqcGRpdWRsbWVrZ2hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5MDg1NzksImV4cCI6MjA5MzQ4NDU3OX0.Xe7mEv3LdrU2UatOqWneyhfFIJNf-GkT3RH3YhxXgFQ';
+var sb = supabase.createClient(SURL, SKEY, {auth:{flowType:'implicit',detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
+var CU = null;
 
-function initSupabase() {
-sb = supabase.createClient(SURL, SKEY, {
-auth: { flowType:‘implicit’, detectSessionInUrl:true, persistSession:true, autoRefreshToken:true }
+function signInWithGoogle(){
+document.getElementById(‘loginLoading’).style.display=‘block’;
+sb.auth.signInWithOAuth({provider:‘google’,options:{redirectTo:‘https://fitplan.houseofshort.com’}}).then(function(result){
+if(result.error){document.getElementById(‘loginLoading’).style.display=‘none’;alert(’Sign in failed: ’+result.error.message);}
 });
 }
-let CU=null;
-
-async function signInWithGoogle(){
-const loadEl = document.getElementById(‘loginLoading’);
-if (!sb) {
-loadEl.textContent = ‘Still loading, please wait a moment and try again…’;
-loadEl.style.display = ‘block’;
-return;
-}
-loadEl.textContent = ‘Signing you in…’;
-loadEl.style.display = ‘block’;
-try {
-const{error}=await sb.auth.signInWithOAuth({
-provider:‘google’,
-options:{redirectTo:‘https://fitplan.houseofshort.com’}
-});
-if(error) throw error;
-} catch(e) {
-loadEl.textContent = ’⚠️ Sign in failed: ’ + (e.message||‘Unknown error’);
-}
-}
-async function signOut(){if(sb)await sb.auth.signOut();document.getElementById(‘main-app’).classList.remove(‘visible’);document.getElementById(‘ls’).classList.remove(‘hidden’);}
+function signOut(){sb.auth.signOut().then(function(){document.getElementById(‘main-app’).classList.remove(‘visible’);document.getElementById(‘ls’).classList.remove(‘hidden’);});}
 
 // ── STORAGE ──
 function uk(k){return’fp_’+(CU?.id||‘x’)+’_’+k;}
@@ -1179,37 +1161,20 @@ if(‘serviceWorker’ in navigator)navigator.serviceWorker.register(’./sw.js�
 showOb();
 }
 
-(async()=>{
-try {
-// Load Supabase if not already loaded
-if (typeof supabase === ‘undefined’) {
-await new Promise((resolve, reject) => {
-const s = document.createElement(‘script’);
-s.src = ‘https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2’;
-s.onload = resolve;
-s.onerror = reject;
-document.head.appendChild(s);
-});
+sb.auth.getSession().then(function(result){
+if(result.data&&result.data.session&&result.data.session.user){
+showApp(result.data.session.user);
 }
-initSupabase();
-await new Promise(r=>setTimeout(r,100));
-const{data:{session}}=await sb.auth.getSession();
-if(session?.user){showApp(session.user);return;}
-sb.auth.onAuthStateChange((ev,session)=>{
-if((ev===‘SIGNED_IN’||ev===‘TOKEN_REFRESHED’)&&session?.user){
-if(window.location.search.includes(‘code=’))window.history.replaceState({},document.title,window.location.pathname);
+});
+sb.auth.onAuthStateChange(function(ev,session){
+if((ev===‘SIGNED_IN’||ev===‘TOKEN_REFRESHED’)&&session&&session.user){
+if(window.location.search.indexOf(‘code=’)>-1)window.history.replaceState({},document.title,window.location.pathname);
 showApp(session.user);
 }else if(ev===‘SIGNED_OUT’){
 document.getElementById(‘main-app’).classList.remove(‘visible’);
 document.getElementById(‘ls’).classList.remove(‘hidden’);
 }
 });
-} catch(e) {
-console.error(‘Boot error:’, e);
-document.getElementById(‘loginLoading’).textContent = ‘⚠️ Could not connect. Check your internet connection and refresh.’;
-document.getElementById(‘loginLoading’).style.display = ‘block’;
-}
-})();
 </script>
 
 </body>
