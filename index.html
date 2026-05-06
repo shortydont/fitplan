@@ -736,14 +736,14 @@ const d=DAYS[planDayIdx];const dp=weeklyPlan.days[planDayIdx];
 const day=getDDay(tday());
 const logCal=planDayIdx===todayIdx()?SLOTS.flatMap(s=>day[s.id]||[]).reduce((a,f)=>a+(f.cal||0),0):0;
 const logPro=planDayIdx===todayIdx()?SLOTS.flatMap(s=>day[s.id]||[]).reduce((a,f)=>a+(f.pro||0),0):0;
-el.innerHTML=` <div style="display:flex;gap:12px;margin-bottom:14px;"> <div style="font-family:'Bebas Neue',sans-serif;font-size:44px;color:var(--border);line-height:1;flex-shrink:0;">${String(planDayIdx+1).padStart(2,'0')}</div> <div style="flex:1;"> <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;">${d.t} — ${d.sub}</div> <div style="font-size:var(--xs);color:var(--muted);margin-top:2px;">Target: ${targets.calories} cal · ${targets.protein}g protein</div> ${planDayIdx===todayIdx()&&logCal>0?`<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;"><span class="chip cn2">✓ ${logCal} cal logged</span><span class="chip ct2">${Math.round(logPro)}g protein</span></div>`:''} </div> </div> ${dp.meals.map((m,mi)=>`
+el.innerHTML=` <div style="display:flex;gap:12px;margin-bottom:14px;"> <div style="font-family:Bebas Neue,sans-serif;font-size:44px;color:var(--border);line-height:1;flex-shrink:0;">${String(planDayIdx+1).padStart(2,'0')}</div> <div style="flex:1;"> <div style="font-family:Bebas Neue,sans-serif;font-size:20px;letter-spacing:1px;">${d.t} — ${d.sub}</div> <div style="font-size:var(--xs);color:var(--muted);margin-top:2px;">Target: ${targets.calories} cal · ${targets.protein}g protein</div> ${planDayIdx===todayIdx()&&logCal>0?`<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;"><span class="chip cn2">✓ ${logCal} cal logged</span><span class="chip ct2">${Math.round(logPro)}g protein</span></div>`:''} </div> </div> ${dp.meals.map((m,mi)=>`
 <div class="card ${mi===1?'ag':'at'}" style="margin-bottom:10px;">
 <div class="ch">
 <div><div class="cl">${m.l}</div><div class="ct">${m.t}</div></div>
-<button onclick="swapM(${planDayIdx},${mi})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:10px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;flex-shrink:0;">🔀</button>
+<button onclick="swapM(${planDayIdx},${mi})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:10px;color:var(--muted);cursor:pointer;font-family:DM Sans,sans-serif;flex-shrink:0;">🔀</button>
 </div>
 <div class="cb">${m.b}<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;"><span class="chip ct2">~${m.c} cal</span><span class="chip cg2">~${m.p}g protein</span></div></div>
-</div>`).join('')} <button onclick="showScreen('gym',document.querySelectorAll('.nav-btn')[1]);switchGD(${planDayIdx})" style="width:100%;background:var(--coral);border:none;border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:var(--sm);font-weight:700;padding:12px;cursor:pointer;margin-top:4px;">🏋️ Go to Today's Workout →</button>`;
+</div>`).join('')} <button onclick="showScreen('gym',document.querySelectorAll('.nav-btn')[1]);switchGD(${planDayIdx})" style="width:100%;background:var(--coral);border:none;border-radius:10px;color:#fff;font-family:DM Sans,sans-serif;font-size:var(--sm);font-weight:700;padding:12px;cursor:pointer;margin-top:4px;">🏋️ Go to Today's Workout →</button>`;
 }
 
 function swapM(di,mi){
@@ -767,7 +767,7 @@ return`<div class="wstrip">${DAYS.map((d,i)=>`
 <div class="wt" style="color:${cc[d.ex]||'var(--teal)'};">${d.ex}</div>
 </div>`).join(’’)}</div>
 
-  <div style="font-family:'Bebas Neue',sans-serif;font-size:var(--xl);letter-spacing:1px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);">Key Principles</div>
+  <div style="font-family:Bebas Neue,sans-serif;font-size:var(--xl);letter-spacing:1px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);">Key Principles</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
     <div class="card at" style="margin-bottom:0;"><div class="cb"><strong>🥩 Protein First</strong><br>Always eat protein first. On low-appetite days, get your protein via a shake minimum.</div></div>
     <div class="card ab" style="margin-bottom:0;"><div class="cb"><strong>🏊 Why Swim?</strong><br>Burns 400–600 cal/hr, low-impact, joint-friendly. Perfect alongside Wegovy.</div></div>
@@ -792,7 +792,7 @@ const done=exs.filter((_,i)=>gymChecked[gk(gymDayIdx,i)]).length;
 const pct=total?Math.round(done/total*100):0;
 const cc={lift:‘var(–coral)’,swim:‘var(–blue)’,rest:‘var(–muted2)’};
 const col=cc[d.ex]||‘var(–teal)’;
-let html=` <div class="card" style="margin-bottom:12px;"> <div style="padding:14px;"> <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"> <div style="font-weight:700;font-size:var(--base);">${d.t} — ${d.sub}</div> <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:${col};">${pct}%</div> </div> <div style="display:flex;justify-content:space-between;font-size:var(--xs);color:var(--muted);margin-bottom:4px;"><span>${done} of ${total} done</span><span>${d.ex}</span></div> <div class="ptr"><div class="pfi" style="width:${pct}%;background:${col};"></div></div> </div> ${d.ex!=='rest'?`<div style="padding:0 14px 12px;"><button onclick="shuffleW()" style="background:none;border:1.5px dashed var(--border);border-radius:8px;color:var(--muted);font-size:var(--xs);font-weight:600;padding:7px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;">🔀 Shuffle workout</button></div>`:''} </div> <div class="card">`;
+let html=` <div class="card" style="margin-bottom:12px;"> <div style="padding:14px;"> <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"> <div style="font-weight:700;font-size:var(--base);">${d.t} — ${d.sub}</div> <div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:${col};">${pct}%</div> </div> <div style="display:flex;justify-content:space-between;font-size:var(--xs);color:var(--muted);margin-bottom:4px;"><span>${done} of ${total} done</span><span>${d.ex}</span></div> <div class="ptr"><div class="pfi" style="width:${pct}%;background:${col};"></div></div> </div> ${d.ex!=='rest'?'<div style="padding:0 14px 12px;"><button onclick="shuffleW()" style="background:none;border:1.5px dashed var(--border);border-radius:8px;color:var(--muted);font-size:var(--xs);font-weight:600;padding:7px 14px;cursor:pointer;width:100%;">🔀 Shuffle workout</button></div>':''} </div> <div class="card">`;
 
 exs.forEach((ex,i)=>{
 const chk=!!gymChecked[gk(gymDayIdx,i)];
@@ -809,7 +809,7 @@ ${trend!==null?`<span style="font-size:10px;font-weight:700;color:${trend>0?'var
 });
 html+=’</div>’;
 
-if(pct===100)html+=`<div style="text-align:center;padding:16px;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--green);">🎉 SESSION COMPLETE!</div>`;
+if(pct===100)html+=`<div style="text-align:center;padding:16px;font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:1px;color:var(--green);">🎉 SESSION COMPLETE!</div>`;
 
 html+=`<div class="card" style="margin-top:4px;"> <div class="ch"><div class="cl">Today's Meals</div></div> ${(weeklyPlan.days[gymDayIdx].meals||[]).map(m=>`
 <div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
@@ -877,7 +877,7 @@ const calL=targets.calories-tCal;
 const cPct=Math.min(100,Math.round(tCal/targets.calories*100));
 const pPct=Math.min(100,Math.round(tPro/targets.protein*100));
 
-let html=` <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"> <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;">${isT?'Today':fmtDate(diaryDate)}</div> ${!isT?`<button onclick="diaryDate=tday();renderDiary()" style="background:var(--tdim);border:1px solid var(--teal);border-radius:8px;padding:5px 12px;font-size:var(--xs);font-weight:700;color:var(--teal);cursor:pointer;font-family:'DM Sans',sans-serif;">Today</button>`:''} </div> <div class="dtot"> <div class="dtr"> <div><div class="dtv" style="color:var(--teal);">${tCal}</div><div class="dtl">of ${targets.calories} cal</div></div> <div style="text-align:center;"><div class="dtv" style="color:var(--gold);">${Math.round(tPro)}g</div><div class="dtl">of ${targets.protein}g P</div></div> <div style="text-align:right;"><div class="dtv" style="color:${calL>=0?'var(--blue)':'var(--coral)'};">${Math.abs(calL)}</div><div class="dtl">${calL>=0?'cal left':'over'}</div></div> </div> <div class="pw"><div class="plab"><span>Calories ${cPct}%</span><span>${tCal}/${targets.calories}</span></div><div class="ptr"><div class="pfi" style="width:${cPct}%;background:${cPct>100?'var(--coral)':'var(--teal)'}"></div></div></div> <div class="pw"><div class="plab"><span>Protein ${pPct}%</span><span>${Math.round(tPro)}g/${targets.protein}g</span></div><div class="ptr"><div class="pfi" style="width:${pPct}%;background:var(--gold)"></div></div></div> </div>`;
+let html=` <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"> <div style="font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:1px;">${isT?'Today':fmtDate(diaryDate)}</div> ${!isT?'<button onclick="diaryDate=tday();renderDiary()" style="background:var(--tdim);border:1px solid var(--teal);border-radius:8px;padding:5px 12px;font-size:var(--xs);font-weight:700;color:var(--teal);cursor:pointer;">Today</button>':''} </div> <div class="dtot"> <div class="dtr"> <div><div class="dtv" style="color:var(--teal);">${tCal}</div><div class="dtl">of ${targets.calories} cal</div></div> <div style="text-align:center;"><div class="dtv" style="color:var(--gold);">${Math.round(tPro)}g</div><div class="dtl">of ${targets.protein}g P</div></div> <div style="text-align:right;"><div class="dtv" style="color:${calL>=0?'var(--blue)':'var(--coral)'};">${Math.abs(calL)}</div><div class="dtl">${calL>=0?'cal left':'over'}</div></div> </div> <div class="pw"><div class="plab"><span>Calories ${cPct}%</span><span>${tCal}/${targets.calories}</span></div><div class="ptr"><div class="pfi" style="width:${cPct}%;background:${cPct>100?'var(--coral)':'var(--teal)'}"></div></div></div> <div class="pw"><div class="plab"><span>Protein ${pPct}%</span><span>${Math.round(tPro)}g/${targets.protein}g</span></div><div class="ptr"><div class="pfi" style="width:${pPct}%;background:var(--gold)"></div></div></div> </div>`;
 
 SLOTS.forEach(sl=>{
 const ents=day[sl.id]||[];
@@ -931,16 +931,34 @@ renderSML();
 }
 }
 function renderQP(){
-document.getElementById(‘quickRow’).innerHTML=QP.map(n=>`<button class="qchip" onclick="selF('${n.replace(/'/g,"\\'")}')"> ${n.split(' (')[0].split('/')[0].trim()}</button>`).join(’’);
+var h=’’;
+QP.forEach(function(n){
+var label=n.split(’ (’)[0].split(’/’)[0].trim();
+var safe=n.replace(/\/g,’\\’).replace(/’/g,”\’”);
+h+=’<button class="qchip" onclick="selF(\''+safe+'\')">’+label+’</button>’;
+});
+document.getElementById(‘quickRow’).innerHTML=h;
 }
 function searchFoods(q){if(document.getElementById(‘portionSc’).style.display!==‘none’)return;renderFL(q);}
 const CC2={‘Meat’:’#e53e3e’,‘Fish’:’#3b82f6’,‘Dairy’:’#d97706’,‘Carbs’:’#7c3aed’,‘Veg’:’#16a34a’,‘Fruit’:’#f97316’,‘Fats’:’#78716c’,‘Other’:’#64748b’};
 function renderFL(q){
 const el=document.getElementById(‘foodList’);
 const ql=(q||’’).toLowerCase().trim();
-const res=ql?FDB.filter(f=>f.n.toLowerCase().includes(ql)).sort((a,b)=>a.n.toLowerCase().indexOf(ql)-b.n.toLowerCase().indexOf(ql)).slice(0,30):FDB.slice(0,30);
-if(!res.length){el.innerHTML=`<div class="emp"><span class="ee">🔍</span>Nothing found for "${q}"</div>`;return;}
-el.innerHTML=res.map(f=>{const col=CC2[f.cat]||’#64748b’;return`<button class="fitem" onclick="selF('${f.n.replace(/'/g,"\\'")}')"><div class="fcat" style="background:${col}18;border:1.5px solid ${col}40;"><div class="fct" style="color:${col};">${f.cat}</div></div><div style="flex:1;min-width:0;"><div class="fn">${f.n}</div><div class="fm">per 100g · <strong style="color:var(--teal)">${f.cal} cal</strong> · <strong style="color:var(--gold)">${f.pro}g P</strong> · ${f.carb}g C · ${f.fat}g F</div></div><div class="fa">›</div></button>`;}).join(’’)+`<div style="padding:14px;text-align:center;"><button onclick="toast2('Add a custom food by typing the name and values')" style="background:none;border:1.5px solid var(--border);border-radius:8px;color:var(--muted);font-size:var(--xs);font-weight:600;padding:8px 16px;cursor:pointer;font-family:'DM Sans',sans-serif;">+ Add Custom Food</button></div>`;
+const res=ql?FDB.filter(function(f){return f.n.toLowerCase().includes(ql);}).sort(function(a,b){return a.n.toLowerCase().indexOf(ql)-b.n.toLowerCase().indexOf(ql);}).slice(0,30):FDB.slice(0,30);
+if(!res.length){el.innerHTML=’<div class="emp"><span class="ee">🔍</span>Nothing found for “’+q+’”</div>’;return;}
+var h=’’;
+res.forEach(function(f){
+var col=CC2[f.cat]||’#64748b’;
+var safeName=f.n.replace(/\/g,’\\’).replace(/’/g,”\’”);
+h+=’<button class="fitem" onclick="selF(\''+safeName+'\')">’;
+h+=’<div class="fcat" style="background:'+col+'18;border:1.5px solid '+col+'40;">’;
+h+=’<div class="fct" style="color:'+col+';">’+f.cat+’</div></div>’;
+h+=’<div style="flex:1;min-width:0;"><div class="fn">’+f.n+’</div>’;
+h+=’<div class="fm">per 100g · <strong style="color:var(--teal)">’+f.cal+’ cal</strong> · <strong style="color:var(--gold)">’+f.pro+‘g P</strong> · ‘+f.carb+‘g C · ‘+f.fat+‘g F</div></div>’;
+h+=’<div class="fa">›</div></button>’;
+});
+h+=’<div style="padding:14px;text-align:center;"><button onclick="toast2(\'Add a custom food by typing the name and values\')" style="background:none;border:1.5px solid var(--border);border-radius:8px;color:var(--muted);font-size:var(--xs);font-weight:600;padding:8px 16px;cursor:pointer;font-family:DM Sans,sans-serif;">+ Add Custom Food</button></div>’;
+el.innerHTML=h;
 }
 function selF(n){const f=FDB.find(x=>x.n===n);if(!f)return;selFood=f;document.getElementById(‘searchTab’).style.display=‘none’;document.getElementById(‘mealsTab’).style.display=‘none’;document.getElementById(‘pName’).textContent=f.n;document.getElementById(‘pMeta’).textContent=`Per 100g: ${f.cal} cal · ${f.pro}g protein · ${f.carb}g carbs · ${f.fat}g fat`;document.getElementById(‘pGrams’).value=’’;[‘pvC’,‘pvP’,‘pvCa’,‘pvF’].forEach(id=>document.getElementById(id).textContent=’—’);document.getElementById(‘portionSc’).style.display=‘flex’;setTimeout(()=>document.getElementById(‘pGrams’).focus(),100);}
 function setG(g){document.getElementById(‘pGrams’).value=g;updatePrev();}
@@ -960,7 +978,20 @@ toast2(‘✅ ‘+selFood.n.split(’ (’)[0]+’ added!’,‘var(–green)’
 function renderSML(){
 const el=document.getElementById(‘savedMealsList’);
 if(!savedMeals.length){el.innerHTML=`<div class="emp"><span class="ee">🍱</span><strong>No saved meals yet</strong><br>Build meals from Settings</div>`;return;}
-el.innerHTML=savedMeals.map((m,i)=>{const tc=m.items.reduce((a,f)=>a+f.cal,0);const tp=m.items.reduce((a,f)=>a+f.pro,0);return`<div style="padding:12px 18px;border-bottom:1px solid var(--border);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div style="font-weight:700;font-size:var(--sm);">${m.n}</div><div style="display:flex;gap:6px;"><button onclick="addSM(${i})" style="background:var(--teal);border:none;border-radius:7px;color:#fff;font-size:var(--xs);font-weight:700;padding:5px 12px;cursor:pointer;font-family:'DM Sans',sans-serif;">Add</button><button onclick="delSM(${i})" style="background:none;border:1px solid var(--border);border-radius:7px;color:var(--muted);font-size:var(--xs);padding:5px 10px;cursor:pointer;">🗑</button></div></div><div style="font-size:var(--xs);color:var(--muted);">${tc} cal · ${Math.round(tp)}g protein · ${m.items.length} items</div></div>`;}).join(’’);
+var h=’’;
+savedMeals.forEach(function(m,i){
+var tc=m.items.reduce(function(a,f){return a+f.cal;},0);
+var tp=m.items.reduce(function(a,f){return a+f.pro;},0);
+h+=’<div style="padding:12px 18px;border-bottom:1px solid var(--border);">’;
+h+=’<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">’;
+h+=’<div style="font-weight:700;font-size:var(--sm);">’+m.n+’</div>’;
+h+=’<div style="display:flex;gap:6px;">’;
+h+=’<button onclick="addSM('+i+')" style="background:var(--teal);border:none;border-radius:7px;color:#fff;font-size:var(--xs);font-weight:700;padding:5px 12px;cursor:pointer;">Add</button>’;
+h+=’<button onclick="delSM('+i+')" style="background:none;border:1px solid var(--border);border-radius:7px;color:var(--muted);font-size:var(--xs);padding:5px 10px;cursor:pointer;">🗑</button>’;
+h+=’</div></div>’;
+h+=’<div style="font-size:var(--xs);color:var(--muted);">’+tc+’ cal · ’+Math.round(tp)+‘g protein · ‘+m.items.length+’ items</div></div>’;
+});
+el.innerHTML=h;
 }
 function addSM(i){const m=savedMeals[i];if(!curSlot||!m)return;if(!foodDiary[diaryDate])foodDiary[diaryDate]={};SLOTS.forEach(s=>{if(!foodDiary[diaryDate][s.id])foodDiary[diaryDate][s.id]=[];});m.items.forEach(item=>{foodDiary[diaryDate][curSlot].push({…item,id:Date.now()+Math.random()});});save(‘fd’,foodDiary);closeFoodModal();renderDiary();toast2(‘🍱 ‘+m.n+’ added!’,‘var(–green)’);}
 function delSM(i){savedMeals.splice(i,1);save(‘sm’,savedMeals);renderSML();}
@@ -979,7 +1010,7 @@ let html=`<div class="srow"> <div class="sb2"><div class="sv" style="color:var(-
   </div>`;
 
 if(profile&&last&&Math.abs(last.weight-profile.w)>2){
-html+=`<div style="background:var(--gdim);border:1px solid var(--gold);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:var(--sm);color:var(--gold);display:flex;align-items:center;justify-content:space-between;gap:10px;"> <span>⚡ Weight changed by ${Math.abs(last.weight-profile.w).toFixed(1)}kg — update profile to recalculate targets</span> <button onclick="openSettings()" style="background:var(--gold);border:none;border-radius:7px;color:#fff;font-size:var(--xs);font-weight:700;padding:5px 10px;cursor:pointer;font-family:'DM Sans',sans-serif;flex-shrink:0;">Update</button> </div>`;
+html+=`<div style="background:var(--gdim);border:1px solid var(--gold);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:var(--sm);color:var(--gold);display:flex;align-items:center;justify-content:space-between;gap:10px;"> <span>⚡ Weight changed by ${Math.abs(last.weight-profile.w).toFixed(1)}kg — update profile to recalculate targets</span> <button onclick="openSettings()" style="background:var(--gold);border:none;border-radius:7px;color:#fff;font-size:var(--xs);font-weight:700;padding:5px 10px;cursor:pointer;font-family:DM Sans,sans-serif;flex-shrink:0;">Update</button> </div>`;
 }
 
 html+=`<div class="card"><div class="ch"><div class="cl">Log Weight</div></div><div style="padding:12px 14px;"><div class="lrow"><input type="number" step="0.1" class="lf" id="wInput" placeholder="e.g. 104.5"><button class="ls" onclick="logW()">Log</button></div></div></div>`;
@@ -988,7 +1019,20 @@ if(ents.length>=2)html+=`<div class="card"><div style="padding:12px 14px;"><div 
 
 html+=`<div class="card"><div class="ch"><div class="cl">History</div></div>`;
 if(!ents.length)html+=`<div style="padding:14px;font-size:var(--sm);color:var(--muted);">No entries yet</div>`;
-else{[…ents].reverse().forEach((e,i,arr)=>{const prev=arr[i+1];const diff=prev?(e.weight-prev.weight).toFixed(1):null;html+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);"><div style="font-size:var(--sm);color:var(--muted);">${fmtDate(e.date)}</div><div style="display:flex;align-items:center;gap:8px;"><div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--teal);">${e.weight}</div>${diff?`<span class="chip ${diff<0?'cn2':'cc2'}">${diff<0?diff:’+’+diff}kg</span>`:''}<button onclick="delW(${e.ts})" style="background:none;border:none;color:var(--muted2);font-size:16px;cursor:pointer;">×</button></div></div>`;});}
+else{
+[…ents].reverse().forEach(function(e,i,arr){
+var prev=arr[i+1];
+var diff=prev?(e.weight-prev.weight).toFixed(1):null;
+var diffChip=diff?’<span class="chip '+(parseFloat(diff)<0?'cn2':'cc2')+'">’+(parseFloat(diff)<0?diff:’+’+diff)+‘kg</span>’:’’;
+html+=’<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);">’;
+html+=’<div style="font-size:var(--sm);color:var(--muted);">’+fmtDate(e.date)+’</div>’;
+html+=’<div style="display:flex;align-items:center;gap:8px;">’;
+html+=’<div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--teal);">’+e.weight+’</div>’;
+html+=diffChip;
+html+=’<button onclick="delW('+e.ts+')" style="background:none;border:none;color:var(--muted2);font-size:16px;cursor:pointer;">×</button>’;
+html+=’</div></div>’;
+});
+}
 html+=’</div>’;
 
 el.innerHTML=html;
@@ -1096,7 +1140,7 @@ const g=document.getElementById(‘pfGoal’).value;
 const el=document.getElementById(‘pprev’);
 if(!w||!h||!a){el.innerHTML=’<div style="font-size:var(--xs);color:var(--muted);">Fill in all fields to see your targets</div>’;return;}
 const t=calcT({w,h,a,sex,act,goal:g});
-el.innerHTML=`<div style="font-size:var(--xs);font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;">Your Calculated Targets</div> <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;"> <div style="text-align:center;"><div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--teal);">${t.cal}</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">Cal</div></div> <div style="text-align:center;"><div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);">${t.pro}g</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">P</div></div> <div style="text-align:center;"><div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--blue);">${t.carb}g</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">C</div></div> <div style="text-align:center;"><div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--purple);">${t.fat}g</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">F</div></div> </div> <div style="font-size:var(--xs);color:var(--muted);line-height:1.6;">BMI: ${t.bmi} · TDEE: ${t.tdee} · Deficit: -${t.def} cal/day · Goal weight: ~${t.ideal}kg</div>`;
+el.innerHTML=`<div style="font-size:var(--xs);font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;">Your Calculated Targets</div> <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;"> <div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--teal);">${t.cal}</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">Cal</div></div> <div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--gold);">${t.pro}g</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">P</div></div> <div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--blue);">${t.carb}g</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">C</div></div> <div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--purple);">${t.fat}g</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">F</div></div> </div> <div style="font-size:var(--xs);color:var(--muted);line-height:1.6;">BMI: ${t.bmi} · TDEE: ${t.tdee} · Deficit: -${t.def} cal/day · Goal weight: ~${t.ideal}kg</div>`;
 }
 function closeProfileEdit(){
 const w=parseFloat(document.getElementById(‘pfWeight’).value);
