@@ -1026,50 +1026,55 @@ function closeSettings(){document.getElementById(‘settingsPanel’).classList.
 function renderSettings(){
 const dark=document.body.classList.contains(‘dark’);
 const t=profile?calcT(profile):null;
-document.getElementById(‘settingsContent’).innerHTML=` ${!profile?`<div style="background:var(--gdim);border:1px solid var(--gold);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:var(--sm);color:var(--gold);font-weight:600;">⚠️ Profile not set up — tap My Profile below to set your targets.</div>`:’’}
+let h=’’;
+if(!profile) h+=’<div style="background:var(--gdim);border:1px solid var(--gold);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:var(--sm);color:var(--gold);font-weight:600;">⚠️ Profile not set up — tap My Profile below to set your targets.</div>’;
+h+=’<div class="sstit">My Profile</div>’;
+if(profile){
+h+=’<div class="pcard"><div>’;
+h+=’<div class="pcn">’+(CU&&CU.user_metadata&&CU.user_metadata.full_name?CU.user_metadata.full_name:‘Profile’)+’</div>’;
+h+=’<div class="pcs">’+profile.w+‘kg · ‘+profile.h+‘cm · Age ‘+profile.a+’ · BMI ‘+(t?t.bmi:’—’)+’</div>’;
+h+=’<div class="pcs">Goal weight: ~‘+(t?t.ideal:’—’)+‘kg</div>’;
+h+=’</div><button class="pce" onclick="openProfileEdit(false)">Edit</button></div>’;
+} else {
+h+=’<button onclick="openProfileEdit(false)" style="width:100%;background:var(--teal);border:none;border-radius:12px;color:#fff;font-family:DM Sans,sans-serif;font-size:var(--base);font-weight:700;padding:14px;cursor:pointer;margin-bottom:16px;">Set Up Profile →</button>’;
+}
+h+=’<div class="sstit" style="margin-top:'+(profile?'8':'0')+'px;">My Targets</div>’;
+h+=’<div class="tgrid">’;
+h+=’<div class="tc" style="border-top:3px solid var(--teal);"><div class="tv2" style="color:var(--teal);">’+targets.calories+’</div><div class="tl2">Calories</div><div class="ts2">’+(t?(’-’+t.def+’ from TDEE’):‘Set profile’)+’</div></div>’;
+h+=’<div class="tc" style="border-top:3px solid var(--gold);"><div class="tv2" style="color:var(--gold);">’+targets.protein+‘g</div><div class="tl2">Protein</div><div class="ts2">’+(profile?((targets.protein/profile.w).toFixed(1)+‘g/kg’):‘Set profile’)+’</div></div>’;
+h+=’<div class="tc" style="border-top:3px solid var(--blue);"><div class="tv2" style="color:var(--blue);">’+targets.carbs+‘g</div><div class="tl2">Carbs</div><div class="ts2">’+(targets.carbs*4)+’ cal</div></div>’;
+h+=’<div class="tc" style="border-top:3px solid var(--purple);"><div class="tv2" style="color:var(--purple);">’+targets.fat+‘g</div><div class="tl2">Fat</div><div class="ts2">’+(targets.fat*9)+’ cal</div></div>’;
+h+=’</div>’;
+h+=’<div class="sstit">Lift Tracker</div><div class="sblock">’;
+LX.slice(0,6).forEach(function(ex){
+const logs=(liftLogs[ex.id]||[]).slice().sort(function(a,b){return b.ts-a.ts;});
+const last=logs[0];const pb=logs.reduce(function(m,l){return l.w>m?l.w:m;},0);
+h+=’<div class="sitem" onclick="openLift(\''+ex.id+'\')"><div class="sil2"><div class="sic" style="background:var(--pdim);">🏋️</div><div><div class="snm">’+ex.n+’</div><div class="ssub2">’+(last?(‘Last: ‘+last.w+‘kg · PB: ‘+pb+‘kg’):‘No logs yet’)+’</div></div></div>’;
+h+=’<div style="display:flex;align-items:center;gap:6px;">’+(last?’<span class="chip cp2">’+last.w+‘kg</span>’:’<span style="font-size:var(--xs);color:var(--teal);">Log →</span>’)+’<div class="schev">›</div></div></div>’;
+});
+h+=’<div class="sitem" style="justify-content:center;color:var(--muted);font-size:var(--xs);">Log lifts via the Gym tab during workouts</div></div>’;
+h+=’<div class="sstit">My Meals</div><div class="sblock">’;
+if(savedMeals.length){
+savedMeals.slice(0,4).forEach(function(m,i){
+const tc=m.items.reduce(function(a,f){return a+f.cal;},0);
+h+=’<div class="sitem"><div class="sil2"><div class="sic" style="background:var(--gdim);">🍱</div><div><div class="snm">’+m.n+’</div><div class="ssub2">’+tc+’ cal · ‘+m.items.length+’ items</div></div></div><button onclick="delSMFromSettings('+i+')" style="background:none;border:none;color:var(--muted2);font-size:16px;cursor:pointer;">🗑</button></div>’;
+});
+} else {
+h+=’<div class="sitem"><div class="sil2"><div class="sic" style="background:var(--gdim);">🍱</div><div><div class="snm">No saved meals yet</div><div class="ssub2">Log food in Diary then save meals</div></div></div></div>’;
+}
+h+=’</div>’;
 
-```
-<div class="sstit">My Profile</div>
-${profile?`<div class="pcard"><div><div class="pcn">${CU?.user_metadata?.full_name||'Profile'}</div><div class="pcs">${profile.w}kg · ${profile.h}cm · Age ${profile.a} · BMI ${t?t.bmi:'—'}</div><div class="pcs">Goal weight: ~${t?t.ideal:'—'}kg</div></div><button class="pce" onclick="openProfileEdit(false)">Edit</button></div>`:
-`<button onclick="openProfileEdit(false)" style="width:100%;background:var(--teal);border:none;border-radius:12px;color:#fff;font-family:'DM Sans',sans-serif;font-size:var(--base);font-weight:700;padding:14px;cursor:pointer;margin-bottom:16px;">Set Up Profile →</button>`}
-
-<div class="sstit" style="margin-top:${profile?'8':'0'}px;">My Targets</div>
-<div class="tgrid">
-  <div class="tc" style="border-top:3px solid var(--teal);"><div class="tv2" style="color:var(--teal);">${targets.calories}</div><div class="tl2">Calories</div><div class="ts2">${t?`-${t.def} from TDEE`:'Set profile'}</div></div>
-  <div class="tc" style="border-top:3px solid var(--gold);"><div class="tv2" style="color:var(--gold);">${targets.protein}g</div><div class="tl2">Protein</div><div class="ts2">${profile?`${(targets.protein/profile.w).toFixed(1)}g/kg`:'Set profile'}</div></div>
-  <div class="tc" style="border-top:3px solid var(--blue);"><div class="tv2" style="color:var(--blue);">${targets.carbs}g</div><div class="tl2">Carbs</div><div class="ts2">${targets.carbs*4} cal</div></div>
-  <div class="tc" style="border-top:3px solid var(--purple);"><div class="tv2" style="color:var(--purple);">${targets.fat}g</div><div class="tl2">Fat</div><div class="ts2">${targets.fat*9} cal</div></div>
-</div>
-
-<div class="sstit">Lift Tracker</div>
-<div class="sblock">
-  ${LX.slice(0,6).map(ex=>{const logs=(liftLogs[ex.id]||[]).slice().sort((a,b)=>b.ts-a.ts);const last=logs[0];const pb=logs.reduce((m,l)=>l.w>m?l.w:m,0);return`<div class="sitem" onclick="openLift('${ex.id}')"><div class="sil2"><div class="sic" style="background:var(--pdim);">🏋️</div><div><div class="snm">${ex.n}</div><div class="ssub2">${last?`Last: ${last.w}kg · PB: ${pb}kg`:'No logs yet'}</div></div></div><div style="display:flex;align-items:center;gap:6px;">${last?`<span class="chip cp2">${last.w}kg</span>`:'<span style="font-size:var(--xs);color:var(--teal);">Log →</span>'}<div class="schev">›</div></div></div>`;}).join('')}
-  <div class="sitem" style="justify-content:center;color:var(--muted);font-size:var(--xs);">Log lifts via the Gym tab during workouts</div>
-</div>
-
-<div class="sstit">My Meals</div>
-<div class="sblock">
-  ${savedMeals.length?savedMeals.slice(0,4).map((m,i)=>{const tc=m.items.reduce((a,f)=>a+f.cal,0);return`<div class="sitem"><div class="sil2"><div class="sic" style="background:var(--gdim);">🍱</div><div><div class="snm">${m.n}</div><div class="ssub2">${tc} cal · ${m.items.length} items</div></div></div><button onclick="delSMFromSettings(${i})" style="background:none;border:none;color:var(--muted2);font-size:16px;cursor:pointer;">🗑</button></div>`;}).join(''):
-'<div class="sitem"><div class="sil2"><div class="sic" style="background:var(--gdim);">🍱</div><div><div class="snm">No saved meals yet</div><div class="ssub2">Log food in Diary then save meals</div></div></div></div>'}
-</div>
-
-<div class="sstit">Appearance</div>
-<div class="sblock">
-  <div class="sitem">
-    <div class="sil2"><div class="sic" style="background:#1a202c20;">${dark?'☀️':'🌙'}</div><div><div class="snm">Dark Mode</div><div class="ssub2">${dark?'On':'Off'}</div></div></div>
-    <div class="tgl ${dark?'on':''}" onclick="toggleDark(this)"><div class="tgl-t"></div></div>
-  </div>
-</div>
-
-<div class="sstit">Account</div>
-<div class="sblock">
-  <div class="sitem"><div class="sil2"><div class="sic" style="background:var(--bdim);">👤</div><div><div class="snm">${CU?.user_metadata?.full_name||'User'}</div><div class="ssub2">${CU?.email||''}</div></div></div></div>
-  <div class="sitem" onclick="signOut()"><div class="sil2"><div class="sic" style="background:var(--cdim);">🚪</div><div><div class="snm" style="color:var(--coral);">Sign Out</div></div></div><div class="schev">›</div></div>
-</div>
-<div style="text-align:center;padding:20px 0;font-size:var(--xs);color:var(--muted2);">FitPlan · Built for your journey 💪</div>
-```
-
-`;
+h+=’<div class="sstit">Appearance</div><div class="sblock"><div class="sitem">’;
+h+=’<div class="sil2"><div class="sic" style="background:#1a202c20;">’+(dark?‘☀️’:‘🌙’)+’</div><div><div class="snm">Dark Mode</div><div class="ssub2">’+(dark?‘On’:‘Off’)+’</div></div></div>’;
+h+=’<div class="tgl '+(dark?'on':'')+'" onclick="toggleDark(this)"><div class="tgl-t"></div></div>’;
+h+=’</div></div>’;
+h+=’<div class="sstit">Account</div><div class="sblock">’;
+const uname=(CU&&CU.user_metadata&&CU.user_metadata.full_name)?CU.user_metadata.full_name:‘User’;
+const uemail=(CU&&CU.email)?CU.email:’’;
+h+=’<div class="sitem"><div class="sil2"><div class="sic" style="background:var(--bdim);">👤</div><div><div class="snm">’+uname+’</div><div class="ssub2">’+uemail+’</div></div></div></div>’;
+h+=’<div class="sitem" onclick="signOut()"><div class="sil2"><div class="sic" style="background:var(--cdim);">🚪</div><div><div class="snm" style="color:var(--coral);">Sign Out</div></div></div><div class="schev">›</div></div>’;
+h+=’</div><div style="text-align:center;padding:20px 0;font-size:var(--xs);color:var(--muted2);">FitPlan · Built for your journey 💪</div>’;
+document.getElementById(‘settingsContent’).innerHTML=h;
 }
 function toggleDark(el){const d=document.body.classList.toggle(‘dark’);save(‘dark’,d);renderSettings();}
 function delSMFromSettings(i){savedMeals.splice(i,1);save(‘sm’,savedMeals);renderSettings();}
