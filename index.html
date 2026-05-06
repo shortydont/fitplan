@@ -460,7 +460,7 @@ if(result.error){document.getElementById(‘loginLoading’).style.display=‘no
 function signOut(){sb.auth.signOut().then(function(){document.getElementById(‘main-app’).classList.remove(‘visible’);document.getElementById(‘ls’).classList.remove(‘hidden’);});}
 
 // ── STORAGE ──
-function uk(k){return’fp_’+(CU?.id||‘x’)+’_’+k;}
+function uk(k){return’fp_’+(CU&&CU.id?CU.id:‘x’)+’_’+k;}
 function save(k,v){try{localStorage.setItem(uk(k),JSON.stringify(v));}catch(e){}}
 function load(k){try{return JSON.parse(localStorage.getItem(uk(k)));}catch(e){return null;}}
 
@@ -1148,8 +1148,8 @@ function showApp(user){
 CU=user;
 document.getElementById(‘ls’).classList.add(‘hidden’);
 document.getElementById(‘main-app’).classList.add(‘visible’);
-const name=user.user_metadata?.full_name||user.email?.split(’@’)[0]||‘User’;
-const av=user.user_metadata?.avatar_url;
+const name=(user.user_metadata&&user.user_metadata.full_name?user.user_metadata.full_name:(user.email?user.email.split(’@’)[0]:‘User’));
+const av=(user.user_metadata&&user.user_metadata.avatar_url?user.user_metadata.avatar_url:null);
 document.getElementById(‘userName’).textContent=name;
 const avel=document.getElementById(‘userAvatar’);
 if(av)avel.innerHTML=`<img src="${av}" alt="${name}">`;else avel.textContent=name.charAt(0).toUpperCase();
