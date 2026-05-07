@@ -1,59 +1,26 @@
-// FitPlan Service Worker - Network First Strategy
-const STATIC_CACHE = ‘fitplan-static-v1778007129’;
+// Force cache bust - new version
+var CACHE = ‘fitplan-v10-’ + Date.now();
 
-const STATIC_ASSETS = [
-‘./’,
-‘./index.html’,
-‘./manifest.json’,
-‘./apple-touch-icon.png’,
-‘./icon-192.png’,
-‘./icon-512.png’
-];
-
-// INSTALL
-self.addEventListener(‘install’, event => {
-event.waitUntil(
-caches.open(STATIC_CACHE)
-.then(cache => cache.addAll(STATIC_ASSETS))
-.then(() => self.skipWaiting())
-);
+self.addEventListener(‘install’, function(e) {
+self.skipWaiting();
 });
 
-// ACTIVATE - delete all old caches
-self.addEventListener(‘activate’, event => {
-event.waitUntil(
-caches.keys()
-.then(keys => Promise.all(
-keys.filter(key => key !== STATIC_CACHE)
-.map(key => caches.delete(key))
-))
-.then(() => self.clients.claim())
-);
-});
-
-// FETCH - Network first, cache fallback
-self.addEventListener(‘fetch’, event => {
-const url = new URL(event.request.url);
-
-// Never intercept non-GET or external services
-if (event.request.method !== ‘GET’) return;
-if (url.hostname !== self.location.hostname) {
-event.respondWith(fetch(event.request));
-return;
-}
-
-event.respondWith(
-fetch(event.request)
-.then(response => {
-if (response && response.status === 200) {
-const clone = response.clone();
-caches.open(STATIC_CACHE).then(cache => cache.put(event.request, clone));
-}
-return response;
+self.addEventListener(‘activate’, function(e) {
+e.waitUntil(
+caches.keys().then(function(keys) {
+return Promise.all(keys.map(function(key) {
+console.log(‘Deleting cache:’, key);
+return caches.delete(key);
+}));
+}).then(function() {
+return self.clients.claim();
 })
-.catch(() =>
-caches.match(event.request)
-.then(cached => cached || caches.match(’./index.html’))
-)
 );
+});
+
+// Network only - no caching until stable
+self.addEventListener(‘fetch’, function(e) {
+if (e.request.url.indexOf(‘supabase’) > -1 ||
+e.request.url.indexOf(‘google’) > -1) return;
+e.respondWith(fetch(e.request));
 });
