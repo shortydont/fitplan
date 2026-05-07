@@ -358,6 +358,21 @@ select.fi2{-webkit-appearance:none;}
       </div>
       <div class="mb"><label class="fl2">Activity Level</label><select class="fi2" id="pfAct" onchange="updatePP()"><option value="1.2">Sedentary (desk job)</option><option value="1.375">Lightly active (1–3 days)</option><option value="1.55" selected>Moderately active (3–5 days)</option><option value="1.725">Very active (6–7 days)</option></select></div>
       <div class="mb"><label class="fl2">Goal</label><select class="fi2" id="pfGoal" onchange="updatePP()"><option value="aggressive">Aggressive deficit (−500 cal/day)</option><option value="moderate">Moderate deficit (−350 cal/day)</option><option value="mild">Mild deficit (−200 cal/day)</option></select></div>
+      <div class="mb">
+        <label class="fl2">On GLP-1 Medication?</label>
+        <select class="fi2" id="pfGlp1" onchange="updatePP()">
+          <option value="no">No</option>
+          <option value="yes">Yes — Wegovy / Ozempic / Mounjaro</option>
+        </select>
+      </div>
+      <div id="glp1Tips" style="display:none;background:#0099cc14;border:1px solid var(--teal);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:var(--xs);color:var(--teal);line-height:1.8;">
+        <strong>💊 GLP-1 Tips built into your plan:</strong><br>
+        · Protein target raised to protect muscle mass<br>
+        · Meals are smaller and easier to digest<br>
+        · Greasy and heavy foods avoided<br>
+        · Liquid protein options included for low-appetite days<br>
+        · Hydration reminders in your rest days
+      </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;" id="pprev"><div style="font-size:var(--xs);color:var(--muted);">Fill in all fields to see your targets</div></div>
     </div>
   </div>
@@ -623,23 +638,28 @@ const SLOTS=[{id:'breakfast',l:'🌅 Breakfast',col:'var(--teal)'},{id:'lunch',l
 function tday(){return new Date().toISOString().split('T')[0];}
 function fmtDate(s){return new Date(s+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});}
 function toast2(msg,col){const t=document.getElementById('toast');t.textContent=msg;t.style.background=col||'#1a202c';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
-function wn(){const d=new Date(),j1=new Date(d.getFullYear(),0,1);return Math.ceil(((d-j1)/86400000+j1.getDay()+1)/7);}
-function srand(seed,i){let h=0;const s=seed+'_'+i;for(let j=0;j<s.length;j++)h=Math.imul(31,h)+s.charCodeAt(j)|0;return Math.abs(h)/2147483647;}
+function wn(){var d=new Date(),j1=new Date(d.getFullYear(),0,1);return Math.ceil(((d-j1)/86400000+j1.getDay()+1)/7);}
+function srand(seed,i){
+  var s=seed+'_'+i;var h=5381;
+  for(var j=0;j<s.length;j++){h=((h<<5)+h)+s.charCodeAt(j);h=h&h;}
+  return Math.abs(h)/2147483647;
+}
 function pick(pool,seed,i){return pool[Math.floor(srand(seed,i)*pool.length)];}
 
 // ── TARGETS ──
 function calcT(p){
-  const bmr=p.sex==='male'?10*p.w+6.25*p.h-5*p.a+5:10*p.w+6.25*p.h-5*p.a-161;
-  const tdee=Math.round(bmr*parseFloat(p.act));
-  const def={aggressive:500,moderate:350,mild:200}[p.goal]||500;
-  const cal=Math.max(1200,Math.round(tdee-def));
-  const pro=Math.max(175,Math.round(p.w*1.8));
-  const rem=cal-pro*4;
-  const fat=Math.round((rem*.35)/9);
-  const carb=Math.round((rem*.65)/4);
-  const bmi=(p.w/((p.h/100)**2)).toFixed(1);
-  const ideal=Math.round(24.9*(p.h/100)**2);
-  return{cal,pro,carb,fat,tdee,def,bmi,ideal};
+  var bmr=p.sex==='male'?10*p.w+6.25*p.h-5*p.a+5:10*p.w+6.25*p.h-5*p.a-161;
+  var tdee=Math.round(bmr*parseFloat(p.act));
+  var def={aggressive:500,moderate:350,mild:200}[p.goal]||500;
+  var cal=Math.max(1200,Math.round(tdee-def));
+  var proMult=p.glp1==='yes'?2.0:1.8;
+  var pro=Math.max(150,Math.round(p.w*proMult));
+  var rem=cal-pro*4;
+  var fat=Math.round((rem*.35)/9);
+  var carb=Math.round((rem*.65)/4);
+  var bmi=(p.w/((p.h/100)*(p.h/100))).toFixed(1);
+  var ideal=Math.round(24.9*(p.h/100)*(p.h/100));
+  return{cal:cal,pro:pro,carb:carb,fat:fat,tdee:tdee,def:def,bmi:bmi,ideal:ideal};
 }
 function applyT(p){const t=calcT(p);targets={calories:t.cal,protein:t.pro,carbs:t.carb,fat:t.fat};save('targets',targets);updateHero();return t;}
 function updateHero(){document.getElementById('heroCal').textContent=targets.calories;document.getElementById('heroPro').textContent=targets.protein+'g';const s=weightEntries.length?weightEntries[weightEntries.length-1].weight+'kg · FitPlan':'FitPlan';const el=document.getElementById('userSub');if(el)el.textContent=s;}
@@ -692,9 +712,10 @@ function showScreen(n,btn){
 // ── PLAN SCREEN ──
 function renderPlan(){
   genPlan();
-  document.getElementById('planTabs').innerHTML=
-    DAYS.map((d,i)=>`<button class="dtab ${i===planDayIdx?'active':''}" onclick="switchPD(${i})">${d.n}</button>`).join('')+
-    `<button class="dtab ${planDayIdx===99?'active':''}" onclick="switchPD(99)">Overview</button>`;
+  var planTabHtml='';
+  DAYS.forEach(function(d,i){planTabHtml+='<button class="dtab '+(i===planDayIdx?'active':'')+'" onclick="switchPD('+i+')">'+d.n+'</button>';});
+  planTabHtml+='<button class="dtab '+(planDayIdx===99?'active':'')+'" onclick="switchPD(99)">Overview</button>';
+  document.getElementById('planTabs').innerHTML=planTabHtml;
   renderPC();
 }
 function switchPD(i){planDayIdx=i;renderPlan();}
@@ -739,28 +760,34 @@ function swapM(di,mi){
 }
 
 function renderOv(){
-  const ti=todayIdx();
-  const ic={lift:'🏋️',swim:'🌊',rest:'😴'};
-  const cc={lift:'var(--coral)',swim:'var(--blue)',rest:'var(--muted2)'};
-  return`<div class="wstrip">${DAYS.map((d,i)=>`
-    <div class="wcard ${i===ti?'today':''}" onclick="switchPD(${i})">
-      <div class="wd">${d.n.toUpperCase()}</div>
-      <div class="wi">${ic[d.ex]||'💪'}</div>
-      <div class="wt" style="color:${cc[d.ex]||'var(--teal)'};">${d.ex}</div>
-    </div>`).join('')}</div>
-  <div style="font-family:Bebas Neue,sans-serif;font-size:var(--xl);letter-spacing:1px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);">Key Principles</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-    <div class="card at" style="margin-bottom:0;"><div class="cb"><strong>🥩 Protein First</strong><br>Always eat protein first. On low-appetite days, get your protein via a shake minimum.</div></div>
-    <div class="card ab" style="margin-bottom:0;"><div class="cb"><strong>🏊 Why Swim?</strong><br>Burns 400–600 cal/hr, low-impact, joint-friendly. Perfect alongside Wegovy.</div></div>
-    <div class="card ag" style="margin-bottom:0;"><div class="cb"><strong>💊 Wegovy Tips</strong><br>Avoid greasy meals. Eat slowly. Drink 2–3L water. Never skip meals.</div></div>
-    <div class="card ac" style="margin-bottom:0;"><div class="cb"><strong>💪 Lift to Tone</strong><br>Resistance 3× per week preserves muscle while losing fat.</div></div>
-  </div>`;
+  var ti=todayIdx();
+  var ic={lift:'🏋️',swim:'🌊',rest:'😴'};
+  var cc={lift:'var(--coral)',swim:'var(--blue)',rest:'var(--muted2)'};
+  var h='<div class="wstrip">';
+  DAYS.forEach(function(d,i){
+    h+='<div class="wcard '+(i===ti?'today':'')+'" onclick="switchPD('+i+')">';
+    h+='<div class="wd">'+d.n.toUpperCase()+'</div>';
+    h+='<div class="wi">'+(ic[d.ex]||'💪')+'</div>';
+    h+='<div class="wt" style="color:'+(cc[d.ex]||'var(--teal)')+';">'+d.ex+'</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+  h+='<div style="font-family:Bebas Neue,sans-serif;font-size:var(--xl);letter-spacing:1px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);">Key Principles</div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+  h+='<div class="card at" style="margin-bottom:0;"><div class="cb"><strong>🥩 Protein First</strong><br>Always eat protein first. On low-appetite days, get your protein via a shake minimum.</div></div>';
+  h+='<div class="card ab" style="margin-bottom:0;"><div class="cb"><strong>🏊 Why Swim?</strong><br>Burns 400–600 cal/hr, low-impact, joint-friendly. Perfect alongside Wegovy.</div></div>';
+  h+='<div class="card ag" style="margin-bottom:0;"><div class="cb"><strong>💊 GLP-1 Tips</strong><br>Avoid greasy meals. Eat slowly. Drink 2–3L water. Never skip meals even if not hungry.</div></div>';
+  h+='<div class="card ac" style="margin-bottom:0;"><div class="cb"><strong>💪 Lift to Tone</strong><br>Resistance 3× per week preserves muscle while losing fat.</div></div>';
+  h+='</div>';
+  return h;
 }
 
 // ── GYM SCREEN ──
 function renderGym(){
   genPlan();
-  document.getElementById('gymTabs').innerHTML=DAYS.map((d,i)=>`<button class="dtab ${i===gymDayIdx?'active':''}" onclick="switchGD(${i})">${d.n}</button>`).join('');
+  var gymTabHtml='';
+  DAYS.forEach(function(d,i){gymTabHtml+='<button class="dtab '+(i===gymDayIdx?'active':'')+'" onclick="switchGD('+i+')">'+d.n+'</button>';});
+  document.getElementById('gymTabs').innerHTML=gymTabHtml;
   renderGC();
 }
 function switchGD(i){gymDayIdx=i;renderGym();}
@@ -1152,47 +1179,65 @@ function delSMFromSettings(i){savedMeals.splice(i,1);save('sm',savedMeals);rende
 
 // ── PROFILE EDIT ──
 function openProfileEdit(fromOb){
-  if(profile){document.getElementById('pfWeight').value=profile.w||'';document.getElementById('pfHeight').value=profile.h||'';document.getElementById('pfAge').value=profile.a||'';document.getElementById('pfSex').value=profile.sex||'male';document.getElementById('pfAct').value=profile.act||'1.55';document.getElementById('pfGoal').value=profile.goal||'aggressive';}
+  if(profile){
+    document.getElementById('pfWeight').value=profile.w||'';
+    document.getElementById('pfHeight').value=profile.h||'';
+    document.getElementById('pfAge').value=profile.a||'';
+    document.getElementById('pfSex').value=profile.sex||'male';
+    document.getElementById('pfAct').value=profile.act||'1.55';
+    document.getElementById('pfGoal').value=profile.goal||'aggressive';
+    document.getElementById('pfGlp1').value=profile.glp1||'no';
+  }
   document.getElementById('profileSaveBtn').textContent=fromOb?'Calculate →':'Save & Calculate';
   document.getElementById('profileEditPanel').classList.add('open');
   updatePP();
 }
 function updatePP(){
-  const w=parseFloat(document.getElementById('pfWeight').value);
-  const h=parseFloat(document.getElementById('pfHeight').value);
-  const a=parseInt(document.getElementById('pfAge').value);
-  const sex=document.getElementById('pfSex').value;
-  const act=document.getElementById('pfAct').value;
-  const g=document.getElementById('pfGoal').value;
-  const el=document.getElementById('pprev');
+  var w=parseFloat(document.getElementById('pfWeight').value);
+  var h=parseFloat(document.getElementById('pfHeight').value);
+  var a=parseInt(document.getElementById('pfAge').value);
+  var sex=document.getElementById('pfSex').value;
+  var act=document.getElementById('pfAct').value;
+  var g=document.getElementById('pfGoal').value;
+  var glp1=document.getElementById('pfGlp1').value;
+  var el=document.getElementById('pprev');
+  var tipsEl=document.getElementById('glp1Tips');
+  if(tipsEl) tipsEl.style.display=glp1==='yes'?'block':'none';
   if(!w||!h||!a){el.innerHTML='<div style="font-size:var(--xs);color:var(--muted);">Fill in all fields to see your targets</div>';return;}
-  const t=calcT({w,h,a,sex,act,goal:g});
-  el.innerHTML=`<div style="font-size:var(--xs);font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;">Your Calculated Targets</div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;">
-      <div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--teal);">${t.cal}</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">Cal</div></div>
-      <div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--gold);">${t.pro}g</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">P</div></div>
-      <div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--blue);">${t.carb}g</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">C</div></div>
-      <div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--purple);">${t.fat}g</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">F</div></div>
-    </div>
-    <div style="font-size:var(--xs);color:var(--muted);line-height:1.6;">BMI: ${t.bmi} · TDEE: ${t.tdee} · Deficit: -${t.def} cal/day · Goal weight: ~${t.ideal}kg</div>`;
+  var t=calcT({w:w,h:h,a:a,sex:sex,act:act,goal:g,glp1:glp1});
+  var glp1badge=glp1==='yes'?'<span style="background:var(--teal-dim);border:1px solid var(--teal);border-radius:5px;padding:2px 7px;font-size:9px;font-weight:700;color:var(--teal);margin-left:6px;">💊 GLP-1 adjusted</span>':'';
+  var h2='<div style="font-size:var(--xs);font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;">Your Calculated Targets'+glp1badge+'</div>';
+  h2+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;">';
+  h2+='<div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--teal);">'+t.cal+'</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">Cal</div></div>';
+  h2+='<div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--gold);">'+t.pro+'g</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">Protein</div></div>';
+  h2+='<div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--blue);">'+t.carb+'g</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">Carbs</div></div>';
+  h2+='<div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--purple);">'+t.fat+'g</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">Fat</div></div>';
+  h2+='</div>';
+  h2+='<div style="font-size:var(--xs);color:var(--muted);line-height:1.6;">BMI: '+t.bmi+' · TDEE: '+t.tdee+' · Deficit: -'+t.def+' cal/day · Goal weight: ~'+t.ideal+'kg</div>';
+  el.innerHTML=h2;
 }
 function closeProfileEdit(){
-  const w=parseFloat(document.getElementById('pfWeight').value);
-  const h=parseFloat(document.getElementById('pfHeight').value);
-  const a=parseInt(document.getElementById('pfAge').value);
+  var w=parseFloat(document.getElementById('pfWeight').value);
+  var h=parseFloat(document.getElementById('pfHeight').value);
+  var a=parseInt(document.getElementById('pfAge').value);
   if(!w||!h||!a){toast2('⚠️ Fill in all fields');return;}
-  profile={w,h,a,sex:document.getElementById('pfSex').value,act:document.getElementById('pfAct').value,goal:document.getElementById('pfGoal').value};
+  var glp1=document.getElementById('pfGlp1').value;
+  profile={w:w,h:h,a:a,sex:document.getElementById('pfSex').value,act:document.getElementById('pfAct').value,goal:document.getElementById('pfGoal').value,glp1:glp1};
   save('profile',profile);
-  const t=applyT(profile);
+  var t=applyT(profile);
   document.getElementById('profileEditPanel').classList.remove('open');
-  if(isOb){document.getElementById('obCal').textContent=t.cal;document.getElementById('obPro').textContent=t.pro+'g';document.getElementById('obSum').textContent=`Based on your stats, eat ${t.cal} cal and ${t.pro}g protein per day. Updates automatically as your weight changes.`;obStep=2;showObSlide(2);document.getElementById('obBtn').style.display='block';}
-  else{renderSettings();}
+  if(isOb){
+    document.getElementById('obCal').textContent=t.cal;
+    document.getElementById('obPro').textContent=t.pro+'g';
+    document.getElementById('obSum').textContent='Based on your stats, eat '+t.cal+' cal and '+t.pro+'g protein per day.'+(glp1==='yes'?' Protein target raised for GLP-1.':'')+' Updates automatically as your weight changes.';
+    obStep=2;showObSlide(2);document.getElementById('obBtn').style.display='block';
+  } else {renderSettings();}
   toast2('✅ Profile saved! Targets updated.','var(--green)');
 }
 
 // ── ONBOARDING ──
 function showOb(){if(load('obDone'))return;isOb=true;obStep=0;showObSlide(0);document.getElementById('ob').classList.add('open');}
-function showObSlide(n){for(let i=0;i<4;i++){const s=document.getElementById('ob'+i);const d=document.getElementById('dot'+i);if(s)s.className='osi'+(i===n?' active':'');if(d)d.className='odot'+(i===n?' active':'');}const b=document.getElementById('obBtn');if(b){b.textContent=n===3?"Let's Go! 🚀":"Next →";b.style.display=n===1?'none':'block';}}
+function showObSlide(n){for(var i=0;i<4;i++){var s=document.getElementById('ob'+i);var d=document.getElementById('dot'+i);if(s)s.className='osi'+(i===n?' active':'');if(d)d.className='odot'+(i===n?' active':'');}var b=document.getElementById('obBtn');if(b){b.textContent=n===3?"Let's Go! 🚀":"Next →";b.style.display=n===1?'none':'block';}}
 function nextOb(){if(obStep===1)return;if(obStep<3){obStep++;showObSlide(obStep);}else{save('obDone',true);isOb=false;document.getElementById('ob').classList.remove('open');}}
 
 // ── BOOT ──
