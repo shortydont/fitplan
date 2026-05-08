@@ -1111,36 +1111,76 @@ function switchGD(i){gymDayIdx=i;renderGym();}
 function gk(di,ei){return’w’+wn()+’_d’+di+’_e’+ei;}
 
 function renderGC(){
-var d=DAYS[gymDayIdx];var dp=weeklyPlan.days[gymDayIdx];
-var exs=dp.ex;var total=exs.length;
-var done=0;for(var dci=0;dci<exs.length;dci++){if(gymChecked[gk(gymDayIdx,dci)])done++;}
+var d=DAYS[gymDayIdx];
+var dp=weeklyPlan.days[gymDayIdx];
+var exs=dp.ex;
+var total=exs.length;
+var done=0;
+for(var dci=0;dci<exs.length;dci++){if(gymChecked[gk(gymDayIdx,dci)])done++;}
 var pct=total?Math.round(done/total*100):0;
-const cc={lift:‘var(–coral)’,swim:‘var(–blue)’,rest:‘var(–muted2)’};
-const col=cc[d.ex]||‘var(–teal)’;
-let html=` <div class="card" style="margin-bottom:12px;"> <div style="padding:14px;"> <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"> <div style="font-weight:700;font-size:var(--base);">${d.t} — ${d.sub}</div> <div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:${col};">${pct}%</div> </div> <div style="display:flex;justify-content:space-between;font-size:var(--xs);color:var(--muted);margin-bottom:4px;"><span>${done} of ${total} done</span><span>${d.ex}</span></div> <div class="ptr"><div class="pfi" style="width:${pct}%;background:${col};"></div></div> </div> ${d.ex!=='rest'?'<div style="padding:0 14px 12px;"><button onclick="shuffleW()" style="background:none;border:1.5px dashed var(--border);border-radius:8px;color:var(--muted);font-size:var(--xs);font-weight:600;padding:7px 14px;cursor:pointer;width:100%;">🔀 Shuffle workout</button></div>':''} </div> <div class="card">`;
+var cc={lift:‘var(–coral)’,swim:‘var(–blue)’,rest:‘var(–muted2)’};
+var col=cc[d.ex]||‘var(–teal)’;
+
+var html=’<div class="card" style="margin-bottom:12px;"><div style="padding:14px;">’;
+html+=’<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">’;
+html+=’<div style="font-weight:700;font-size:var(--base);">’+d.t+’ — ‘+d.sub+’</div>’;
+html+=’<div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:'+col+';">’+pct+’%</div>’;
+html+=’</div>’;
+html+=’<div style="display:flex;justify-content:space-between;font-size:var(--xs);color:var(--muted);margin-bottom:4px;">’;
+html+=’<span>’+done+’ of ‘+total+’ done</span><span>’+d.ex+’</span></div>’;
+html+=’<div class="ptr"><div class="pfi" style="width:'+pct+'%;background:'+col+';"></div></div>’;
+html+=’</div>’;
+if(d.ex!==‘rest’){
+html+=’<div style="padding:0 14px 12px;">’;
+html+=’<button onclick="shuffleW()" style="background:none;border:1.5px dashed var(--border);border-radius:8px;color:var(--muted);font-size:var(--xs);font-weight:600;padding:7px 14px;cursor:pointer;width:100%;">🔀 Shuffle workout</button>’;
+html+=’</div>’;
+}
+html+=’</div><div class="card">’;
 
 exs.forEach(function(ex,i){
-const chk=!!gymChecked[gk(gymDayIdx,i)];
-var lx=null;for(var lxi=0;lxi<LX.length;lxi++){if(LX[lxi].n.toLowerCase()===ex.n.toLowerCase()){lx=LX[lxi];break;}}
+var chk=!!gymChecked[gk(gymDayIdx,i)];
+var lx=null;
+for(var lxi=0;lxi<LX.length;lxi++){if(LX[lxi].n.toLowerCase()===ex.n.toLowerCase()){lx=LX[lxi];break;}}
 var logs=lx?(liftLogs[lx.id]||[]).slice().sort(function(a,b){return b.ts-a.ts;}):[];
-var last3=logs2[0];var pb2=logs2.reduce(function(m,l){return l.w>m?l.w:m;},0);
-var prev=logs[1];var trend=last&&prev?last.w-prev.w:null;
+var last=logs[0];
+var pb=logs.reduce(function(m,l){return l.w>m?l.w:m;},0);
+var prev=logs[1];
+var trend=last&&prev?last.w-prev.w:null;
 var isnew=last&&pb>0&&last.w===pb;
-html+=`<div class="ex-item" onclick="toggleEx(${gymDayIdx},${i})"> <div class="ex-check ${chk?'done':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div> <div class="ex-info"> <div class="ex-name ${chk?'done':''}">${ex.n}</div> <div class="ex-det">${ex.d}</div> ${last?`<div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;align-items:center;">
-<span class="chip cp2">Last: ${last.w}kg × ${last.r||’?’}r</span>
-${isnew?’<span class="chip cg2">🏅 PB</span>’:’’}
-‘+(trend!==null?’<span style="font-size:10px;font-weight:700;color:'+(trend>0?'var(--green)':'var(--coral)')+';">’+( trend>0?‘▲ +’+trend:‘▼ ‘+trend)+‘kg</span>’:’’)+’
-</div>`:'<div style="font-size:10px;color:var(--muted2);margin-top:3px;">No logs yet — tap Log to record your weight</div>'} </div> '+(lx?'<button class="lbadge" onclick="event.stopPropagation();openLift(\''+lx.id+'\')">'+(last?last.w+'kg':'Log')+'</button>':'')+' </div>`;
+
+```
+html+='<div class="ex-item" onclick="toggleEx('+gymDayIdx+','+i+')">';
+html+='<div class="ex-check '+(chk?'done':'')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>';
+html+='<div class="ex-info">';
+html+='<div class="ex-name '+(chk?'done':'')+'">'+ex.n+'</div>';
+html+='<div class="ex-det">'+ex.d+'</div>';
+if(last){
+  html+='<div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;align-items:center;">';
+  html+='<span class="chip cp2">Last: '+last.w+'kg × '+(last.r||'?')+'r</span>';
+  if(isnew) html+='<span class="chip cg2">🏅 PB</span>';
+  if(trend!==null) html+='<span style="font-size:10px;font-weight:700;color:'+(trend>0?'var(--green)':'var(--coral)')+';">'+(trend>0?'▲ +'+trend:'▼ '+trend)+'kg</span>';
+  html+='</div>';
+} else {
+  html+='<div style="font-size:10px;color:var(--muted2);margin-top:3px;">No logs yet — tap Log to record your weight</div>';
+}
+html+='</div>';
+if(lx) html+='<button class="lbadge" onclick="event.stopPropagation();openLift(\''+lx.id+'\')">'+(last?last.w+'kg':'Log')+'</button>';
+html+='</div>';
+```
+
+});
+
+html+=’</div>’;
+if(pct===100) html+=’<div style="text-align:center;padding:16px;font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:1px;color:var(--green);">🎉 SESSION COMPLETE!</div>’;
+
+html+=’<div class="card" style="margin-top:4px;"><div class="ch"><div class="cl">Today's Meals</div></div>’;
+(weeklyPlan.days[gymDayIdx].meals||[]).forEach(function(m){
+html+=’<div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">’;
+html+=’<div style="font-size:var(--sm);color:var(--text);font-weight:500;flex:1;min-width:0;">’+m.t+’</div>’;
+html+=’<span class="chip ct2" style="flex-shrink:0;margin-left:8px;">~’+m.c+’ cal</span>’;
+html+=’</div>’;
 });
 html+=’</div>’;
-
-if(pct===100)html+=’<div style="text-align:center;padding:16px;font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:1px;color:var(--green);">🎉 SESSION COMPLETE!</div>’;
-
-html+=`<div class="card" style="margin-top:4px;">
-<div class="ch"><div class="cl">Today’s Meals</div></div>
-‘+function(){var mh=’’;(weeklyPlan.days[gymDayIdx].meals||[]).forEach(function(m){mh+=’<div style="padding:9px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;"><div style="font-size:var(--sm);color:var(--text);font-weight:500;flex:1;min-width:0;">’+m.t+’</div><span class="chip ct2" style="flex-shrink:0;margin-left:8px;">~’+m.c+’ cal</span></div>’;});return mh;}()+’
-
-  </div>`;
 
 document.getElementById(‘gymContent’).innerHTML=html;
 }
@@ -1187,20 +1227,31 @@ else toast2(‘💪 Lift logged!’);
 }
 
 // ── DIARY ──
-function getDDay(date){const d=(foodDiary[date]||{});SLOTS.forEach(s=>{if(!d[s.id])d[s.id]=[];});return d;}
-function changeDiaryDate(delta){const d=new Date(diaryDate+‘T12:00:00’);d.setDate(d.getDate()+delta);diaryDate=d.toISOString().split(‘T’)[0];renderDiary();}
+function getDDay(date){var d=(foodDiary[date]||{});SLOTS.forEach(function(s){if(!d[s.id])d[s.id]=[];});return d;}
+function changeDiaryDate(delta){var d=new Date(diaryDate+‘T12:00:00’);d.setDate(d.getDate()+delta);diaryDate=d.toISOString().split(‘T’)[0];renderDiary();}
 
 function renderDiary(){
 var isT=diaryDate===tday();
 var day=getDDay(diaryDate);
-const all=SLOTS.reduce(function(acc,sl){return acc.concat(day[sl.id]||[]);}, []);
+var all=SLOTS.reduce(function(acc,sl){return acc.concat(day[sl.id]||[]);}, []);
 var tCal=all.reduce(function(a,f){return a+(f.cal||0);},0);
 var tPro=all.reduce(function(a,f){return a+(f.pro||0);},0);
-const calL=targets.calories-tCal;
-const cPct=Math.min(100,Math.round(tCal/targets.calories*100));
-const pPct=Math.min(100,Math.round(tPro/targets.protein*100));
+var calL=targets.calories-tCal;
+var cPct=Math.min(100,Math.round(tCal/targets.calories*100));
+var pPct=Math.min(100,Math.round(tPro/targets.protein*100));
 
-let html=` <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"> <div style="font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:1px;">${isT?'Today':fmtDate(diaryDate)}</div> ${!isT?'<button onclick="diaryDate=tday();renderDiary()" style="background:var(--tdim);border:1px solid var(--teal);border-radius:8px;padding:5px 12px;font-size:var(--xs);font-weight:700;color:var(--teal);cursor:pointer;">Today</button>':''} </div> <div class="dtot"> <div class="dtr"> <div><div class="dtv" style="color:var(--teal);">${tCal}</div><div class="dtl">of ${targets.calories} cal</div></div> <div style="text-align:center;"><div class="dtv" style="color:var(--gold);">${Math.round(tPro)}g</div><div class="dtl">of ${targets.protein}g P</div></div> <div style="text-align:right;"><div class="dtv" style="color:${calL>=0?'var(--blue)':'var(--coral)'};">${Math.abs(calL)}</div><div class="dtl">${calL>=0?'cal left':'over'}</div></div> </div> <div class="pw"><div class="plab"><span>Calories ${cPct}%</span><span>${tCal}/${targets.calories}</span></div><div class="ptr"><div class="pfi" style="width:${cPct}%;background:${cPct>100?'var(--coral)':'var(--teal)'}"></div></div></div> <div class="pw"><div class="plab"><span>Protein ${pPct}%</span><span>${Math.round(tPro)}g/${targets.protein}g</span></div><div class="ptr"><div class="pfi" style="width:${pPct}%;background:var(--gold)"></div></div></div> </div>`;
+var html=’<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">’;
+html+=’<div style="font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:1px;">’+(isT?‘Today’:fmtDate(diaryDate))+’</div>’;
+if(!isT) html+=’<button onclick="diaryDate=tday();renderDiary()" style="background:var(--tdim);border:1px solid var(--teal);border-radius:8px;padding:5px 12px;font-size:var(--xs);font-weight:700;color:var(--teal);cursor:pointer;">Today</button>’;
+html+=’</div>’;
+html+=’<div class="dtot"><div class="dtr">’;
+html+=’<div><div class="dtv" style="color:var(--teal);">’+tCal+’</div><div class="dtl">of ‘+targets.calories+’ cal</div></div>’;
+html+=’<div style="text-align:center;"><div class="dtv" style="color:var(--gold);">’+Math.round(tPro)+‘g</div><div class="dtl">of ‘+targets.protein+‘g P</div></div>’;
+html+=’<div style="text-align:right;"><div class="dtv" style="color:'+(calL>=0?'var(--blue)':'var(--coral)')+';">’+Math.abs(calL)+’</div><div class="dtl">’+(calL>=0?‘cal left’:‘over’)+’</div></div>’;
+html+=’</div>’;
+html+=’<div class="pw"><div class="plab"><span>Calories ‘+cPct+’%</span><span>’+tCal+’/’+targets.calories+’</span></div><div class="ptr"><div class="pfi" style="width:'+cPct+'%;background:'+(cPct>100?'var(--coral)':'var(--teal)')+'"></div></div></div>’;
+html+=’<div class="pw"><div class="plab"><span>Protein ‘+pPct+’%</span><span>’+Math.round(tPro)+‘g/’+targets.protein+‘g</span></div><div class="ptr"><div class="pfi" style="width:'+pPct+'%;background:var(--gold)"></div></div></div>’;
+html+=’</div>’;
 
 SLOTS.forEach(function(sl){
 var ents=day[sl.id]||[];
@@ -1405,17 +1456,17 @@ c.width=W*dpr;c.height=H*dpr;c.style.width=W+‘px’;c.style.height=H+‘px’;
 const ctx=c.getContext(‘2d’);ctx.scale(dpr,dpr);
 const p={t:20,r:16,b:32,l:44};const gW=W-p.l-p.r;const gH=H-p.t-p.b;
 var vs=ents.map(function(e){return e.weight;});var mn=Math.min.apply(null,vs)-1;var mx=Math.max.apply(null,vs)+1;
-const tx=i=>p.l+(i/(vs.length-1||1))*gW;const ty=v=>p.t+gH-((v-mn)/(mx-mn))*gH;
+function tx(i){return p.l+(i/(vs.length-1||1))*gW;} function ty(v){return p.t+gH-((v-mn)/(mx-mn))*gH;}
 const bg=document.body.classList.contains(‘dark’)?’#1a1f2e’:’#fff’;
 ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
 ctx.strokeStyle=’#e1e7ef’;ctx.lineWidth=1;
 for(let i=0;i<=4;i++){const y=p.t+(gH/4)*i;ctx.beginPath();ctx.moveTo(p.l,y);ctx.lineTo(p.l+gW,y);ctx.stroke();ctx.fillStyle=’#94a3b8’;ctx.font=‘10px DM Sans,sans-serif’;ctx.textAlign=‘right’;ctx.fillText((mx-((mx-mn)/4)*i).toFixed(1),p.l-4,y+4);}
 const step=Math.max(1,Math.floor(vs.length/4));
-vs.forEach((_,i)=>{if(i%step===0||i===vs.length-1){ctx.fillStyle=’#94a3b8’;ctx.font=‘10px DM Sans,sans-serif’;ctx.textAlign=‘center’;ctx.fillText(fmtDate(ents[i].date).split(’ ‘).slice(0,2).join(’ ‘),tx(i),H-p.b+14);}});
+vs.forEach(function(_,i){if(i%step===0||i===vs.length-1){ctx.fillStyle=’#94a3b8’;ctx.font=‘10px DM Sans,sans-serif’;ctx.textAlign=‘center’;ctx.fillText(fmtDate(ents[i].date).split(’ ‘).slice(0,2).join(’ ‘),tx(i),H-p.b+14);}});
 const g=ctx.createLinearGradient(0,p.t,0,p.t+gH);g.addColorStop(0,‘rgba(0,153,204,.25)’);g.addColorStop(1,‘rgba(0,153,204,.02)’);
-ctx.beginPath();ctx.moveTo(tx(0),ty(vs[0]));vs.forEach((v,i)=>{if(i>0)ctx.lineTo(tx(i),ty(v));});ctx.lineTo(tx(vs.length-1),p.t+gH);ctx.lineTo(tx(0),p.t+gH);ctx.closePath();ctx.fillStyle=g;ctx.fill();
-ctx.beginPath();ctx.strokeStyle=’#0099cc’;ctx.lineWidth=2.5;ctx.lineJoin=‘round’;vs.forEach((v,i)=>{i===0?ctx.moveTo(tx(i),ty(v)):ctx.lineTo(tx(i),ty(v));});ctx.stroke();
-vs.forEach((v,i)=>{ctx.beginPath();ctx.arc(tx(i),ty(v),4,0,Math.PI*2);ctx.fillStyle=’#0099cc’;ctx.fill();ctx.strokeStyle=bg;ctx.lineWidth=1.5;ctx.stroke();});
+ctx.beginPath();ctx.moveTo(tx(0),ty(vs[0]));vs.forEach(function(v,i){if(i>0)ctx.lineTo(tx(i),ty(v));});ctx.lineTo(tx(vs.length-1),p.t+gH);ctx.lineTo(tx(0),p.t+gH);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+ctx.beginPath();ctx.strokeStyle=’#0099cc’;ctx.lineWidth=2.5;ctx.lineJoin=‘round’;vs.forEach(function(v,i){if(i===0)ctx.moveTo(tx(i),ty(v));else ctx.lineTo(tx(i),ty(v));});ctx.stroke();
+vs.forEach(function(v,i){ctx.beginPath();ctx.arc(tx(i),ty(v),4,0,Math.PI*2);ctx.fillStyle=’#0099cc’;ctx.fill();ctx.strokeStyle=bg;ctx.lineWidth=1.5;ctx.stroke();});
 const lx2=tx(vs.length-1),ly2=ty(vs[vs.length-1]);ctx.fillStyle=’#0099cc’;ctx.font=‘bold 12px DM Sans,sans-serif’;ctx.textAlign=‘center’;ctx.fillText(vs[vs.length-1],lx2,ly2-10);
 }
 
