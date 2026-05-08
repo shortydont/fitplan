@@ -1177,9 +1177,9 @@ function openLift(id){
   liftExId=id;
   var ex=null;for(var lxi2=0;lxi2<LX.length;lxi2++){if(LX[lxi2].id===id){ex=LX[lxi2];break;}}
   var logsL=(liftLogs[id]||[]).slice().sort(function(a,b){return b.ts-a.ts;});
-  var lastL=logsL[0];var pbL=logsL.reduce(function(m,l){return l.w>m?l.w:m;},0);
+  var last3=logs2[0];var pb2=logs2.reduce(function(m,l){return l.w>m?l.w:m;},0);
   document.getElementById('liftTitle').textContent=ex.n;
-  document.getElementById('liftCtx').textContent=lastL?'Last: '+lastL.w+'kg × '+(lastL.s||'?')+'×'+(lastL.r||'?')+' · PB: '+pbL+'kg':'No previous logs';
+  document.getElementById('liftCtx').textContent=lastL?'Last: '+lastL.w+'kg x '+(lastL.s||'?')+'x'+(lastL.r||'?')+' . PB: '+pbL+'kg':'No previous logs';
   document.getElementById('liftW').value=lastL?lastL.w:'';
   document.getElementById('liftR').value=lastL?lastL.r:'';
   document.getElementById('liftS').value=lastL?lastL.s:'';
@@ -1196,7 +1196,7 @@ function saveLift(){
   if(!w||w<=0){toast2('!! Enter a weight');return;}
   if(!liftLogs[liftExId])liftLogs[liftExId]=[];
   var pb=liftLogs[liftExId].reduce(function(m,l){return l.w>m?l.w:m;},0);
-  var isPB=w>pb;
+  var isPB=w>pbSave;
   liftLogs[liftExId].push({date:tday(),w,r,s,n,ts:Date.now()});
   var lastLiftEntry=liftLogs[liftExId][liftLogs[liftExId].length-1];syncLiftLog(liftExId,lastLiftEntry);
   closeLiftModal();renderGC();
