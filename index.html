@@ -1158,19 +1158,37 @@ function renderGC(){
   var pct=total?Math.round(done/total*100):0;
   var cc={lift:'var(--coral)',swim:'var(--blue)',rest:'var(--muted2)'};
   var col=cc[d.ex]||'var(--teal)';
+  var curType=dp.dayType||d.ex;
 
   var html='<div class="card" style="margin-bottom:12px;"><div style="padding:14px;">';
   html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">';
-  html+='<div style="font-weight:700;font-size:var(--base);">'+d.t+'  '+d.sub+'</div>';
+  html+='<div style="font-weight:700;font-size:var(--base);">'+d.t+' &mdash; '+d.sub+'</div>';
   html+='<div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:'+col+';">'+pct+'%</div>';
   html+='</div>';
+
+  // Inline day type selector
+  html+='<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;">';
+  var DAY_TYPE_OPTS=[
+    {id:'lift_upper',label:'Upper Body',ex:'lift'},
+    {id:'lift_lower',label:'Lower Body',ex:'lift'},
+    {id:'lift_full',label:'Full Body',ex:'lift'},
+    {id:'swim',label:'Swim',ex:'swim'},
+    {id:'walk',label:'Walk',ex:'rest'},
+    {id:'rest',label:'Rest',ex:'rest'},
+  ];
+  DAY_TYPE_OPTS.forEach(function(dt){
+    var active=curType===dt.id||(curType===dt.ex&&dt.id===dt.ex);
+    html+='<button onclick="setGymDayType(\''+dt.id+'\')" style="padding:4px 10px;border-radius:20px;border:1.5px solid '+(active?'var(--teal)':'var(--border)')+';background:'+(active?'var(--teal)':'var(--surface)')+';color:'+(active?'#fff':'var(--muted)')+';font-size:var(--xs);font-weight:700;cursor:pointer;white-space:nowrap;">'+dt.label+'</button>';
+  });
+  html+='</div>';
+
   html+='<div style="display:flex;justify-content:space-between;font-size:var(--xs);color:var(--muted);margin-bottom:4px;">';
-  html+='<span>'+done+' of '+total+' done</span><span>'+d.ex+'</span></div>';
+  html+='<span>'+done+' of '+total+' done</span></div>';
   html+='<div class="ptr"><div class="pfi" style="width:'+pct+'%;background:'+col+';"></div></div>';
   html+='</div>';
   if(d.ex!=='rest'){
     html+='<div style="padding:0 14px 12px;">';
-    html+='<button onclick="shuffleW()" style="background:none;border:1.5px dashed var(--border);border-radius:8px;color:var(--muted);font-size:var(--xs);font-weight:600;padding:7px 14px;cursor:pointer;width:100%;"> Shuffle workout</button>';
+    html+='<button onclick="shuffleW()" style="background:none;border:1.5px dashed var(--border);border-radius:8px;color:var(--muted);font-size:var(--xs);font-weight:600;padding:7px 14px;cursor:pointer;width:100%;">Shuffle workout</button>';
     html+='</div>';
   }
   html+='</div><div class="card">';
@@ -1312,7 +1330,31 @@ function shuffleW(){
   var d=DAYS[gymDayIdx];
   if(d.ex==='lift'){var pool=gymDayIdx===0?EP.upper:gymDayIdx===2?EP.lower:EP.fullbody;weeklyPlan.days[gymDayIdx].ex=pool[Math.floor(Math.random()*pool.length)];}
   else if(d.ex==='swim'){weeklyPlan.days[gymDayIdx].ex=EP.swim[Math.floor(Math.random()*EP.swim.length)];}
-  save('wp',weeklyPlan);renderGC();toast2(' Workout shuffled!');
+  save('wp',weeklyPlan);renderGC();toast2('Workout shuffled!');
+}
+
+function setGymDayType(typeId){
+  var typeMap={
+    lift_upper:{ex:'lift',sub:'Upper Body Strength',pool:'upper'},
+    lift_lower:{ex:'lift',sub:'Lower Body Strength',pool:'lower'},
+    lift_full:{ex:'lift',sub:'Full Body Strength',pool:'fullbody'},
+    swim:{ex:'swim',sub:'Swim Day',pool:'swim'},
+    walk:{ex:'rest',sub:'Walk Day',pool:null},
+    rest:{ex:'rest',sub:'Rest & Recovery',pool:null},
+  };
+  var t=typeMap[typeId];
+  if(!t)return;
+  weeklyPlan.days[gymDayIdx].dayType=typeId;
+  DAYS[gymDayIdx].ex=t.ex;
+  DAYS[gymDayIdx].sub=t.sub;
+  if(t.pool==='upper') weeklyPlan.days[gymDayIdx].ex=EP.upper[Math.floor(Math.random()*EP.upper.length)];
+  else if(t.pool==='lower') weeklyPlan.days[gymDayIdx].ex=EP.lower[Math.floor(Math.random()*EP.lower.length)];
+  else if(t.pool==='fullbody') weeklyPlan.days[gymDayIdx].ex=EP.fullbody[Math.floor(Math.random()*EP.fullbody.length)];
+  else if(t.pool==='swim') weeklyPlan.days[gymDayIdx].ex=EP.swim[Math.floor(Math.random()*EP.swim.length)];
+  else weeklyPlan.days[gymDayIdx].ex=EP.rest;
+  save('wp',weeklyPlan);
+  renderGym();
+  toast2(t.sub+' set!');
 }
 
 // -- LIFT MODAL --
