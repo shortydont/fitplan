@@ -1066,9 +1066,8 @@ function showScreen(n,btn){
 // -- PLAN SCREEN --
 function renderPlan(){
   genPlan();
-  var planTabHtml='';
+  var planTabHtml='<button class="dtab '+(planDayIdx===99?'active':'')+'" onclick="switchPD(99)">Week</button>';
   DAYS.forEach(function(d,i){planTabHtml+='<button class="dtab '+(i===planDayIdx?'active':'')+'" onclick="switchPD('+i+')">'+d.n+'</button>';});
-  planTabHtml+='<button class="dtab '+(planDayIdx===99?'active':'')+'" onclick="switchPD(99)">Overview</button>';
   document.getElementById('planTabs').innerHTML=planTabHtml;
   renderPC();
 }
@@ -1116,26 +1115,108 @@ function swapM(di,mi){
 
 function renderOv(){
   var ti=todayIdx();
-  var ic={lift:'',swim:'',rest:''};
-  var cc={lift:'var(--coral)',swim:'var(--blue)',rest:'var(--muted2)'};
-  var h='<div class="wstrip">';
+  var typeLabels={lift_upper:'Upper Body',lift_lower:'Lower Body',lift_full:'Full Body',swim:'Swim',walk:'Walk',rest:'Rest',lift:'Strength'};
+  var typeColors={lift_upper:'var(--coral)',lift_lower:'var(--coral)',lift_full:'var(--coral)',swim:'var(--blue)',walk:'var(--green)',rest:'var(--muted2)',lift:'var(--coral)'};
+  var typeBg={lift_upper:'var(--cdim)',lift_lower:'var(--cdim)',lift_full:'var(--cdim)',swim:'var(--bdim)',walk:'var(--ndim)',rest:'var(--surface2)',lift:'var(--cdim)'};
+
+  var h='';
+
+  // -- TODAY SUMMARY --
+  var todayDay=getDDay(tday());
+  var todayAll=SLOTS.reduce(function(acc,sl){return acc.concat(todayDay[sl.id]||[]);}, []);
+  var todayCal=todayAll.reduce(function(a,f){return a+(f.cal||0);},0);
+  var todayPro=todayAll.reduce(function(a,f){return a+(f.pro||0);},0);
+  var calPct=Math.min(100,Math.round(todayCal/targets.calories*100));
+  var proPct=Math.min(100,Math.round(todayPro/targets.protein*100));
+  var calLeft=targets.calories-todayCal;
+
+  h+='<div style="background:linear-gradient(135deg,var(--teal),var(--teal-d));border-radius:14px;padding:16px;margin-bottom:14px;">';
+  h+='<div style="font-family:Bebas Neue,sans-serif;font-size:13px;letter-spacing:2px;color:#b3eaff;margin-bottom:8px;">TODAY</div>';
+  h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">';
+  h+='<div><div style="font-family:Bebas Neue,sans-serif;font-size:36px;color:#fff;line-height:1;">'+todayCal+'</div><div style="font-size:var(--xs);color:#b3eaff;">of '+targets.calories+' cal</div></div>';
+  h+='<div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:36px;color:#fff;line-height:1;">'+Math.round(todayPro)+'g</div><div style="font-size:var(--xs);color:#b3eaff;">of '+targets.protein+'g protein</div></div>';
+  h+='<div style="text-align:right;"><div style="font-family:Bebas Neue,sans-serif;font-size:36px;color:'+(calLeft>=0?'#fff':'#ffaaaa')+';line-height:1;">'+Math.abs(calLeft)+'</div><div style="font-size:var(--xs);color:#b3eaff;">'+(calLeft>=0?'cal remaining':'over target')+'</div></div>';
+  h+='</div>';
+  // Calorie bar
+  h+='<div style="margin-bottom:6px;"><div style="display:flex;justify-content:space-between;font-size:var(--xs);color:#b3eaff;margin-bottom:3px;"><span>Calories '+calPct+'%</span></div>';
+  h+='<div style="background:#ffffff30;border-radius:20px;height:8px;overflow:hidden;"><div style="height:100%;border-radius:20px;background:'+(calPct>=100?'#ffaaaa':'#fff')+';width:'+calPct+'%;transition:width .4s;"></div></div></div>';
+  // Protein bar
+  h+='<div><div style="display:flex;justify-content:space-between;font-size:var(--xs);color:#b3eaff;margin-bottom:3px;"><span>Protein '+proPct+'%</span></div>';
+  h+='<div style="background:#ffffff30;border-radius:20px;height:8px;overflow:hidden;"><div style="height:100%;border-radius:20px;background:#f59e0b;width:'+proPct+'%;transition:width .4s;"></div></div></div>';
+  h+='</div>';
+
+  // -- WEEKLY BREAKDOWN --
+  h+='<div style="font-family:Bebas Neue,sans-serif;font-size:var(--xl);letter-spacing:1px;margin-bottom:10px;">This Week</div>';
+
   DAYS.forEach(function(d,i){
-    h+='<div class="wcard '+(i===ti?'today':'')+'" onclick="switchPD('+i+')">';
-    h+='<div class="wd">'+d.n.toUpperCase()+'</div>';
-    h+='<div class="wi">'+(ic[d.ex]||'')+'</div>';
-    h+='<div class="wt" style="color:'+(cc[d.ex]||'var(--teal)')+';">'+d.ex+'</div>';
+    var dp=weeklyPlan.days[i];
+    var dayType=dp.dayType||d.ex;
+    var typeLabel=typeLabels[dayType]||dayType;
+    var typeColor=typeColors[dayType]||'var(--teal)';
+    var typeBgColor=typeBg[dayType]||'var(--tdim)';
+    var isToday=i===ti;
+
+    // Get today's calorie log for this day
+    var dayDate=getDayDate(i);
+    var dayLog=getDDay(dayDate);
+    var dayAll=SLOTS.reduce(function(acc,sl){return acc.concat(dayLog[sl.id]||[]);}, []);
+    var dayCal=dayAll.reduce(function(a,f){return a+(f.cal||0);},0);
+    var dayPct=Math.min(100,Math.round(dayCal/targets.calories*100));
+    var hasLog=dayCal>0;
+
+    h+='<div onclick="switchPD('+i+')" style="background:var(--surface);border:1.5px solid '+(isToday?'var(--teal)':'var(--border)')+';border-radius:12px;margin-bottom:8px;overflow:hidden;cursor:pointer;box-shadow:'+(isToday?'0 4px 12px rgba(0,153,204,.15)':'0 1px 4px rgba(0,0,0,.06)')+';display:flex;align-items:stretch;">';
+    // Left colour strip
+    h+='<div style="width:4px;background:'+typeColor+';flex-shrink:0;"></div>';
+    h+='<div style="padding:12px 14px;flex:1;min-width:0;">';
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">';
+    h+='<div style="display:flex;align-items:center;gap:8px;">';
+    h+='<div style="font-weight:700;font-size:var(--sm);color:'+(isToday?'var(--teal)':'var(--text)');+'">'+(isToday?'TODAY - ':'')+d.t+'</div>';
+    h+='<span style="background:'+typeBgColor+';border:1px solid '+typeColor+';border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700;color:'+typeColor+';">'+typeLabel+'</span>';
     h+='</div>';
+    // Calorie progress or dash
+    if(hasLog){
+      h+='<div style="text-align:right;"><div style="font-family:Bebas Neue,sans-serif;font-size:16px;color:var(--teal);">'+dayPct+'%</div><div style="font-size:9px;color:var(--muted);">'+dayCal+' cal</div></div>';
+    } else if(i<ti){
+      h+='<div style="font-size:var(--xs);color:var(--muted2);">no log</div>';
+    }
+    h+='</div>';
+    // Today meals preview
+    if(dp.meals&&dp.meals.length){
+      h+='<div style="font-size:var(--xs);color:var(--muted);line-height:1.5;">';
+      dp.meals.forEach(function(m){h+=m.t+' &bull; ';});
+      h=h.slice(0,-7); // remove trailing bull
+      h+='</div>';
+    }
+    // Calorie progress bar (only if logged)
+    if(hasLog){
+      h+='<div style="margin-top:6px;background:var(--surface2);border-radius:20px;height:4px;overflow:hidden;"><div style="height:100%;border-radius:20px;background:'+(dayPct>=100?'var(--coral)':'var(--teal)')+';width:'+dayPct+'%;"></div></div>';
+    }
+    h+='</div></div>';
   });
-  h+='</div>';
-  h+='<div style="font-family:Bebas Neue,sans-serif;font-size:var(--xl);letter-spacing:1px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);">Key Principles</div>';
+
+  // -- KEY PRINCIPLES --
+  h+='<div style="font-family:Bebas Neue,sans-serif;font-size:var(--xl);letter-spacing:1px;margin-bottom:10px;margin-top:4px;">Key Principles</div>';
   h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
-  h+='<div class="card at" style="margin-bottom:0;"><div class="cb"><strong> Protein First</strong><br>Always eat protein first. On low-appetite days, get your protein via a shake minimum.</div></div>';
-  h+='<div class="card ab" style="margin-bottom:0;"><div class="cb"><strong> Why Swim?</strong><br>Burns 400600 cal/hr, low-impact, joint-friendly. Perfect alongside Wegovy.</div></div>';
-  h+='<div class="card ag" style="margin-bottom:0;"><div class="cb"><strong> GLP-1 Tips</strong><br>Avoid greasy meals. Eat slowly. Drink 23L water. Never skip meals even if not hungry.</div></div>';
-  h+='<div class="card ac" style="margin-bottom:0;"><div class="cb"><strong> Lift to Tone</strong><br>Resistance 3x per week preserves muscle while losing fat.</div></div>';
+  h+='<div class="card at" style="margin-bottom:0;"><div class="cb"><strong>Protein First</strong><br>Always eat protein first. On low-appetite days, a shake minimum.</div></div>';
+  h+='<div class="card ab" style="margin-bottom:0;"><div class="cb"><strong>Why Swim?</strong><br>Burns 400-600 cal/hr, low-impact, joint-friendly.</div></div>';
+  h+='<div class="card ag" style="margin-bottom:0;"><div class="cb"><strong>GLP-1 Tips</strong><br>Avoid greasy meals. Eat slowly. Drink 2-3L water daily.</div></div>';
+  h+='<div class="card ac" style="margin-bottom:0;"><div class="cb"><strong>Lift to Tone</strong><br>Resistance 3x per week preserves muscle while losing fat.</div></div>';
   h+='</div>';
+
   return h;
 }
+
+// Helper - get the ISO date string for a given day index this week
+function getDayDate(dayIdx){
+  var today=new Date();
+  var todayDow=today.getDay();
+  var todayIdx2={1:0,2:1,3:2,4:3,5:4,6:5,0:6}[todayDow];
+  var diff=dayIdx-todayIdx2;
+  var d=new Date(today);
+  d.setDate(d.getDate()+diff);
+  return d.toISOString().split('T')[0];
+}
+
 
 // -- GYM SCREEN --
 function renderGym(){
@@ -2130,7 +2211,7 @@ function showApp(user){
   // Load local data immediately so app is usable
   loadAll();genPlan();updateHero();
   var dow={1:0,2:1,3:2,4:3,5:4,6:5,0:6}[new Date().getDay()];
-  planDayIdx=dow;gymDayIdx=dow;
+  planDayIdx=99;gymDayIdx=dow;
   renderPlan();renderDiary();
   if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(regs){regs.forEach(function(r){r.unregister();});});}
   showOb();
