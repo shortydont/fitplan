@@ -1194,16 +1194,31 @@ function renderGC(){
     if(last){
       html+='<div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;align-items:center;">';
       html+='<span class="chip cp2">Last: '+last.w+'kg x '+(last.r||'?')+'r</span>';
-      if(isnew) html+='<span class="chip cg2">PB! PB</span>';
+      if(isnew) html+='<span class="chip cg2">PB!</span>';
       if(trend!==null) html+='<span style="font-size:10px;font-weight:700;color:'+(trend>0?'var(--green)':'var(--coral)')+';">'+(trend>0?'^ +'+trend:'v '+trend)+'kg</span>';
       html+='</div>';
     } else {
-      html+='<div style="font-size:10px;color:var(--muted2);margin-top:3px;">No logs yet  tap Log to record your weight</div>';
+      html+='<div style="font-size:10px;color:var(--muted2);margin-top:3px;">No logs yet - tap Log to record your weight</div>';
     }
     html+='</div>';
+    html+='<div style="display:flex;gap:4px;flex-shrink:0;">';
     if(lx) html+='<button class="lbadge" onclick="event.stopPropagation();openLift(\''+lx.id+'\')">'+(last?last.w+'kg':'Log')+'</button>';
+    html+='<button onclick="event.stopPropagation();removeGymEx('+i+')" style="background:var(--cdim);border:1px solid var(--coral);border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;color:var(--coral);cursor:pointer;">x</button>';
+    html+='</div>';
     html+='</div>';
   });
+
+  // Inline add exercise
+  html+='<div style="padding:12px 14px;border-top:1px solid var(--border);">';
+  html+='<div style="font-size:var(--xs);font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Add Exercise</div>';
+  html+='<div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:6px;" id="gymAddFilter">';
+  var cats=['All','Chest','Back','Shoulders','Arms','Legs','Core','Full Body','Cardio'];
+  cats.forEach(function(cat){
+    html+='<button onclick="setGymAddFilter(\''+cat+'\')" id="gaf_'+cat.replace(' ','_')+'" style="padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);font-size:var(--xs);font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">'+cat+'</button>';
+  });
+  html+='</div>';
+  html+='<div id="gymAddList" style="max-height:180px;overflow-y:auto;margin-top:4px;"></div>';
+  html+='</div>';
 
   html+='</div>';
   if(pct===100) html+='<div style="text-align:center;padding:16px;font-family:Bebas Neue,sans-serif;font-size:22px;letter-spacing:1px;color:var(--green);"> SESSION COMPLETE!</div>';
@@ -1218,10 +1233,81 @@ function renderGC(){
   html+='</div>';
 
   document.getElementById('gymContent').innerHTML=html;
+  renderGymAddList();
 }
 
 function toggleEx(di,ei){var k=gk(di,ei);gymChecked[k]=!gymChecked[k];save('gc',gymChecked);renderGC();if(gymChecked[k])toast2('OK Done!','var(--green)');}
 
+function removeGymEx(idx){
+  var exs=weeklyPlan.days[gymDayIdx].ex;
+  exs.splice(idx,1);
+  weeklyPlan.days[gymDayIdx].ex=exs;
+  save('wp',weeklyPlan);
+  renderGC();
+  toast2('Exercise removed');
+}
+
+var gymAddFilter='All';
+function setGymAddFilter(cat){
+  gymAddFilter=cat;
+  renderGymAddList();
+  // Update button styles
+  var cats=['All','Chest','Back','Shoulders','Arms','Legs','Core','Full Body','Cardio'];
+  cats.forEach(function(c){
+    var btn=document.getElementById('gaf_'+c.replace(' ','_'));
+    if(btn){
+      btn.style.background=c===cat?'var(--teal)':'var(--surface)';
+      btn.style.color=c===cat?'#fff':'var(--muted)';
+      btn.style.borderColor=c===cat?'var(--teal)':'var(--border)';
+    }
+  });
+}
+
+function renderGymAddList(){
+  var el=document.getElementById('gymAddList');
+  if(!el)return;
+  var filtered=gymAddFilter==='All'?LX:LX.filter(function(e){return e.cat===gymAddFilter;});
+  var currentNames=weeklyPlan.days[gymDayIdx].ex.map(function(e){return e.n.toLowerCase();});
+  var h='';
+  filtered.forEach(function(ex){
+    var already=currentNames.indexOf(ex.n.toLowerCase())>-1;
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">';
+    h+='<div><div style="font-size:var(--sm);font-weight:600;color:var(--text);">'+ex.n+'</div>';
+    h+='<div style="font-size:var(--xs);color:var(--muted);">'+ex.cat+' . '+ex.d+'</div></div>';
+    if(already){
+      h+='<span style="font-size:var(--xs);color:var(--muted2);padding:0 8px;">Added</span>';
+    } else {
+      h+='<button onclick="addGymEx(\''+ex.id+'\')" style="background:var(--teal);border:none;border-radius:7px;color:#fff;font-size:var(--xs);font-weight:700;padding:5px 12px;cursor:pointer;flex-shrink:0;">+ Add</button>';
+    }
+    h+='</div>';
+  });
+  // Custom exercise row
+  h+='<div style="padding:8px 0;">';
+  h+='<input type="text" id="gymCustomExName" placeholder="Custom exercise name..." class="lf" style="font-size:var(--sm);font-weight:400;margin-bottom:6px;width:100%;">';
+  h+='<button onclick="addGymCustomEx()" style="width:100%;background:var(--purple);border:none;border-radius:7px;color:#fff;font-size:var(--xs);font-weight:700;padding:7px;cursor:pointer;">+ Add Custom Exercise</button>';
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+function addGymEx(id){
+  var ex=null;
+  for(var i=0;i<LX.length;i++){if(LX[i].id===id){ex=LX[i];break;}}
+  if(!ex)return;
+  weeklyPlan.days[gymDayIdx].ex.push({n:ex.n,d:ex.d});
+  save('wp',weeklyPlan);
+  renderGC();
+  toast2(ex.n+' added!','var(--green)');
+}
+
+function addGymCustomEx(){
+  var inp=document.getElementById('gymCustomExName');
+  var name=inp?inp.value.trim():'';
+  if(!name){toast2('Enter an exercise name');return;}
+  weeklyPlan.days[gymDayIdx].ex.push({n:name,d:'3 sets x 10 reps'});
+  save('wp',weeklyPlan);
+  renderGC();
+  toast2(name+' added!','var(--green)');
+}
 function shuffleW(){
   var d=DAYS[gymDayIdx];
   if(d.ex==='lift'){var pool=gymDayIdx===0?EP.upper:gymDayIdx===2?EP.lower:EP.fullbody;weeklyPlan.days[gymDayIdx].ex=pool[Math.floor(Math.random()*pool.length)];}
