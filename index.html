@@ -7,7 +7,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0099cc">
+<meta name="theme-color" content="#6366f1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="FitPlan">
@@ -18,8 +18,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--bg:#f4f6f9;--surface:#fff;--surface2:#edf0f5;--border:#e1e7ef;--teal:#0099cc;--teal-d:#0077aa;--tdim:#0099cc14;--coral:#e53e3e;--cdim:#e53e3e12;--gold:#d97706;--gdim:#d9770612;--blue:#3b82f6;--bdim:#3b82f612;--purple:#7c3aed;--pdim:#7c3aed12;--green:#16a34a;--ndim:#16a34a12;--text:#1a202c;--muted:#64748b;--muted2:#94a3b8;--xs:11px;--sm:13px;--base:14px;--lg:17px;--xl:22px;--st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);--nh:56px;}
-body.dark{--bg:#0f1117;--surface:#1a1f2e;--surface2:#252b3b;--border:#2d3548;--text:#e8edf5;--muted:#8892a4;--muted2:#4a5568;}
+:root{
+  --bg:#f8fafc;--surface:#ffffff;--surface2:#f1f5f9;--border:#e2e8f0;
+  --teal:#6366f1;--teal-d:#4f46e5;--tdim:#6366f115;
+  --coral:#f43f5e;--cdim:#f43f5e12;
+  --gold:#f59e0b;--gdim:#f59e0b12;
+  --blue:#3b82f6;--bdim:#3b82f612;
+  --purple:#8b5cf6;--pdim:#8b5cf612;
+  --green:#10b981;--ndim:#10b98112;
+  --text:#0f172a;--muted:#64748b;--muted2:#94a3b8;
+  --xs:11px;--sm:13px;--base:14px;--lg:17px;--xl:22px;
+  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);--nh:56px;
+}
+body.dark{
+  --bg:#0a0e1a;--surface:#111827;--surface2:#1f2937;--border:#374151;
+  --text:#f1f5f9;--muted:#9ca3af;--muted2:#4b5563;
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:var(--base);line-height:1.5;display:flex;flex-direction:column;height:100dvh;}
@@ -30,12 +44,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:calc(var(--nh) + var(--sb) + 16px);}
 .scroll::-webkit-scrollbar{display:none;}
 .con{padding:14px 20px;max-width:600px;margin:0 auto;width:100%;}
-.user-bar{display:flex;align-items:center;justify-content:space-between;padding:calc(var(--st) + 10px) 20px 10px;background:linear-gradient(135deg,#0099cc,#005f8a);flex-shrink:0;}
+.user-bar{display:flex;align-items:center;justify-content:space-between;padding:calc(var(--st) + 10px) 20px 10px;background:linear-gradient(135deg,#1e1b4b,#4338ca);flex-shrink:0;}
 .ub-left{display:flex;align-items:center;gap:10px;}
 .avatar{width:32px;height:32px;border-radius:50%;background:#fff3;border:2px solid #fff5;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0;}
 .avatar img{width:100%;height:100%;object-fit:cover;}
 .uname{color:#fff;font-size:var(--sm);font-weight:600;}
-.usub{color:#b3eaff;font-size:var(--xs);}
+.usub{color:#c7d2fe;font-size:var(--xs);}
 .set-btn{background:#fff3;border:1px solid #fff4;border-radius:8px;color:#fff;padding:6px 10px;cursor:pointer;font-size:16px;display:flex;align-items:center;gap:5px;}
 .set-btn span{font-size:var(--xs);font-weight:600;}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--surface);border-top:1px solid var(--border);display:flex;padding-bottom:var(--sb);height:calc(var(--nh) + var(--sb));box-shadow:0 -2px 12px rgba(0,0,0,.08);}
@@ -45,14 +59,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .ph{padding:14px 20px 12px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;}
 .ph h2{font-family:'Bebas Neue',sans-serif;font-size:var(--xl);letter-spacing:1px;}
 .ph p{color:var(--muted);font-size:var(--xs);margin-top:1px;}
-.hero{background:linear-gradient(135deg,#0099cc,#005f8a);padding:12px 20px 14px;flex-shrink:0;}
+.hero{background:linear-gradient(135deg,#1e1b4b,#4338ca);padding:12px 20px 14px;flex-shrink:0;}
 .hero-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:#fff;line-height:1;margin-bottom:4px;}
-.hero-title span{color:#b3eaff;}
-.hero-sub{color:#cceeff;font-size:var(--xs);margin-bottom:10px;}
+.hero-title span{color:#c7d2fe;}
+.hero-sub{color:#e0e7ff;font-size:var(--xs);margin-bottom:10px;}
 .hero-pills{display:flex;gap:6px;}
 .hp{background:#fff2;border:1px solid #fff3;border-radius:20px;padding:4px 10px;display:flex;align-items:center;gap:4px;}
 .hpv{font-family:'Bebas Neue',sans-serif;font-size:15px;color:#fff;}
-.hpl{font-size:9px;color:#99d6f0;text-transform:uppercase;letter-spacing:.5px;}
+.hpl{font-size:9px;color:#a5b4fc;text-transform:uppercase;letter-spacing:.5px;}
 .dtabs{display:flex;overflow-x:auto;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;scrollbar-width:none;padding:0 6px;}
 .dtabs::-webkit-scrollbar{display:none;}
 .dtab{padding:10px 13px;font-size:var(--sm);font-weight:600;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;flex-shrink:0;}
@@ -160,9 +174,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;fon
 .tgl.on{background:var(--teal);border-color:var(--teal);}
 .tgl-t{width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
 .tgl.on .tgl-t{transform:translateX(18px);}
-.pcard{background:linear-gradient(135deg,var(--teal),var(--teal-d));border-radius:14px;padding:16px 18px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;}
+.pcard{background:linear-gradient(135deg,#1e1b4b,#312e81);border-radius:14px;padding:16px 18px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;}
 .pcn{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:#fff;}
-.pcs{font-size:var(--xs);color:#cceeff;margin-top:3px;}
+.pcs{font-size:var(--xs);color:#e0e7ff;margin-top:3px;}
 .pce{background:#fff3;border:1px solid #fff5;border-radius:8px;color:#fff;font-size:var(--xs);font-weight:700;padding:6px 12px;cursor:pointer;font-family:'DM Sans',sans-serif;}
 .tgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:6px;}
 .tc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
@@ -183,16 +197,16 @@ select.fi2{-webkit-appearance:none;}
 .wcard.today .wd{color:var(--teal);}
 .wi{font-size:20px;margin:5px 0;}
 .wt{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
-#ls{position:fixed;inset:0;z-index:900;background:linear-gradient(160deg,#0099cc,#0077aa 50%,#005f8a);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;text-align:center;overflow-y:auto;}
+#ls{position:fixed;inset:0;z-index:900;background:linear-gradient(160deg,#6366f1,#4f46e5 50%,#3730a3);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;text-align:center;overflow-y:auto;}
 #ls.hidden{display:none;}
 .ll{font-family:'Bebas Neue',sans-serif;font-size:68px;letter-spacing:4px;color:#fff;line-height:.9;margin-bottom:8px;}
-.ll span{color:#b3eaff;display:block;font-size:30px;letter-spacing:6px;}
-.lt{color:#cceeff;font-size:var(--base);font-weight:300;margin-bottom:40px;max-width:280px;line-height:1.7;}
+.ll span{color:#c7d2fe;display:block;font-size:30px;letter-spacing:6px;}
+.lt{color:#e0e7ff;font-size:var(--base);font-weight:300;margin-bottom:40px;max-width:280px;line-height:1.7;}
 .gb{display:flex;align-items:center;gap:12px;background:#fff;border:none;border-radius:14px;padding:16px 28px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;color:#1a202c;box-shadow:0 4px 20px rgba(0,0,0,.2);width:100%;max-width:300px;justify-content:center;min-height:56px;-webkit-appearance:none;}
 .gb:active{transform:scale(.98);background:#f8f8f8;}
 .gb svg{width:22px;height:22px;flex-shrink:0;}
-.lnote{color:#99d6ee;font-size:var(--xs);margin-top:20px;max-width:260px;line-height:1.7;}
-.ll2{color:#cceeff;font-size:var(--sm);margin-top:16px;display:none;}
+.lnote{color:#a5b4fc;font-size:var(--xs);margin-top:20px;max-width:260px;line-height:1.7;}
+.ll2{color:#e0e7ff;font-size:var(--sm);margin-top:16px;display:none;}
 #ob{position:fixed;inset:0;z-index:800;background:#fff;display:none;flex-direction:column;pointer-events:none;}
 #ob.open{display:flex;pointer-events:all;}
 .obs{flex:1;position:relative;overflow:hidden;}
@@ -228,15 +242,15 @@ select.fi2{-webkit-appearance:none;}
   </button>
   <div style="display:flex;align-items:center;gap:10px;width:100%;max-width:300px;margin:16px 0;">
     <div style="flex:1;height:1px;background:#ffffff40;"></div>
-    <div style="color:#99d6ee;font-size:var(--xs);">or use email</div>
+    <div style="color:#a5b4fc;font-size:var(--xs);">or use email</div>
     <div style="flex:1;height:1px;background:#ffffff40;"></div>
   </div>
   <div style="width:100%;max-width:300px;display:flex;flex-direction:column;gap:8px;">
     <input type="email" id="loginEmail" placeholder="Email address" autocomplete="email" style="width:100%;padding:13px 16px;border-radius:12px;border:none;font-family:DM Sans,sans-serif;font-size:15px;outline:none;">
     <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" style="width:100%;padding:13px 16px;border-radius:12px;border:none;font-family:DM Sans,sans-serif;font-size:15px;outline:none;">
     <button onclick="signInWithEmail()" style="width:100%;padding:14px;background:#ffffff25;border:1.5px solid #ffffff60;border-radius:12px;color:#fff;font-family:DM Sans,sans-serif;font-size:15px;font-weight:700;cursor:pointer;">Sign In with Email</button>
-    <button onclick="signUpWithEmail()" style="width:100%;padding:11px;background:none;border:1px solid #ffffff40;border-radius:12px;color:#cceeff;font-family:DM Sans,sans-serif;font-size:var(--sm);cursor:pointer;">Create Account</button>
-    <button onclick="resetPassword()" style="background:none;border:none;color:#99d6ee;font-size:var(--xs);cursor:pointer;font-family:DM Sans,sans-serif;padding:4px;">Forgot password?</button>
+    <button onclick="signUpWithEmail()" style="width:100%;padding:11px;background:none;border:1px solid #ffffff40;border-radius:12px;color:#e0e7ff;font-family:DM Sans,sans-serif;font-size:var(--sm);cursor:pointer;">Create Account</button>
+    <button onclick="resetPassword()" style="background:none;border:none;color:#a5b4fc;font-size:var(--xs);cursor:pointer;font-family:DM Sans,sans-serif;padding:4px;">Forgot password?</button>
   </div>
   <div class="ll2" id="loginLoading">Signing you in...</div>
 </div>
@@ -244,10 +258,10 @@ select.fi2{-webkit-appearance:none;}
 <!-- ONBOARDING -->
 <div id="ob">
   <div class="obs">
-    <div class="osi active" id="ob0" style="background:linear-gradient(160deg,#0099cc,#005f8a);">
+    <div class="osi active" id="ob0" style="background:linear-gradient(160deg,#1e1b4b,#312e81);">
       <div class="oe">💪</div>
       <div class="ot" style="color:#fff;">WELCOME TO<br>FITPLAN</div>
-      <div class="ob2" style="color:#cceeff;">Your personal high-protein fat loss app. Built around your Wegovy journey.</div>
+      <div class="ob2" style="color:#e0e7ff;">Your personal high-protein fat loss app. Built around your Wegovy journey.</div>
     </div>
     <div class="osi" id="ob1">
       <div class="oe">📊</div>
@@ -389,7 +403,7 @@ select.fi2{-webkit-appearance:none;}
           <option value="yes">Yes -- Wegovy / Ozempic / Mounjaro</option>
         </select>
       </div>
-      <div id="glp1Tips" style="display:none;background:#0099cc14;border:1px solid var(--teal);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:var(--xs);color:var(--teal);line-height:1.8;">
+      <div id="glp1Tips" style="display:none;background:#6366f114;border:1px solid var(--teal);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:var(--xs);color:var(--teal);line-height:1.8;">
         <strong>GLP-1 Tips built into your plan:</strong><br>
         Protein target raised to protect muscle mass<br>
         Meals are smaller and easier to digest<br>
@@ -1128,16 +1142,16 @@ function renderOv(){
   var proPct=Math.min(100,Math.round(todayPro/targets.protein*100));
   var calLeft=targets.calories-todayCal;
 
-  h+='<div style="background:linear-gradient(135deg,var(--teal),var(--teal-d));border-radius:14px;padding:16px;margin-bottom:14px;">';
-  h+='<div style="font-family:Bebas Neue,sans-serif;font-size:12px;letter-spacing:2px;color:#b3eaff;margin-bottom:10px;">TODAY</div>';
+  h+='<div style="background:linear-gradient(135deg,#1e1b4b,#312e81);border-radius:14px;padding:16px;margin-bottom:14px;">';
+  h+='<div style="font-family:Bebas Neue,sans-serif;font-size:12px;letter-spacing:2px;color:#c7d2fe;margin-bottom:10px;">TODAY</div>';
   h+='<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;">';
-  h+='<div><div style="font-family:Bebas Neue,sans-serif;font-size:38px;color:#fff;line-height:1;">'+todayCal+'</div><div style="font-size:var(--xs);color:#b3eaff;">of '+targets.calories+' cal</div></div>';
-  h+='<div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:38px;color:#f59e0b;line-height:1;">'+Math.round(todayPro)+'g</div><div style="font-size:var(--xs);color:#b3eaff;">of '+targets.protein+'g protein</div></div>';
-  h+='<div style="text-align:right;"><div style="font-family:Bebas Neue,sans-serif;font-size:38px;color:'+(calLeft>=0?'#fff':'#ffaaaa')+';line-height:1;">'+Math.abs(calLeft)+'</div><div style="font-size:var(--xs);color:#b3eaff;">'+(calLeft>=0?'remaining':'over')+'</div></div>';
+  h+='<div><div style="font-family:Bebas Neue,sans-serif;font-size:38px;color:#fff;line-height:1;">'+todayCal+'</div><div style="font-size:var(--xs);color:#c7d2fe;">of '+targets.calories+' cal</div></div>';
+  h+='<div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:38px;color:#f59e0b;line-height:1;">'+Math.round(todayPro)+'g</div><div style="font-size:var(--xs);color:#c7d2fe;">of '+targets.protein+'g protein</div></div>';
+  h+='<div style="text-align:right;"><div style="font-family:Bebas Neue,sans-serif;font-size:38px;color:'+(calLeft>=0?'#fff':'#ffaaaa')+';line-height:1;">'+Math.abs(calLeft)+'</div><div style="font-size:var(--xs);color:#c7d2fe;">'+(calLeft>=0?'remaining':'over')+'</div></div>';
   h+='</div>';
-  h+='<div style="margin-bottom:5px;"><div style="font-size:10px;color:#b3eaff;margin-bottom:3px;">Calories '+calPct+'%</div>';
+  h+='<div style="margin-bottom:5px;"><div style="font-size:10px;color:#c7d2fe;margin-bottom:3px;">Calories '+calPct+'%</div>';
   h+='<div style="background:#ffffff25;border-radius:20px;height:7px;overflow:hidden;"><div style="height:100%;border-radius:20px;background:'+(calPct>=100?'#ffaaaa':'#fff')+';width:'+calPct+'%;"></div></div></div>';
-  h+='<div><div style="font-size:10px;color:#b3eaff;margin-bottom:3px;">Protein '+proPct+'%</div>';
+  h+='<div><div style="font-size:10px;color:#c7d2fe;margin-bottom:3px;">Protein '+proPct+'%</div>';
   h+='<div style="background:#ffffff25;border-radius:20px;height:7px;overflow:hidden;"><div style="height:100%;border-radius:20px;background:#f59e0b;width:'+proPct+'%;"></div></div></div>';
   h+='</div>';
 
@@ -1215,14 +1229,7 @@ function renderOv(){
   });
   h+='</div>';
 
-  // KEY PRINCIPLES
-  h+='<div style="font-family:Bebas Neue,sans-serif;font-size:var(--xl);letter-spacing:1px;margin-bottom:8px;margin-top:14px;">Key Principles</div>';
-  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
-  h+='<div class="card at" style="margin-bottom:0;"><div class="cb"><strong>Protein First</strong><br>Always eat protein first. On low-appetite days, a shake minimum.</div></div>';
-  h+='<div class="card ab" style="margin-bottom:0;"><div class="cb"><strong>Why Swim?</strong><br>Burns 400-600 cal/hr, low-impact, joint-friendly.</div></div>';
-  h+='<div class="card ag" style="margin-bottom:0;"><div class="cb"><strong>GLP-1 Tips</strong><br>Avoid greasy meals. Eat slowly. Drink 2-3L water daily.</div></div>';
-  h+='<div class="card ac" style="margin-bottom:0;"><div class="cb"><strong>Lift to Tone</strong><br>Resistance 3x per week preserves muscle while losing fat.</div></div>';
-  h+="</div>";
+
   return h;
 }
 
@@ -1729,9 +1736,9 @@ function drawChart(ents){
   vs.forEach(function(_,i){if(i%step===0||i===vs.length-1){ctx.fillStyle='#94a3b8';ctx.font='10px DM Sans,sans-serif';ctx.textAlign='center';ctx.fillText(fmtDate(ents[i].date).split(' ').slice(0,2).join(' '),tx(i),H-p.b+14);}});
   var g=ctx.createLinearGradient(0,p.t,0,p.t+gH);g.addColorStop(0,'rgba(0,153,204,.25)');g.addColorStop(1,'rgba(0,153,204,.02)');
   ctx.beginPath();ctx.moveTo(tx(0),ty(vs[0]));vs.forEach(function(v,i){if(i>0)ctx.lineTo(tx(i),ty(v));});ctx.lineTo(tx(vs.length-1),p.t+gH);ctx.lineTo(tx(0),p.t+gH);ctx.closePath();ctx.fillStyle=g;ctx.fill();
-  ctx.beginPath();ctx.strokeStyle='#0099cc';ctx.lineWidth=2.5;ctx.lineJoin='round';vs.forEach(function(v,i){if(i===0)ctx.moveTo(tx(i),ty(v));else ctx.lineTo(tx(i),ty(v));});ctx.stroke();
-  vs.forEach(function(v,i){ctx.beginPath();ctx.arc(tx(i),ty(v),4,0,Math.PI*2);ctx.fillStyle='#0099cc';ctx.fill();ctx.strokeStyle=bg;ctx.lineWidth=1.5;ctx.stroke();});
-  var lx2=tx(vs.length-1),ly2=ty(vs[vs.length-1]);ctx.fillStyle='#0099cc';ctx.font='bold 12px DM Sans,sans-serif';ctx.textAlign='center';ctx.fillText(vs[vs.length-1],lx2,ly2-10);
+  ctx.beginPath();ctx.strokeStyle='#6366f1';ctx.lineWidth=2.5;ctx.lineJoin='round';vs.forEach(function(v,i){if(i===0)ctx.moveTo(tx(i),ty(v));else ctx.lineTo(tx(i),ty(v));});ctx.stroke();
+  vs.forEach(function(v,i){ctx.beginPath();ctx.arc(tx(i),ty(v),4,0,Math.PI*2);ctx.fillStyle='#6366f1';ctx.fill();ctx.strokeStyle=bg;ctx.lineWidth=1.5;ctx.stroke();});
+  var lx2=tx(vs.length-1),ly2=ty(vs[vs.length-1]);ctx.fillStyle='#6366f1';ctx.font='bold 12px DM Sans,sans-serif';ctx.textAlign='center';ctx.fillText(vs[vs.length-1],lx2,ly2-10);
 }
 
 // -- SETTINGS --
