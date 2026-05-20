@@ -295,7 +295,6 @@ canvas{display:block;width:100%;height:auto;}
       <div class="ob2" style="color:#cef2fd;">Your personal high-protein fat loss app. Built around your Wegovy journey.</div>
     </div>
     <div class="osi" id="ob1">
-      <div class="oe"></div>
       <div class="ot">SET UP YOUR<br>PROFILE</div>
       <div class="ob2">We need your weight, height and age to calculate your exact calorie and protein targets. One-time setup -- takes 30 seconds.</div>
       <button onclick="openProfileEdit(true)" style="margin-top:24px;background:var(--teal);border:none;border-radius:12px;color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;padding:13px 32px;cursor:pointer;">Set Up Profile -></button>
@@ -360,8 +359,8 @@ canvas{display:block;width:100%;height:auto;}
   <div class="screen" id="screen-gym">
     <div class="ph">
     <div style="display:flex;align-items:center;justify-content:space-between;">
-      <div><h2> Gym Tracker</h2><p>Tick off exercises . See your live lift weights</p></div>
-      <button onclick="openWorkoutEditor()" style="background:var(--teal);border:none;border-radius:8px;color:#fff;font-size:var(--xs);font-weight:700;padding:6px 12px;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap;"> Edit</button>
+      <div><h2>Gym Tracker</h2><p>Tick off exercises . See your live lift weights</p></div>
+      <button onclick="openWorkoutEditor()" style="background:var(--teal);border:none;border-radius:8px;color:#fff;font-size:var(--xs);font-weight:700;padding:6px 12px;cursor:pointer;font-family:DM Sans,sans-serif;white-space:nowrap;">Edit</button>
     </div>
   </div>
     <div class="dtabs" id="gymTabs"></div>
@@ -372,7 +371,7 @@ canvas{display:block;width:100%;height:auto;}
   <div class="screen" id="screen-diary">
     <div class="ph">
       <div style="display:flex;align-items:center;justify-content:space-between;">
-        <div><h2> Food Diary</h2><p>Search & log real foods</p></div>
+        <div><h2>Food Diary</h2><p>Search & log real foods</p></div>
         <div style="display:flex;gap:6px;">
           <button onclick="changeDiaryDate(-1)" style="width:30px;height:30px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><</button>
           <button onclick="changeDiaryDate(1)" style="width:30px;height:30px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">></button>
@@ -384,7 +383,7 @@ canvas{display:block;width:100%;height:auto;}
 
   <!-- WEIGHT SCREEN -->
   <div class="screen" id="screen-weight">
-    <div class="ph"><h2> Weight Tracker</h2><p>Log your weight . See your trajectory</p></div>
+    <div class="ph"><h2>Weight Tracker</h2><p>Log your weight . See your trajectory</p></div>
     <div class="scroll"><div class="con" id="weightContent"></div></div>
   </div>
 
@@ -413,7 +412,7 @@ canvas{display:block;width:100%;height:auto;}
 <!-- PROFILE EDIT -->
 <div class="pep" id="profileEditPanel">
   <div class="sph">
-    <div class="spt"> My Profile</div>
+    <div class="spt">My Profile</div>
     <button class="spc" id="profileSaveBtn" onclick="closeProfileEdit()">Save & Calculate</button>
   </div>
   <div class="scroll" style="padding-bottom:30px;">
@@ -456,7 +455,7 @@ canvas{display:block;width:100%;height:auto;}
     <div class="sh2"></div>
     <div class="shh">
       <div class="sht"><div class="shti" id="foodTitle">Add Food</div><button class="shc" onclick="closeFoodModal()">x</button></div>
-      <div class="stabs"><button class="stab active" id="tabS" onclick="switchFTab('search')"> Search</button><button class="stab" id="tabM" onclick="switchFTab('meals')"> My Meals</button></div>
+      <div class="stabs"><button class="stab active" id="tabS" onclick="switchFTab('search')">Search</button><button class="stab" id="tabM" onclick="switchFTab('meals')">My Meals</button></div>
       <input type="text" class="si" id="foodSearch" placeholder="Search e.g. chicken, rice, salmon..." oninput="searchFoods(this.value)" autocomplete="off" autocorrect="off" spellcheck="false">
     </div>
     <div id="searchTab" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
@@ -512,9 +511,9 @@ canvas{display:block;width:100%;height:auto;}
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;" id="weTypeRow"></div>
       <!-- Mode tabs -->
       <div class="stabs" id="weModeTabs">
-        <button class="stab active" id="weTabAuto" onclick="switchWEMode('auto')"> Auto</button>
-        <button class="stab" id="weTabTemplate" onclick="switchWEMode('template')"> Templates</button>
-        <button class="stab" id="weTabCustom" onclick="switchWEMode('custom')"> Custom</button>
+        <button class="stab active" id="weTabAuto" onclick="switchWEMode('auto')">Auto</button>
+        <button class="stab" id="weTabTemplate" onclick="switchWEMode('template')">Templates</button>
+        <button class="stab" id="weTabCustom" onclick="switchWEMode('custom')">Custom</button>
       </div>
     </div>
 
@@ -522,7 +521,7 @@ canvas{display:block;width:100%;height:auto;}
     <div id="weModeAuto" style="flex:1;overflow-y:auto;padding:16px 18px;">
       <div style="font-size:var(--sm);color:var(--muted);margin-bottom:16px;line-height:1.6;">Auto mode generates a workout based on the day type. Tap Regenerate to get a different one.</div>
       <div id="weAutoPreview"></div>
-      <button onclick="regenerateAuto()" style="width:100%;margin-top:12px;background:var(--teal);border:none;border-radius:10px;color:#fff;font-family:DM Sans,sans-serif;font-size:var(--sm);font-weight:700;padding:13px;cursor:pointer;"> Regenerate</button>
+      <button onclick="regenerateAuto()" style="width:100%;margin-top:12px;background:var(--teal);border:none;border-radius:10px;color:#fff;font-family:DM Sans,sans-serif;font-size:var(--sm);font-weight:700;padding:13px;cursor:pointer;">Regenerate</button>
       <button onclick="useAutoWorkout()" style="width:100%;margin-top:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:DM Sans,sans-serif;font-size:var(--sm);font-weight:700;padding:13px;cursor:pointer;">OK Use This Workout</button>
     </div>
 
@@ -1393,7 +1392,7 @@ function renderGC(){
   renderGymAddList();
 }
 
-function toggleEx(di,ei){var k=gk(di,ei);gymChecked[k]=!gymChecked[k];save('gc',gymChecked);renderGC();if(gymChecked[k])toast2('OK Done!','var(--green)');}
+function toggleEx(di,ei){var k=gk(di,ei);gymChecked[k]=!gymChecked[k];save('gc',gymChecked);renderGC();if(gymChecked[k])toast2('Done!','var(--green)');}
 
 function removeGymEx(idx){
   var exs=weeklyPlan.days[gymDayIdx].ex;
@@ -1748,7 +1747,7 @@ function renderWeight(){
   if(ents.length>=2)setTimeout(function(){drawChart(ents);},50);
 }
 
-function logW(){var v=parseFloat(document.getElementById('wInput').value);if(!v||v<20||v>400){toast2('!! Enter a valid weight');return;}weightEntries=weightEntries.filter(function(e){return e.date!==tday();});weightEntries.push({date:tday(),weight:v,ts:Date.now()});weightEntries.sort(function(a,b){return a.date.localeCompare(b.date);});var newE=weightEntries[weightEntries.length-1];syncWeightLog(newE);updateHero();renderWeight();toast2(' Weight logged!','var(--teal)');}
+function logW(){var v=parseFloat(document.getElementById('wInput').value);if(!v||v<20||v>400){toast2('!! Enter a valid weight');return;}weightEntries=weightEntries.filter(function(e){return e.date!==tday();});weightEntries.push({date:tday(),weight:v,ts:Date.now()});weightEntries.sort(function(a,b){return a.date.localeCompare(b.date);});var newE=weightEntries[weightEntries.length-1];syncWeightLog(newE);updateHero();renderWeight();toast2('Weight logged!','var(--teal)');}
 function delW(ts){weightEntries=weightEntries.filter(function(e){return e.ts!==ts;});save('we',weightEntries);if(sb&&CU)sb.from('weight_logs').delete().eq('user_id',CU.id).eq('id','w_'+CU.id+'_'+ts).then(function(){});renderWeight();}
 
 function drawChart(ents){
@@ -1826,7 +1825,7 @@ function renderSettings(){
   } else {
     h+='<div class="sitem"><div class="sil2"><div class="sic" style="background:var(--cdim);"></div><div><div class="snm">No saved workouts yet</div><div class="ssub2">Edit workouts from the Gym tab</div></div></div></div>';
   }
-  h+='<div class="sitem" onclick="showScreen(\'gym\',document.querySelectorAll(\'.nav-btn\')[1]);closeSettings();openWorkoutEditor()"><div class="sil2"><div class="sic" style="background:var(--tdim);"></div><div><div class="snm">Edit Workouts</div><div class="ssub2">Change day types, exercises and more</div></div></div><div class="schev"></div></div>';
+  h+='<div class="sitem" onclick="showScreen(\'gym\',document.querySelectorAll(\'.nav-btn\')[1]);closeSettings();openWorkoutEditor()"><div class="sil2"><div class="sic" style="background:var(--tdim);">+</div><div><div class="snm">Edit Workouts</div><div class="ssub2">Change day types, exercises and more</div></div></div><div class="schev"></div></div>';
   h+='</div>';
   h+='<div class="sil2"><div class="sic" style="background:#1a202c20;">'+(dark?'':'')+'</div><div><div class="snm">Dark Mode</div><div class="ssub2">'+(dark?'On':'Off')+'</div></div></div>';
   h+='<div class="tgl '+(dark?'on':'')+'" onclick="toggleDark(this)"><div class="tgl-t"></div></div>';
@@ -1873,8 +1872,8 @@ function updatePP(){
   if(tipsEl) tipsEl.style.display=glp1==='yes'?'block':'none';
   if(!w||!h||!a){el.innerHTML='<div style="font-size:var(--xs);color:var(--muted);">Fill in all fields to see your targets</div>';return;}
   var t=calcT({w:w,h:h,a:a,sex:sex,act:act,goal:g,glp1:glp1,manCal:manCal});
-  var glp1badge=glp1==='yes'?'<span style="background:var(--teal-dim);border:1px solid var(--teal);border-radius:5px;padding:2px 7px;font-size:9px;font-weight:700;color:var(--teal);margin-left:6px;"> GLP-1 adjusted</span>':'';
-  var manbadge=t.manual?'<span style="background:var(--gold-dim);border:1px solid var(--gold);border-radius:5px;padding:2px 7px;font-size:9px;font-weight:700;color:var(--gold);margin-left:6px;"> Manual override</span>':'';
+  var glp1badge=glp1==='yes'?'<span style="background:var(--teal-dim);border:1px solid var(--teal);border-radius:5px;padding:2px 7px;font-size:9px;font-weight:700;color:var(--teal);margin-left:6px;">GLP-1 adjusted</span>':'';
+  var manbadge=t.manual?'<span style="background:var(--gold-dim);border:1px solid var(--gold);border-radius:5px;padding:2px 7px;font-size:9px;font-weight:700;color:var(--gold);margin-left:6px;">Manual override</span>':'';
   var h2='<div style="font-size:var(--xs);font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;">Your Calculated Targets'+glp1badge+manbadge+'</div>';
   h2+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;">';
   h2+='<div style="text-align:center;"><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--teal);">'+t.cal+'</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;">Cal</div></div>';
@@ -1911,7 +1910,7 @@ function closeProfileEdit(){
     document.getElementById('obSum').textContent='Based on your stats, eat '+t.cal+' cal and '+t.pro+'g protein per day.'+(glp1==='yes'?' Protein raised for GLP-1.':'')+' Updates as your weight changes.';
     obStep=2;showObSlide(2);document.getElementById('obBtn').style.display='block';
   } else {renderSettings();}
-  toast2('OK Profile saved!','var(--green)');
+  toast2('Profile saved!','var(--green)');
 }
 
 // 
@@ -2028,7 +2027,7 @@ function useAutoWorkout() {
   save('wp', weeklyPlan);
   closeWorkoutEditor();
   renderGC();
-  toast2('OK Workout updated!', 'var(--green)');
+  toast2('Workout saved!', 'var(--green)');
 }
 
 function renderWETemplates() {
