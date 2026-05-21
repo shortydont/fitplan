@@ -214,7 +214,7 @@ select.fi2{-webkit-appearance:none;}
 .pchips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
 
 /* ONBOARDING */
-.ob{position:fixed;inset:0;z-index:600;display:none;}
+.ob{position:fixed;inset:0;z-index:800;display:none;background:var(--bg);}
 .ob.open{display:flex;flex-direction:column;}
 .osi{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;}
 .osi.active{display:flex;}
@@ -313,38 +313,30 @@ canvas{display:block;width:100%;}
 
 <!-- ONBOARDING -->
 <div id="ob" class="ob">
-  <div class="obs">
     <div class="osi active" id="ob0" style="background:linear-gradient(160deg,#064e63,#0c6a82);">
       <div class="oe"></div>
       <div class="ot" style="color:#fff;">WELCOME TO<br>FITPLAN</div>
       <div class="ob2" style="color:#cef2fd;">Your personal high-protein fat loss app. Built around your Wegovy journey.</div>
     </div>
-    <div class="osi" id="ob1">
+    <div class="osi" id="ob1" style="background:var(--bg);">
       <div class="ot">SET UP YOUR<br>PROFILE</div>
-      <div class="ob2">We need your weight, height and age to calculate your exact calorie and protein targets. One-time setup -- takes 30 seconds.</div>
+      <div class="ob2" style="color:var(--muted);">We need your weight, height and age to calculate your exact calorie and protein targets. One-time setup -- takes 30 seconds.</div>
       <button onclick="openProfileEdit(true)" style="margin-top:24px;background:var(--teal);border:none;border-radius:12px;color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;padding:13px 32px;cursor:pointer;">Set Up Profile -></button>
     </div>
-    <div class="osi" id="ob2">
+    <div class="osi" id="ob2" style="background:var(--bg);">
       <div class="oe"></div>
       <div class="ot">TARGETS<br>CALCULATED</div>
-      <div class="ob2" id="obSum">Your personalised targets are ready.</div>
+      <div class="ob2" id="obSum" style="color:var(--muted);">Your personalised targets are ready.</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:20px;width:100%;max-width:280px;">
         <div style="background:var(--tdim);border:1px solid var(--teal);border-radius:10px;padding:12px;text-align:center;"><div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--teal);" id="obCal">--</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;">Calories</div></div>
         <div style="background:var(--gdim);border:1px solid var(--gold);border-radius:10px;padding:12px;text-align:center;"><div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);" id="obPro">--</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;">Protein</div></div>
       </div>
     </div>
-    <div class="osi" id="ob3">
+    <div class="osi" id="ob3" style="background:var(--bg);">
       <div class="oe"></div>
       <div class="ot">YOU'RE<br>READY</div>
-      <div class="ob2">Your data is the heart of the app. Every lift, every meal, every weigh-in makes your plan smarter.</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:20px;width:100%;max-width:280px;">
-        <div style="background:var(--tdim);border-radius:10px;padding:10px;font-size:12px;color:var(--teal);font-weight:600;"> Plan<br><span style="font-weight:300;color:var(--muted);font-size:11px;">Weekly schedule</span></div>
-        <div style="background:var(--cdim);border-radius:10px;padding:10px;font-size:12px;color:var(--coral);font-weight:600;"> Gym<br><span style="font-weight:300;color:var(--muted);font-size:11px;">Live lift data</span></div>
-        <div style="background:var(--gdim);border-radius:10px;padding:10px;font-size:12px;color:var(--gold);font-weight:600;"> Diary<br><span style="font-weight:300;color:var(--muted);font-size:11px;">Log your food</span></div>
-        <div style="background:var(--bdim);border-radius:10px;padding:10px;font-size:12px;color:var(--blue);font-weight:600;"> Weight<br><span style="font-weight:300;color:var(--muted);font-size:11px;">Track progress</span></div>
-      </div>
+      <div class="ob2" style="color:var(--muted);">Your data is the heart of the app. Every lift, every meal, every weigh-in makes your plan smarter.</div>
     </div>
-  </div>
   <div class="of">
     <div class="odots"><div class="odot active" id="dot0"></div><div class="odot" id="dot1"></div><div class="odot" id="dot2"></div><div class="odot" id="dot3"></div></div>
     <button class="obtn" id="obBtn" onclick="nextOb()">Next -></button>
@@ -429,8 +421,8 @@ canvas{display:block;width:100%;}
 </div>
 
 <!-- SETTINGS PANEL -->
-<div class="sp2" id="settingsPanel">
-  <div class="sph"><div class="spt"> Settings</div><button class="spc" onclick="closeSettings()">Done</button></div>
+<div class="pscreen" id="settingsPanel">
+  <div class="sph"><div class="spt">Settings</div><button class="spc" onclick="closeSettings()">Done</button></div>
   <div class="scroll" style="padding-bottom:30px;"><div class="con" id="settingsContent"></div></div>
 </div>
 
