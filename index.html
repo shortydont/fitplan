@@ -33,7 +33,7 @@
 body.dark{--bg:#0f1117;--surface:#1a1f2e;--surface2:#242b3d;--border:#2d3548;--text:#e8edf5;--muted:#8892a4;--muted2:#4a5568;}
 
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;}
+html,body{height:100%;overflow:hidden;position:fixed;width:100%;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;font-size:var(--base);line-height:1.5;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;}
 
 /* NAV */
@@ -43,10 +43,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .nav-btn.active{color:var(--teal);}
 
 /* APP LAYOUT */
-#app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:430px;margin:0 auto;overflow:hidden;}
-.screen{display:none;flex-direction:column;flex:1;overflow:hidden;min-height:0;}
+#app{display:flex;flex-direction:column;height:100%;max-width:430px;margin:0 auto;overflow:hidden;}
+.screen{display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden;}
 .screen.active{display:flex;}
-.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;min-height:0;}
 .scroll::-webkit-scrollbar{display:none;}
 .con{padding:14px 14px calc(14px + var(--sb));}
 
@@ -230,8 +230,8 @@ select.fi2{-webkit-appearance:none;}
 /* LOGIN */
 #ls{position:fixed;inset:0;background:linear-gradient(160deg,#0c4a6e,#0284c7 50%,#0ea5e9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:700;padding:32px 24px;}
 #ls.hidden{display:none;}
-#main-app{display:none;height:100%;}
-#main-app.visible{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;}
+#main-app{display:none;}
+#main-app.visible{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;}
 .ll{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:3px;color:#fff;margin-bottom:6px;}
 .ll span{color:#7dd3fc;}
 .lt{font-size:var(--sm);color:#93c5fd;margin-bottom:32px;text-align:center;max-width:280px;line-height:1.5;}
