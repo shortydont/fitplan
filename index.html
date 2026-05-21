@@ -230,6 +230,8 @@ select.fi2{-webkit-appearance:none;}
 /* LOGIN */
 #ls{position:fixed;inset:0;background:linear-gradient(160deg,#0c4a6e,#0284c7 50%,#0ea5e9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:700;padding:32px 24px;}
 #ls.hidden{display:none;}
+#main-app{display:none;}
+#main-app.visible{display:flex;flex-direction:column;flex:1;}
 .ll{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:3px;color:#fff;margin-bottom:6px;}
 .ll span{color:#7dd3fc;}
 .lt{font-size:var(--sm);color:#93c5fd;margin-bottom:32px;text-align:center;max-width:280px;line-height:1.5;}
@@ -310,7 +312,7 @@ canvas{display:block;width:100%;}
 </div>
 
 <!-- ONBOARDING -->
-<div id="ob">
+<div id="ob" class="ob">
   <div class="obs">
     <div class="osi active" id="ob0" style="background:linear-gradient(160deg,#064e63,#0c6a82);">
       <div class="oe"></div>
