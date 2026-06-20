@@ -282,7 +282,9 @@ canvas{display:block;width:100%;}
 .user-bar{display:flex;align-items:center;justify-content:space-between;padding:calc(8px + var(--st)) 16px 8px;background:linear-gradient(135deg,#0c4a6e,#0891b2);color:#fff;flex-shrink:0;width:100%;}
 .bpri{flex:2;padding:12px;background:var(--teal);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:var(--sm);font-weight:700;color:#fff;cursor:pointer;}
 
-/* FOOD LIST ITEMS */
+/* SCANNER */
+#scannerVideo video{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;}
+#scannerVideo canvas{display:none;}
 .fitem{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);background:none;border-left:none;border-right:none;border-top:none;width:100%;text-align:left;cursor:pointer;font-family:'DM Sans',sans-serif;}
 .fitem:active{background:var(--surface2);}
 .fcat{padding:3px 7px;border-radius:6px;flex-shrink:0;}
@@ -477,7 +479,7 @@ canvas{display:block;width:100%;}
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.1/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
 
 <!-- BARCODE SCANNER OVERLAY -->
 <div id="scannerOv" style="display:none;position:fixed;inset:0;z-index:900;background:#000;flex-direction:column;">
@@ -486,7 +488,7 @@ canvas{display:block;width:100%;}
     <button onclick="closeScanner()" style="background:#ffffff20;border:none;border-radius:20px;color:#fff;font-size:13px;font-weight:700;padding:6px 14px;cursor:pointer;">Cancel</button>
   </div>
   <div style="flex:1;position:relative;overflow:hidden;">
-    <video id="scannerVideo" style="width:100%;height:100%;object-fit:cover;" playsinline autoplay muted></video>
+    <div id="scannerVideo" style="width:100%;height:100%;"></div>
     <!-- Viewfinder -->
     <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
       <div style="width:240px;height:160px;position:relative;">
@@ -2305,8 +2307,6 @@ function useCustomWorkout() {
 
 // -- BARCODE SCANNER --
 var scannerActive = false;
-var scannerStream = null;
-var scannerTimer = null;
 var barcodeCache = {};
 
 function openScanner() {
@@ -2314,68 +2314,57 @@ function openScanner() {
   document.getElementById('scanStatus').textContent = 'Starting camera...';
   scannerActive = true;
 
-  // Request camera
-  var constraints = {video: {facingMode: {ideal: 'environment'}, width: {ideal: 1280}, height: {ideal: 720}}};
-  navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
-    scannerStream = stream;
-    var video = document.getElementById('scannerVideo');
-    video.srcObject = stream;
-    video.play();
-    document.getElementById('scanStatus').textContent = 'Point camera at a barcode';
+  if (typeof Quagga === 'undefined') {
+    document.getElementById('scanStatus').textContent = 'Scanner library not loaded. Check your connection.';
+    return;
+  }
 
-    // Use native BarcodeDetector if available (Chrome Android, some iOS)
-    if ('BarcodeDetector' in window) {
-      var detector = new BarcodeDetector({formats: ['ean_13','ean_8','upc_a','upc_e','code_128','code_39','qr_code','itf','codabar']});
-      var scan = function() {
-        if (!scannerActive) return;
-        detector.detect(video).then(function(barcodes) {
-          if (barcodes.length > 0) {
-            var barcode = barcodes[0].rawValue;
-            document.getElementById('scanStatus').textContent = 'Found: ' + barcode;
-            closeScanner();
-            lookupBarcode(barcode);
-          } else {
-            scannerTimer = setTimeout(scan, 300);
-          }
-        }).catch(function() {
-          scannerTimer = setTimeout(scan, 300);
-        });
-      };
-      video.addEventListener('playing', function() { scan(); }, {once: true});
-    } else {
-      // Fallback: ZXing if loaded, otherwise show manual entry prompt
-      if (typeof ZXingBrowser !== 'undefined') {
-        try {
-          var reader = new ZXingBrowser.BrowserMultiFormatReader();
-          reader.decodeFromStream(stream, video, function(result, err) {
-            if (!scannerActive) return;
-            if (result) {
-              var barcode = result.getText();
-              closeScanner();
-              lookupBarcode(barcode);
-            }
-          });
-        } catch(e) {
-          document.getElementById('scanStatus').textContent = 'Scanner unavailable. Try manual entry.';
-        }
-      } else {
-        document.getElementById('scanStatus').textContent = 'Barcode scanning not supported on this browser. Use search instead.';
+  Quagga.init({
+    inputStream: {
+      name: 'Live',
+      type: 'LiveStream',
+      target: document.getElementById('scannerVideo'),
+      constraints: {
+        facingMode: 'environment',
+        width: {ideal: 1280},
+        height: {ideal: 720}
       }
+    },
+    locator: {patchSize: 'medium', halfSample: true},
+    numOfWorkers: 2,
+    frequency: 10,
+    decoder: {
+      readers: ['ean_reader','ean_8_reader','upc_reader','upc_e_reader','code_128_reader','code_39_reader']
+    },
+    locate: true
+  }, function(err) {
+    if (err) {
+      document.getElementById('scanStatus').textContent = 'Camera error: ' + (err.message || err);
+      return;
     }
-  }).catch(function(err) {
-    document.getElementById('scanStatus').textContent = 'Camera access denied. Please allow camera permission and try again.';
+    Quagga.start();
+    document.getElementById('scanStatus').textContent = 'Point camera at a barcode';
+  });
+
+  Quagga.onDetected(function(result) {
+    if (!scannerActive) return;
+    var barcode = result.codeResult.code;
+    if (!barcode) return;
+    // Validate - must be all digits for EAN/UPC
+    if (!/^[0-9]{8,14}$/.test(barcode)) return;
+    scannerActive = false;
+    document.getElementById('scanStatus').textContent = 'Found: ' + barcode;
+    closeScanner();
+    lookupBarcode(barcode);
   });
 }
 
 function closeScanner() {
   scannerActive = false;
-  if (scannerTimer) { clearTimeout(scannerTimer); scannerTimer = null; }
-  if (scannerStream) {
-    scannerStream.getTracks().forEach(function(t) { t.stop(); });
-    scannerStream = null;
+  if (typeof Quagga !== 'undefined') {
+    try { Quagga.stop(); } catch(e) {}
+    try { Quagga.offDetected(); } catch(e) {}
   }
-  var video = document.getElementById('scannerVideo');
-  if (video) { video.srcObject = null; }
   document.getElementById('scannerOv').style.display = 'none';
 }
 
