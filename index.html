@@ -2378,12 +2378,26 @@ function lookupBarcode(barcode) {
       var p = data.product;
       var nm = p.product_name || p.product_name_en || 'Unknown Product';
       var n = p.nutriments || {};
+
+      // Try to get serving size for pre-filling
+      var servingG = 0;
+      if (p.serving_quantity) {
+        servingG = parseFloat(p.serving_quantity) || 0;
+      }
+      // For drinks/liquids, use net quantity of container
+      if (!servingG && p.product_quantity) {
+        var qty = parseFloat(p.product_quantity) || 0;
+        // Only prefill if it's a reasonable single-serving size (<= 500ml/g)
+        if (qty > 0 && qty <= 500) servingG = qty;
+      }
+
       var food = {
         n: nm,
         cal: Math.round(n['energy-kcal_100g'] || n['energy-kcal'] || 0),
         pro: Math.round((n.proteins_100g || 0) * 10) / 10,
         carb: Math.round((n.carbohydrates_100g || 0) * 10) / 10,
         fat: Math.round((n.fat_100g || 0) * 10) / 10,
+        serving: Math.round(servingG) || 0,
         scanned: true
       };
       barcodeCache[barcode] = food;
@@ -2395,14 +2409,21 @@ function loadScannedProduct(food) {
   selFood = food;
   document.getElementById('pName').textContent = food.n;
   document.getElementById('pMeta').textContent = 'Per 100g: ' + food.cal + ' cal . ' + food.pro + 'g protein . ' + food.carb + 'g carbs . ' + food.fat + 'g fat';
-  document.getElementById('pGrams').value = '';
-  document.getElementById('pvC').textContent = '--';
-  document.getElementById('pvP').textContent = '--';
-  document.getElementById('pvCa').textContent = '--';
-  document.getElementById('pvF').textContent = '--';
   document.getElementById('portionSc').classList.add('open');
+  // Pre-fill serving size if we have one
+  if (food.serving > 0) {
+    document.getElementById('pGrams').value = food.serving;
+    updatePrev();
+    toast2('Found: ' + food.n + ' (' + food.serving + 'g serving)');
+  } else {
+    document.getElementById('pGrams').value = '';
+    document.getElementById('pvC').textContent = '--';
+    document.getElementById('pvP').textContent = '--';
+    document.getElementById('pvCa').textContent = '--';
+    document.getElementById('pvF').textContent = '--';
+    toast2('Found: ' + food.n + ' - enter your portion');
+  }
   setTimeout(function() { document.getElementById('pGrams').focus(); }, 300);
-  toast2('Found: ' + food.n);
 }
 
 // -- ONBOARDING --
