@@ -33,8 +33,8 @@
 body.dark{--bg:#0f1117;--surface:#1a1f2e;--surface2:#242b3d;--border:#2d3548;--text:#e8edf5;--muted:#8892a4;--muted2:#4a5568;}
 
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;width:100%;}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;font-size:var(--base);line-height:1.5;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;}
+html{height:100%;overflow:hidden;}body{height:100%;overflow:hidden;display:flex;flex-direction:column;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans-serif;font-size:var(--base);line-height:1.5;-webkit-font-smoothing:antialiased;}
 
 /* NAV */
 .nav{display:flex;background:var(--surface);border-top:1px solid var(--border);padding-bottom:var(--sb);flex-shrink:0;box-shadow:0 -2px 8px rgba(0,0,0,.06);}
@@ -43,7 +43,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,sans
 .nav-btn.active{color:var(--teal);}
 
 /* APP LAYOUT */
-#app{display:flex;flex-direction:column;height:100%;width:100%;overflow:hidden;}
+
 .screen{display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden;}
 .screen.active{display:flex;width:100%;}
 .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;min-height:0;}
@@ -228,7 +228,7 @@ select.fi2{-webkit-appearance:none;}
 .obtn{padding:12px 28px;background:#fff;border:none;border-radius:30px;font-family:'DM Sans',sans-serif;font-size:var(--base);font-weight:700;color:#0c4a6e;cursor:pointer;}
 
 /* LOGIN */
-#ls{position:fixed;inset:0;background:linear-gradient(160deg,#0c4a6e,#0284c7 50%,#0ea5e9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:700;padding:32px 24px;}
+#ls{position:fixed;inset:0;background:linear-gradient(160deg,#0c4a6e,#0284c7 50%,#0ea5e9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:700;padding:32px 24px;overflow-y:auto;}
 #ls.hidden{display:none;}
 #main-app{display:none;}
 #main-app.visible{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;width:100%;}
@@ -277,10 +277,21 @@ select.fi2{-webkit-appearance:none;}
 .pscreen.open{display:flex;}
 .sp2{font-size:var(--xs);color:var(--muted);margin-top:2px;}
 canvas{display:block;width:100%;}
-.app{display:flex;flex-direction:column;height:100vh;max-width:430px;margin:0 auto;}
-.bottom-nav{display:flex;background:var(--surface);border-top:1px solid var(--border);padding-bottom:var(--sb);flex-shrink:0;width:100%;}
+.app{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;width:100%;}
+.bottom-nav{display:flex;background:var(--surface);border-top:1px solid var(--border);padding-bottom:var(--sb);flex-shrink:0;width:100%;box-shadow:0 -1px 8px rgba(0,0,0,.08);}
 .user-bar{display:flex;align-items:center;justify-content:space-between;padding:calc(8px + var(--st)) 16px 8px;background:linear-gradient(135deg,#0c4a6e,#0891b2);color:#fff;flex-shrink:0;width:100%;}
 .bpri{flex:2;padding:12px;background:var(--teal);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:var(--sm);font-weight:700;color:#fff;cursor:pointer;}
+
+/* FOOD LIST ITEMS */
+.fitem{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);background:none;border-left:none;border-right:none;border-top:none;width:100%;text-align:left;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.fitem:active{background:var(--surface2);}
+.fcat{padding:3px 7px;border-radius:6px;flex-shrink:0;}
+.fct{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.fn{font-size:var(--sm);font-weight:600;color:var(--text);margin-bottom:2px;}
+.fm{font-size:var(--xs);color:var(--muted);}
+.fa{width:16px;height:16px;flex-shrink:0;opacity:.3;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2'%3E%3Cpolyline points='9 18 15 12 9 6'/%3E%3C/svg%3E") center/contain no-repeat;}
+.emp{padding:32px 14px;text-align:center;color:var(--muted);}
+.ee{display:block;font-size:32px;margin-bottom:8px;}
 </style>
 </head>
 <body>
@@ -1635,7 +1646,7 @@ function resetFS(){
   document.getElementById('foodSearch').style.display='block';
   document.getElementById('searchTab').style.display='flex';
   document.getElementById('mealsTab').style.display='none';
-  document.getElementById('portionSc').style.display='none';
+  document.getElementById('portionSc').classList.remove('open');
   document.getElementById('tabS').className='stab active';
   document.getElementById('tabM').className='stab';
   selFood=null;renderQP();renderFL('');
@@ -1645,7 +1656,7 @@ function switchFTab(t){
     document.getElementById('searchTab').style.display='flex';
     document.getElementById('mealsTab').style.display='none';
     document.getElementById('foodSearch').style.display='block';
-    document.getElementById('portionSc').style.display='none';
+    document.getElementById('portionSc').classList.remove('open');
     document.getElementById('tabS').className='stab active';
     document.getElementById('tabM').className='stab';
     renderFL('');
@@ -1653,7 +1664,7 @@ function switchFTab(t){
     document.getElementById('searchTab').style.display='none';
     document.getElementById('mealsTab').style.display='flex';
     document.getElementById('foodSearch').style.display='none';
-    document.getElementById('portionSc').style.display='none';
+    document.getElementById('portionSc').classList.remove('open');
     document.getElementById('tabS').className='stab';
     document.getElementById('tabM').className='stab active';
     renderSML();
@@ -1668,7 +1679,7 @@ function renderQP(){
   });
   document.getElementById('quickRow').innerHTML=h;
 }
-function searchFoods(q){if(document.getElementById('portionSc').style.display!=='none')return;renderFL(q);}
+function searchFoods(q){if(document.getElementById('portionSc').classList.contains('open'))return;renderFL(q);}
 var CC2={'Meat':'#e53e3e','Fish':'#3b82f6','Dairy':'#d97706','Carbs':'#7c3aed','Veg':'#16a34a','Fruit':'#f97316','Fats':'#78716c','Other':'#64748b'};
 function renderFL(q){
   var el=document.getElementById('foodList');
@@ -1689,15 +1700,15 @@ function renderFL(q){
   h+='<div style="padding:14px;text-align:center;"><button onclick="toast2(\'Add a custom food by typing the name and values\')" style="background:none;border:1.5px solid var(--border);border-radius:8px;color:var(--muted);font-size:var(--xs);font-weight:600;padding:8px 16px;cursor:pointer;font-family:DM Sans,sans-serif;">+ Add Custom Food</button></div>';
   el.innerHTML=h;
 }
-function selF(n){var f=null;for(var fdi=0;fdi<FDB.length;fdi++){if(FDB[fdi].n===n){f=FDB[fdi];break;}}if(!f)return;selFood=f;document.getElementById('searchTab').style.display='none';document.getElementById('mealsTab').style.display='none';document.getElementById('pName').textContent=f.n;document.getElementById('pMeta').textContent=`Per 100g: ${f.cal} cal . ${f.pro}g protein . ${f.carb}g carbs . ${f.fat}g fat`;document.getElementById('pGrams').value='';['pvC','pvP','pvCa','pvF'].forEach(id=>document.getElementById(id).textContent='');document.getElementById('portionSc').style.display='flex';setTimeout(()=>document.getElementById('pGrams').focus(),100);}
+function selF(n){var f=null;for(var fdi=0;fdi<FDB.length;fdi++){if(FDB[fdi].n===n){f=FDB[fdi];break;}}if(!f)return;selFood=f;document.getElementById('searchTab').style.display='none';document.getElementById('mealsTab').style.display='none';document.getElementById('pName').textContent=f.n;document.getElementById('pMeta').textContent='Per 100g: '+f.cal+' cal . '+f.pro+'g protein . '+f.carb+'g carbs . '+f.fat+'g fat';document.getElementById('pGrams').value='';['pvC','pvP','pvCa','pvF'].forEach(function(id){document.getElementById(id).textContent='';});document.getElementById('portionSc').classList.add('open');setTimeout(function(){document.getElementById('pGrams').focus();},100);}
 function setG(g){document.getElementById('pGrams').value=g;updatePrev();}
 function updatePrev(){if(!selFood)return;var g=parseFloat(document.getElementById('pGrams').value)||0;document.getElementById('pvC').textContent=g?Math.round(selFood.cal*g/100):'';document.getElementById('pvP').textContent=g?(selFood.pro*g/100).toFixed(1)+'g':'';document.getElementById('pvCa').textContent=g?(selFood.carb*g/100).toFixed(1)+'g':'';document.getElementById('pvF').textContent=g?(selFood.fat*g/100).toFixed(1)+'g':'';}
-function backToSearch(){document.getElementById('portionSc').style.display='none';document.getElementById('searchTab').style.display='flex';selFood=null;}
+function backToSearch(){document.getElementById('portionSc').classList.remove('open');document.getElementById('searchTab').style.display='flex';selFood=null;}
 function confirmAdd(){
   if(!selFood)return;
   var g=parseFloat(document.getElementById('pGrams').value);
   if(!g||g<=0){toast2('!! Enter an amount in grams');return;}
-  var entry={n:selFood.n,g,cal:Math.round(selFood.cal*g/100),pro:parseFloat((selFood.pro*g/100).toFixed(1)),carb:parseFloat((selFood.carb*g/100).toFixed(1)),fat:parseFloat((selFood.fat*g/100).toFixed(1)),id:Date.now()};
+  var entry={n:selFood.n,g:g,cal:Math.round(selFood.cal*g/100),pro:parseFloat((selFood.pro*g/100).toFixed(1)),carb:parseFloat((selFood.carb*g/100).toFixed(1)),fat:parseFloat((selFood.fat*g/100).toFixed(1)),id:Date.now()};
   if(!foodDiary[diaryDate])foodDiary[diaryDate]={};
   SLOTS.forEach(function(s){if(!foodDiary[diaryDate][s.id])foodDiary[diaryDate][s.id]=[];});
   foodDiary[diaryDate][curSlot].push(entry);
