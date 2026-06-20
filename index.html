@@ -466,13 +466,37 @@ canvas{display:block;width:100%;}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@zxing/browser@latest/umd/index.min.js"></script>
+
+<!-- BARCODE SCANNER OVERLAY -->
+<div id="scannerOv" style="display:none;position:fixed;inset:0;z-index:900;background:#000;flex-direction:column;">
+  <div style="padding:calc(14px + var(--st)) 16px 10px;display:flex;align-items:center;justify-content:space-between;background:#000;flex-shrink:0;">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:1px;">Scan Barcode</div>
+    <button onclick="closeScanner()" style="background:#ffffff20;border:none;border-radius:20px;color:#fff;font-size:13px;font-weight:700;padding:6px 14px;cursor:pointer;">Cancel</button>
+  </div>
+  <div style="flex:1;position:relative;overflow:hidden;">
+    <video id="scannerVideo" style="width:100%;height:100%;object-fit:cover;" playsinline autoplay muted></video>
+    <!-- Viewfinder -->
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+      <div style="width:240px;height:160px;position:relative;">
+        <div style="position:absolute;top:0;left:0;width:30px;height:30px;border-top:3px solid #0ea5e9;border-left:3px solid #0ea5e9;border-radius:3px 0 0 0;"></div>
+        <div style="position:absolute;top:0;right:0;width:30px;height:30px;border-top:3px solid #0ea5e9;border-right:3px solid #0ea5e9;border-radius:0 3px 0 0;"></div>
+        <div style="position:absolute;bottom:0;left:0;width:30px;height:30px;border-bottom:3px solid #0ea5e9;border-left:3px solid #0ea5e9;border-radius:0 0 0 3px;"></div>
+        <div style="position:absolute;bottom:0;right:0;width:30px;height:30px;border-bottom:3px solid #0ea5e9;border-right:3px solid #0ea5e9;border-radius:0 0 3px 0;"></div>
+        <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:rgba(14,165,233,.6);transform:translateY(-50%);"></div>
+      </div>
+    </div>
+  </div>
+  <div id="scanStatus" style="padding:16px;text-align:center;color:#93c5fd;font-size:var(--sm);background:#000;flex-shrink:0;">Point camera at a barcode</div>
+</div>
+
 <!-- FOOD MODAL -->
 <div class="ov" id="foodOv" onclick="if(event.target===this)closeFoodModal()">
   <div class="sheet">
     <div class="sh2"></div>
     <div class="shh">
       <div class="sht"><div class="shti" id="foodTitle">Add Food</div><button class="shc" onclick="closeFoodModal()">x</button></div>
-      <div class="stabs"><button class="stab active" id="tabS" onclick="switchFTab('search')">Search</button><button class="stab" id="tabM" onclick="switchFTab('meals')">My Meals</button></div>
+      <div class="stabs"><button class="stab active" id="tabS" onclick="switchFTab('search')">Search</button><button class="stab" id="tabM" onclick="switchFTab('meals')">My Meals</button><button class="stab" id="tabScan" onclick="openScanner()" style="background:var(--teal);color:#fff;">Scan</button></div>
       <input type="text" class="si" id="foodSearch" placeholder="Search e.g. chicken, rice, salmon..." oninput="searchFoods(this.value)" autocomplete="off" autocorrect="off" spellcheck="false">
     </div>
     <div id="searchTab" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
@@ -2268,6 +2292,86 @@ function useCustomWorkout() {
 
 // Also load savedWorkouts in loadAll
 
+// -- BARCODE SCANNER --
+var scannerActive = false;
+var scannerControls = null;
+var barcodeCache = {};
+
+function openScanner() {
+  if (typeof ZXingBrowser === 'undefined') {
+    toast2('Scanner not loaded. Check connection.');
+    return;
+  }
+  document.getElementById('scannerOv').style.display = 'flex';
+  document.getElementById('scanStatus').textContent = 'Starting camera...';
+  scannerActive = true;
+  var codeReader = new ZXingBrowser.BrowserMultiFormatReader();
+  codeReader.decodeFromVideoDevice(null, 'scannerVideo', function(result, err) {
+    if (!scannerActive) return;
+    if (result) {
+      var barcode = result.getText();
+      scannerActive = false;
+      if (scannerControls) { try { scannerControls.stop(); } catch(e) {} }
+      document.getElementById('scanStatus').textContent = 'Found: ' + barcode + ' - Looking up...';
+      lookupBarcode(barcode);
+    }
+  }).then(function(controls) {
+    scannerControls = controls;
+    document.getElementById('scanStatus').textContent = 'Point camera at a barcode';
+  }).catch(function(err) {
+    document.getElementById('scanStatus').textContent = 'Camera error: ' + (err.message || 'Cannot access camera');
+  });
+}
+
+function closeScanner() {
+  scannerActive = false;
+  if (scannerControls) { try { scannerControls.stop(); } catch(e) {} scannerControls = null; }
+  var video = document.getElementById('scannerVideo');
+  if (video && video.srcObject) {
+    video.srcObject.getTracks().forEach(function(t) { t.stop(); });
+    video.srcObject = null;
+  }
+  document.getElementById('scannerOv').style.display = 'none';
+}
+
+function lookupBarcode(barcode) {
+  if (barcodeCache[barcode]) { closeScanner(); loadScannedProduct(barcodeCache[barcode]); return; }
+  fetch('https://world.openfoodfacts.org/api/v0/product/' + barcode + '.json')
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      closeScanner();
+      if (data.status !== 1 || !data.product) { toast2('Product not found - try searching manually'); return; }
+      var p = data.product;
+      var nm = p.product_name || p.product_name_en || 'Unknown Product';
+      var n = p.nutriments || {};
+      var food = {
+        n: nm,
+        cal: Math.round(n['energy-kcal_100g'] || n['energy-kcal'] || 0),
+        pro: Math.round((n.proteins_100g || 0) * 10) / 10,
+        carb: Math.round((n.carbohydrates_100g || 0) * 10) / 10,
+        fat: Math.round((n.fat_100g || 0) * 10) / 10,
+        scanned: true
+      };
+      barcodeCache[barcode] = food;
+      loadScannedProduct(food);
+    }).catch(function() { closeScanner(); toast2('Lookup failed - check connection'); });
+}
+
+function loadScannedProduct(food) {
+  selFood = food;
+  document.getElementById('pName').textContent = food.n;
+  document.getElementById('pMeta').textContent = 'Per 100g: ' + food.cal + ' cal . ' + food.pro + 'g protein . ' + food.carb + 'g carbs . ' + food.fat + 'g fat';
+  document.getElementById('pGrams').value = '';
+  document.getElementById('pvC').textContent = '--';
+  document.getElementById('pvP').textContent = '--';
+  document.getElementById('pvCa').textContent = '--';
+  document.getElementById('pvF').textContent = '--';
+  document.getElementById('portionSc').classList.add('open');
+  setTimeout(function() { document.getElementById('pGrams').focus(); }, 300);
+  toast2('Found: ' + food.n);
+}
+
+// -- ONBOARDING --
 function showOb(){if(load('obDone'))return;isOb=true;obStep=0;showObSlide(0);document.getElementById('ob').classList.add('open');}
 function showObSlide(n){for(var i=0;i<4;i++){var s=document.getElementById('ob'+i);var d=document.getElementById('dot'+i);if(s)s.className='osi'+(i===n?' active':'');if(d)d.className='odot'+(i===n?' active':'');}var b=document.getElementById('obBtn');if(b){b.textContent=n===3?"Let's Go! ":"Next ->";b.style.display=n===1?'none':'block';}}
 function nextOb(){if(obStep===1)return;if(obStep<3){obStep++;showObSlide(obStep);}else{save('obDone',true);isOb=false;document.getElementById('ob').classList.remove('open');}}
