@@ -466,7 +466,7 @@ canvas{display:block;width:100%;}
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@zxing/browser@latest/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.1/umd/index.min.js"></script>
 
 <!-- BARCODE SCANNER OVERLAY -->
 <div id="scannerOv" style="display:none;position:fixed;inset:0;z-index:900;background:#000;flex-direction:column;">
@@ -1070,7 +1070,7 @@ var FDB=[
 ];
 
 var QP=['Chicken Breast (grilled)','Brown Rice (cooked)','Broccoli','Egg (whole)','Greek Yogurt (0% fat)','Salmon (fillet)','Sweet Potato (baked)','Tuna (canned in water)','Spinach','Oats (dry)'];
-var SLOTS=[{id:'breakfast',l:' Breakfast',col:'var(--teal)'},{id:'lunch',l:' Lunch',col:'var(--gold)'},{id:'dinner',l:' Dinner',col:'var(--blue)'},{id:'snacks',l:' Snacks',col:'var(--coral)'}];
+var SLOTS=[{id:'breakfast',l:'Breakfast',col:'var(--teal)'},{id:'lunch',l:'Lunch',col:'var(--gold)'},{id:'dinner',l:'Dinner',col:'var(--blue)'},{id:'snacks',l:'Snacks',col:'var(--coral)'}];
 
 // -- HELPERS --
 function tday(){return new Date().toISOString().split('T')[0];}
@@ -1611,7 +1611,7 @@ function renderDiary(){
       html+='<div class="fem">'+f.g+'g . '+f.cal+' cal . '+f.pro+'g protein</div></div>';
       html+='<button class="fdel" onclick="delFood(\''+sl.id+'\','+f.id+')">x</button></div>';
     });
-    if(!ents.length) html+='<div style="padding:10px 14px;font-size:var(--xs);color:var(--muted2);">Nothing logged  tap + Add</div>';
+    if(!ents.length) html+='<div style="padding:10px 14px;font-size:var(--xs);color:var(--muted2);">Nothing logged - tap + Add</div>';
     html+='</div>';
   });
 
@@ -1965,12 +1965,12 @@ var savedWorkouts = [];
 var weAutoExs = [];
 
 var DAY_TYPES = [
-  {id:'lift_upper', label:' Upper', ex:'lift'},
-  {id:'lift_lower', label:' Lower', ex:'lift'},
-  {id:'lift_full',  label:' Full Body', ex:'lift'},
-  {id:'swim',       label:' Swim', ex:'swim'},
-  {id:'walk',       label:' Walk', ex:'rest'},
-  {id:'rest',       label:' Rest', ex:'rest'},
+  {id:'lift_upper', label:'Upper', ex:'lift'},
+  {id:'lift_lower', label:'Lower', ex:'lift'},
+  {id:'lift_full',  label:'Full Body', ex:'lift'},
+  {id:'swim',       label:'Swim', ex:'swim'},
+  {id:'walk',       label:'Walk', ex:'rest'},
+  {id:'rest',       label:'Rest', ex:'rest'},
 ];
 
 function openWorkoutEditor() {
@@ -2305,22 +2305,27 @@ function openScanner() {
   document.getElementById('scannerOv').style.display = 'flex';
   document.getElementById('scanStatus').textContent = 'Starting camera...';
   scannerActive = true;
-  var codeReader = new ZXingBrowser.BrowserMultiFormatReader();
-  codeReader.decodeFromVideoDevice(null, 'scannerVideo', function(result, err) {
-    if (!scannerActive) return;
-    if (result) {
-      var barcode = result.getText();
-      scannerActive = false;
-      if (scannerControls) { try { scannerControls.stop(); } catch(e) {} }
-      document.getElementById('scanStatus').textContent = 'Found: ' + barcode + ' - Looking up...';
-      lookupBarcode(barcode);
-    }
-  }).then(function(controls) {
-    scannerControls = controls;
-    document.getElementById('scanStatus').textContent = 'Point camera at a barcode';
-  }).catch(function(err) {
-    document.getElementById('scanStatus').textContent = 'Camera error: ' + (err.message || 'Cannot access camera');
-  });
+  try {
+    var codeReader = new ZXingBrowser.BrowserMultiFormatReader();
+    codeReader.decodeFromVideoDevice(undefined, 'scannerVideo', function(result, err, controls) {
+      if (!scannerActive) return;
+      if (result) {
+        var barcode = result.getText();
+        scannerActive = false;
+        scannerControls = controls;
+        if (controls) { try { controls.stop(); } catch(e) {} }
+        document.getElementById('scanStatus').textContent = 'Found: ' + barcode;
+        lookupBarcode(barcode);
+      }
+    }).then(function(controls) {
+      scannerControls = controls;
+      document.getElementById('scanStatus').textContent = 'Point camera at a barcode';
+    }).catch(function(err) {
+      document.getElementById('scanStatus').textContent = 'Camera error: ' + (err.message || 'Cannot access camera');
+    });
+  } catch(e) {
+    document.getElementById('scanStatus').textContent = 'Scanner error: ' + e.message;
+  }
 }
 
 function closeScanner() {
