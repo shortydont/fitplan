@@ -527,7 +527,7 @@ canvas{display:block;width:100%;}
         <div style="font-size:var(--xs);color:var(--muted);line-height:1.6;" id="pMeta"></div>
       </div>
       <div style="flex:1;overflow-y:auto;padding:14px 18px;">
-        <label class="fl2">How much? (grams)</label>
+        <label class="fl2" id="portionLabel">How much? (grams)</label>
         <input type="number" class="lf" id="pGrams" placeholder="e.g. 150" oninput="updatePrev()" style="margin-top:4px;font-size:20px;width:100%;">
         <div class="gsh">
           <button class="gbtn2" onclick="setG(50)">50g</button>
@@ -1648,6 +1648,8 @@ function resetFS(){
   document.getElementById('foodSearch').style.display='block';
   document.getElementById('searchTab').style.display='flex';
   document.getElementById('mealsTab').style.display='none';
+  var portionLabel=document.getElementById('portionLabel');
+  if(portionLabel)portionLabel.textContent='How much? (grams)';
   document.getElementById('portionSc').classList.remove('open');
   document.getElementById('tabS').className='stab active';
   document.getElementById('tabM').className='stab';
@@ -2379,15 +2381,18 @@ function lookupBarcode(barcode) {
       var nm = p.product_name || p.product_name_en || 'Unknown Product';
       var n = p.nutriments || {};
 
-      // Try to get serving size for pre-filling
+      // Detect if product is a liquid
+      var isLiquid = false;
+      var qt = (p.quantity || '').toLowerCase();
+      var cats = (p.categories || '').toLowerCase();
+      if (qt.indexOf('ml') > -1 || qt.indexOf('cl') > -1 || qt.indexOf('l)') > -1) isLiquid = true;
+      if (cats.indexOf('drink') > -1 || cats.indexOf('beverage') > -1 || cats.indexOf('juice') > -1 || cats.indexOf('water') > -1 || cats.indexOf('milk') > -1 || cats.indexOf('cola') > -1) isLiquid = true;
+
+      // Get serving size
       var servingG = 0;
-      if (p.serving_quantity) {
-        servingG = parseFloat(p.serving_quantity) || 0;
-      }
-      // For drinks/liquids, use net quantity of container
+      if (p.serving_quantity) servingG = parseFloat(p.serving_quantity) || 0;
       if (!servingG && p.product_quantity) {
         var qty = parseFloat(p.product_quantity) || 0;
-        // Only prefill if it's a reasonable single-serving size (<= 500ml/g)
         if (qty > 0 && qty <= 500) servingG = qty;
       }
 
@@ -2398,6 +2403,7 @@ function lookupBarcode(barcode) {
         carb: Math.round((n.carbohydrates_100g || 0) * 10) / 10,
         fat: Math.round((n.fat_100g || 0) * 10) / 10,
         serving: Math.round(servingG) || 0,
+        liquid: isLiquid,
         scanned: true
       };
       barcodeCache[barcode] = food;
@@ -2407,21 +2413,24 @@ function lookupBarcode(barcode) {
 
 function loadScannedProduct(food) {
   selFood = food;
+  var unit = food.liquid ? 'ml' : 'g';
   document.getElementById('pName').textContent = food.n;
-  document.getElementById('pMeta').textContent = 'Per 100g: ' + food.cal + ' cal . ' + food.pro + 'g protein . ' + food.carb + 'g carbs . ' + food.fat + 'g fat';
+  document.getElementById('pMeta').textContent = 'Per 100' + unit + ': ' + food.cal + ' cal . ' + food.pro + 'g protein . ' + food.carb + 'g carbs . ' + food.fat + 'g fat';
+  // Update the portion label
+  var portionLabel = document.getElementById('portionLabel');
+  if (portionLabel) portionLabel.textContent = 'How much? (' + unit + ')';
   document.getElementById('portionSc').classList.add('open');
-  // Pre-fill serving size if we have one
   if (food.serving > 0) {
     document.getElementById('pGrams').value = food.serving;
     updatePrev();
-    toast2('Found: ' + food.n + ' (' + food.serving + 'g serving)');
+    toast2('Found: ' + food.n + ' (' + food.serving + unit + ')');
   } else {
     document.getElementById('pGrams').value = '';
     document.getElementById('pvC').textContent = '--';
     document.getElementById('pvP').textContent = '--';
     document.getElementById('pvCa').textContent = '--';
     document.getElementById('pvF').textContent = '--';
-    toast2('Found: ' + food.n + ' - enter your portion');
+    toast2('Found: ' + food.n);
   }
   setTimeout(function() { document.getElementById('pGrams').focus(); }, 300);
 }
