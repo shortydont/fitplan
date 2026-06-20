@@ -2305,48 +2305,77 @@ function useCustomWorkout() {
 
 // -- BARCODE SCANNER --
 var scannerActive = false;
-var scannerControls = null;
+var scannerStream = null;
+var scannerTimer = null;
 var barcodeCache = {};
 
 function openScanner() {
-  if (typeof ZXingBrowser === 'undefined') {
-    toast2('Scanner not loaded. Check connection.');
-    return;
-  }
   document.getElementById('scannerOv').style.display = 'flex';
   document.getElementById('scanStatus').textContent = 'Starting camera...';
   scannerActive = true;
-  try {
-    var codeReader = new ZXingBrowser.BrowserMultiFormatReader();
-    codeReader.decodeFromVideoDevice(undefined, 'scannerVideo', function(result, err, controls) {
-      if (!scannerActive) return;
-      if (result) {
-        var barcode = result.getText();
-        scannerActive = false;
-        scannerControls = controls;
-        if (controls) { try { controls.stop(); } catch(e) {} }
-        document.getElementById('scanStatus').textContent = 'Found: ' + barcode;
-        lookupBarcode(barcode);
+
+  // Request camera
+  var constraints = {video: {facingMode: {ideal: 'environment'}, width: {ideal: 1280}, height: {ideal: 720}}};
+  navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+    scannerStream = stream;
+    var video = document.getElementById('scannerVideo');
+    video.srcObject = stream;
+    video.play();
+    document.getElementById('scanStatus').textContent = 'Point camera at a barcode';
+
+    // Use native BarcodeDetector if available (Chrome Android, some iOS)
+    if ('BarcodeDetector' in window) {
+      var detector = new BarcodeDetector({formats: ['ean_13','ean_8','upc_a','upc_e','code_128','code_39','qr_code','itf','codabar']});
+      var scan = function() {
+        if (!scannerActive) return;
+        detector.detect(video).then(function(barcodes) {
+          if (barcodes.length > 0) {
+            var barcode = barcodes[0].rawValue;
+            document.getElementById('scanStatus').textContent = 'Found: ' + barcode;
+            closeScanner();
+            lookupBarcode(barcode);
+          } else {
+            scannerTimer = setTimeout(scan, 300);
+          }
+        }).catch(function() {
+          scannerTimer = setTimeout(scan, 300);
+        });
+      };
+      video.addEventListener('playing', function() { scan(); }, {once: true});
+    } else {
+      // Fallback: ZXing if loaded, otherwise show manual entry prompt
+      if (typeof ZXingBrowser !== 'undefined') {
+        try {
+          var reader = new ZXingBrowser.BrowserMultiFormatReader();
+          reader.decodeFromStream(stream, video, function(result, err) {
+            if (!scannerActive) return;
+            if (result) {
+              var barcode = result.getText();
+              closeScanner();
+              lookupBarcode(barcode);
+            }
+          });
+        } catch(e) {
+          document.getElementById('scanStatus').textContent = 'Scanner unavailable. Try manual entry.';
+        }
+      } else {
+        document.getElementById('scanStatus').textContent = 'Barcode scanning not supported on this browser. Use search instead.';
       }
-    }).then(function(controls) {
-      scannerControls = controls;
-      document.getElementById('scanStatus').textContent = 'Point camera at a barcode';
-    }).catch(function(err) {
-      document.getElementById('scanStatus').textContent = 'Camera error: ' + (err.message || 'Cannot access camera');
-    });
-  } catch(e) {
-    document.getElementById('scanStatus').textContent = 'Scanner error: ' + e.message;
-  }
+    }
+  }).catch(function(err) {
+    document.getElementById('scanStatus').textContent = 'Camera access denied. Please allow camera permission and try again.';
+  });
 }
 
 function closeScanner() {
   scannerActive = false;
-  if (scannerControls) { try { scannerControls.stop(); } catch(e) {} scannerControls = null; }
-  var video = document.getElementById('scannerVideo');
-  if (video && video.srcObject) {
-    video.srcObject.getTracks().forEach(function(t) { t.stop(); });
-    video.srcObject = null;
+  if (scannerTimer) { clearTimeout(scannerTimer); scannerTimer = null; }
+  if (scannerStream) {
+    scannerStream.getTracks().forEach(function(t) { t.stop(); });
+    scannerStream = null;
   }
+  var video = document.getElementById('scannerVideo');
+  if (video) { video.srcObject = null; }
   document.getElementById('scannerOv').style.display = 'none';
 }
 
